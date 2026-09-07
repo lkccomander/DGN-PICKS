@@ -1,0 +1,13 @@
+DGN-PICKS Codex documentation pack
+
+Files:
+- AGENTS.md
+- ARCHITECTURE.md
+- PLANS.md
+- README.md
+- docs/product-specs/001-local-mvp.md
+- docs/design-docs/branding.md
+
+Seed users: gato, daran, noch
+All provided initial picks belong to gato.
+Malakai Toney 72.5 receiving yards remains unresolved because Over/Under was not specified.
