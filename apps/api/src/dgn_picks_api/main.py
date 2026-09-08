@@ -1,4 +1,7 @@
+import os
+
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 from dgn_picks_api.api.routes.health import router as health_router
 from dgn_picks_api.api.v1.routes.analytics import router as analytics_router
@@ -9,6 +12,23 @@ from dgn_picks_api.api.v1.routes.picks import router as picks_router
 from dgn_picks_api.api.v1.routes.users import router as users_router
 
 app = FastAPI(title="DGN-PICKS API", version="0.1.0")
+
+cors_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "DGN_CORS_ORIGINS",
+        "https://dgnweb-production.up.railway.app",
+    ).split(",")
+    if origin.strip()
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=cors_origins,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Accept", "Content-Type"],
+)
+
 app.include_router(health_router, prefix="/api")
 
 for router in (
