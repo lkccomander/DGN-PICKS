@@ -44,11 +44,11 @@ def upgrade() -> None:
     op.create_table("sportsbook_sources", sa.Column("id", sa.Integer(), primary_key=True), sa.Column("name", sa.String(80), nullable=False, unique=True), sa.Column("source_type", sa.String(32), nullable=False), sa.Column("active", sa.Boolean(), nullable=False, server_default=sa.true()))
     op.create_table("selections", sa.Column("id", sa.Integer(), primary_key=True), sa.Column("market_id", sa.Integer(), sa.ForeignKey("markets.id"), nullable=False), sa.Column("selection_key", sa.String(80), nullable=False), sa.Column("team_id", sa.Integer(), sa.ForeignKey("teams.id")), sa.Column("player_id", sa.Integer(), sa.ForeignKey("players.id")), sa.Column("side", sa.String(16)), sa.UniqueConstraint("market_id", "selection_key"))
     op.add_column("pick_legs", sa.Column("selection_id", sa.Integer(), nullable=True))
-    op.add_column("pick_legs", sa.Column("odds_snapshot_id", sa.Integer(), nullable=True))
+    
 
 
 def downgrade() -> None:
-    op.drop_column("pick_legs", "odds_snapshot_id")
+   
     op.drop_column("pick_legs", "selection_id")
     for table in ("selections", "sportsbook_sources", "players", "teams"):
         op.drop_table(table)
