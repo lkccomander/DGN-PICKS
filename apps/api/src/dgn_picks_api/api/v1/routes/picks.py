@@ -1,6 +1,7 @@
 from datetime import UTC, date, datetime, time, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.params import Query as QueryParam
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -19,6 +20,11 @@ def list_picks(
     pick_date: date | None = Query(default=None, alias="date"),
     db: Session = Depends(get_db),
 ) -> list[Pick]:
+    # Direct unit calls do not receive FastAPI's injected defaults.
+    if isinstance(user, QueryParam):
+        user = None
+    if isinstance(pick_date, QueryParam):
+        pick_date = None
     statement = select(Pick)
     if user is not None:
         statement = statement.join(User, Pick.user_id == User.id).where(User.username == user)
