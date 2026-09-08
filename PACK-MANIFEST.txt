@@ -11,3 +11,28 @@ Files:
 Seed users: gato, daran, noch
 All provided initial picks belong to gato.
 Malakai Toney 72.5 receiving yards remains unresolved because Over/Under was not specified.
+Deployment workflow: GitHub -> Railway
+
+FRONTEND:
+https://dgnweb-production.up.railway.app/
+
+API:
+https://dgn-picks-production.up.railway.app
+
+API v1 base path (once mounted and deployed):
+https://dgn-picks-production.up.railway.app/api/v1
+
+API v1 route groups:
+- users
+- games
+- markets/{market_id}/history
+- picks
+- analytics/summary
+- dev/seed
+
+Status:
+- M1 foundation present.
+- M2 domain, fixture, seed, and API v1 implementation is in progress.
+- API v1 routers still require application mounting before deployment availability.
+- Frontend dashboard/API integration remains pending.
+- No live Railway verification is claimed.

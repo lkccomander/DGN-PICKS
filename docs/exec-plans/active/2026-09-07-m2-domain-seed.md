@@ -8,6 +8,25 @@
 
 **Tech Stack:** Python 3.11+, FastAPI, Pydantic v2, SQLAlchemy 2, Alembic, PostgreSQL, pytest, httpx.
 
+## Current status — 2026-09-07
+
+The M2 domain, migration alignment, calculation, deterministic fixture, seed, and API v1 route implementation exists in the working tree. The `/api/v1` routers are now mounted alongside `/api/health`, and the frontend dashboard integration is present. The work remains active because dependency-based validation, deployment, and Railway smoke checks are incomplete.
+
+The repository workflow is GitHub → Railway. Deployment references are:
+
+- Frontend: https://dgnweb-production.up.railway.app/
+- API: https://dgn-picks-production.up.railway.app
+
+No live Railway verification is claimed from the current environment.
+
+Current implementation evidence:
+
+- Domain models, calculations, fixture provider, seed definitions/service/report, and API v1 route modules are present.
+- API v1 route groups cover users, games, markets/history, picks, analytics, and development seeding, and are mounted in `main.py`.
+- The frontend dashboard reads games, picks, and analytics from the configured Railway API URL.
+- The unresolved Malakai Toney receiving-yards side remains preserved and must not be guessed.
+- API tests and deployment availability remain unverified here; do not mark the milestone complete until dependency-based validation and GitHub → Railway smoke checks are finished.
+
 ## Global Constraints
 
 - Use a modular monolith; no microservices.
@@ -171,4 +190,3 @@
 - [ ] Pick taken line and price remain unchanged after later snapshots.
 - [ ] API v1 returns validated responses.
 - [ ] Domain and API tests pass when dependencies are installed.
-

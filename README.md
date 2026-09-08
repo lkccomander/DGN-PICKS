@@ -1,6 +1,17 @@
 # DGN-PICKS
 
-Local-first NCAA College Football picks, lines, props, and line-movement tracker.
+NCAA College Football picks, lines, props, and line-movement tracker.
+
+## Deployment
+
+The active workflow is **GitHub → Railway**. Railway is the deployment environment; a local runtime is not required for normal project use.
+
+| Service | Railway URL |
+|---|---|
+| Frontend | https://dgnweb-production.up.railway.app/ |
+| API | https://dgn-picks-production.up.railway.app |
+
+These URLs are deployment references. No live Railway verification is claimed here.
 
 ## Baseline stack
 - Next.js + TypeScript
@@ -18,16 +29,36 @@ Local-first NCAA College Football picks, lines, props, and line-movement tracker
 4. `PLANS.md`
 5. `docs/design-docs/branding.md`
 
-## First task
-Bootstrap Milestone 1 only. Do not connect a real odds provider yet.
-## Local development
+## Current milestone status
 
-Milestone 1 provides a Next.js web shell, a FastAPI health endpoint, and a PostgreSQL-backed migration foundation. It intentionally does not connect to a live odds provider.
+- **M1 foundation:** present — web shell, FastAPI health endpoint, PostgreSQL migration foundation, and deterministic fixture direction.
+- **M2 domain/seed:** implementation is present in the working tree — domain models, migrations, calculations, fixture provider, seed definitions/service, and seed report.
+- **API v1:** route modules and schemas are mounted under `/api/v1`; runtime and Railway smoke validation remain pending.
+- **Frontend dashboard:** connected dashboard implementation is present; production smoke validation remains pending.
+- **Live odds provider:** intentionally not connected. Deterministic local fixtures remain the source for MVP data.
 
-1. Install web dependencies with `npm install --prefix apps/web`.
-2. Start PostgreSQL with `npm run db:up`.
-3. Run migrations with `npm run db:migrate`.
-4. Start the API with `npm run api` or the web app with `npm run dev:web`.
-5. Run checks with `npm run lint:web` and `npm run test:api`.
+## API v1 usage
 
-The API health check is available at `http://localhost:8000/api/health`.
+Use the Railway API base URL:
+
+```text
+https://dgn-picks-production.up.railway.app/api/v1
+```
+
+Available route shapes:
+
+- `GET /users?user=gato`
+- `GET /games?date=YYYY-MM-DD&conference=SEC`
+- `GET /games/{game_id}`
+- `GET /games/{game_id}/markets`
+- `GET /markets/{market_id}/history`
+- `GET /picks?user=gato&date=YYYY-MM-DD`
+- `POST /picks`
+- `GET /analytics/summary`
+- `POST /dev/seed`
+
+The development seed endpoint is idempotent and reports unresolved input. The Malakai Toney 72.5 receiving-yards definition remains unresolved because its Over/Under side was not supplied; it must not be guessed.
+
+## Validation and handoff
+
+Push documentation and implementation changes to GitHub; Railway then deploys from the configured repository. This documentation does not claim that the Railway endpoints, migrations, or API v1 routes have been live-verified from the current environment.
