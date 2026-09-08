@@ -42,6 +42,19 @@ type Summary = {
   roi: number | null;
 };
 
+function normalizeSummary(summary: Summary): Summary {
+  return {
+    wins: Number(summary.wins),
+    losses: Number(summary.losses),
+    pushes: Number(summary.pushes),
+    pending: Number(summary.pending),
+    void: Number(summary.void),
+    total_units_risked: Number(summary.total_units_risked),
+    profit_units: Number(summary.profit_units),
+    roi: summary.roi == null ? null : Number(summary.roi),
+  };
+}
+
 type DashboardData = { games: Game[]; picks: Pick[]; summary: Summary };
 
 const emptySummary: Summary = { wins: 0, losses: 0, pushes: 0, pending: 0, void: 0, total_units_risked: 0, profit_units: 0, roi: null };
@@ -73,12 +86,12 @@ export default function Home() {
     setLoading(true);
     setError(null);
     try {
-      const [games, picks, summary] = await Promise.all([
+      const [games, picks, summaryResponse] = await Promise.all([
         fetchJson<Game[]>("/api/v1/games"),
         fetchJson<Pick[]>(`/api/v1/picks?user=${ACTIVE_USER}`),
         fetchJson<Summary>("/api/v1/analytics/summary"),
       ]);
-      setData({ games, picks, summary });
+      setData({ games, picks, summary: normalizeSummary(summaryResponse) });
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Unable to reach the picks API.");
     } finally {
