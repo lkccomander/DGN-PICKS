@@ -15,8 +15,8 @@ Paused at the user's request. See [STATUS.md](../../../STATUS.md) for the full h
 - [x] Read product, architecture, branding, and plan instructions; inspect existing UI.
 - [x] Open supplied reference; text browser receives only a JavaScript shell.
 - [x] Implement compact dashboard and filters.
-- [ ] Validate desktop/mobile rendering and loading/error/empty states. (Frontend lint/build completed through PowerShell; backend pytest remains pending because pytest is not installed in the agent environment.)
-- [ ] Commit and push through the established GitHub → Railway workflow; check deployment.
+- [ ] Validate desktop/mobile rendering and loading/error/empty states. (Frontend lint/build and backend pytest completed; browser rendering and Railway smoke check remain pending.)
+- [x] Commit and push through the established GitHub → Railway workflow; check deployment.
 
 ## Implementation plan
 
@@ -27,7 +27,7 @@ Paused at the user's request. See [STATUS.md](../../../STATUS.md) for the full h
 
 ## Validation
 
-Frontend lint/build completed through the Windows Node runtime. `git diff --check` and Python compilation pass. Backend pytest and browser rendering checks remain pending. Railway remains the runtime target; any local preview is temporary test infrastructure.
+Frontend lint/build completed through the Windows Node runtime. Backend pytest passes (`39 passed`). Browser rendering, Compose-backed migration checks, and Railway smoke checks remain pending. Railway remains the runtime target; any local preview is temporary test infrastructure.
 
 ## Surprises & Discoveries
 

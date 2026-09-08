@@ -4,6 +4,8 @@
 
 **Goal:** Create a runnable local DGN-PICKS monorepo foundation with web, API, PostgreSQL, migrations, health checks, and baseline developer commands.
 
+**Status:** Implementation complete. API tests pass (`39 passed`), frontend lint/build pass through Windows Node, and Compose remains dependent on Docker Desktop WSL integration being enabled in the local environment.
+
 **Architecture:** A modular monorepo contains a Next.js App Router frontend in `apps/web` and a FastAPI backend in `apps/api`. PostgreSQL runs as a local Docker Compose dependency; the first migration establishes the shared database schema foundation without connecting a live odds provider.
 
 **Tech Stack:** Next.js, TypeScript, React, FastAPI, Python, PostgreSQL, Docker Compose, Alembic, pytest, ESLint.
@@ -25,10 +27,10 @@
 - Create: `.gitignore`
 - Create: `Makefile`
 
-- [ ] Add workspace scripts for web, API, checks, and database services.
-- [ ] Add PostgreSQL health-gated Compose service with a non-secret local default.
-- [ ] Add environment examples and ignore local secrets/build output.
-- [ ] Run the repository scripts and Compose configuration validation.
+    - [x] Add workspace scripts for web, API, checks, and database services.
+    - [x] Add PostgreSQL health-gated Compose service with a non-secret local default.
+    - [x] Add environment examples and ignore local secrets/build output.
+    - [ ] Run Compose configuration validation (blocked only by Docker Desktop WSL integration in this distro).
 
 ### Task 2: FastAPI shell
 
@@ -38,9 +40,9 @@
 - Create: `apps/api/src/dgn_picks_api/api/routes/health.py`
 - Create: `apps/api/tests/test_health.py`
 
-- [ ] Define a typed FastAPI app and `/health` route returning service status.
-- [ ] Add pytest coverage through `TestClient`.
-- [ ] Run the API test suite and import check.
+    - [x] Define a typed FastAPI app and `/health` route returning service status.
+    - [x] Add pytest coverage through an ASGI test client.
+    - [x] Run the API test suite and import check.
 
 ### Task 3: Next.js shell
 
@@ -53,9 +55,9 @@
 - Create: `apps/web/src/app/page.tsx`
 - Create: `apps/web/src/app/globals.css`
 
-- [ ] Add App Router root layout and branded starter page.
-- [ ] Reuse existing brand assets without introducing provider-specific UI.
-- [ ] Run lint and production build.
+    - [x] Add App Router root layout and branded starter page.
+    - [x] Reuse existing brand assets without introducing provider-specific UI.
+    - [x] Run lint and production build.
 
 ### Task 4: Database migration foundation
 
@@ -65,9 +67,9 @@
 - Create: `apps/api/migrations/versions/0001_initial_schema.py`
 - Create: `apps/api/src/dgn_picks_api/db.py`
 
-- [ ] Add Alembic configuration driven by `DATABASE_URL`.
-- [ ] Add initial tables for users, sports, events, markets, odds snapshots, picks, and pick legs.
-- [ ] Verify migration upgrade and downgrade against local PostgreSQL when available.
+    - [x] Add Alembic configuration driven by `DATABASE_URL`.
+    - [x] Add initial tables for users, sports, events, markets, odds snapshots, picks, and pick legs.
+    - [ ] Verify migration upgrade and downgrade against local PostgreSQL when Docker Desktop WSL integration is available.
 
 ### Task 5: Documentation and verification
 
@@ -75,6 +77,6 @@
 - Modify: `README.md`
 - Modify: `PLANS.md`
 
-- [ ] Document install, run, test, lint, migration, and health commands.
-- [ ] Record that Milestone 1 intentionally has no live odds provider.
-- [ ] Run all available checks and report unavailable external prerequisites explicitly.
+    - [x] Document install, run, test, lint, migration, and health commands.
+    - [x] Record that Milestone 1 intentionally has no live odds provider.
+    - [x] Run all available checks and report unavailable external prerequisites explicitly.

@@ -5,11 +5,11 @@ description = "DGN-PICKS local MVP API"
 requires-python = ">=3.11"
 dependencies = [
   "alembic>=1.13,<2",
-  "fastapi>=0.115,<1",
+  "fastapi>=0.115,<0.116",
   "psycopg[binary]>=3.2,<4",
   "sqlalchemy>=2.0,<3",
   "uvicorn[standard]>=0.32,<1",
 ]
 
 [dependency-groups]
-dev = ["httpx2>=2.12,<3", "pytest>=8.3,<9"]
+dev = ["httpx>=0.27,<1", "pytest>=8.3,<9"]
