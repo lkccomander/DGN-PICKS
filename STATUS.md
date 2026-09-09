@@ -33,9 +33,9 @@ Global project checklist and session handoff.
 - [x] Seed users: `gato`, `daran`, `noch`.
 - [x] API v1 routes for users, games, markets/history, picks, analytics, and seed.
 - [x] API test suite passing locally.
-- [ ] Audit 13 Gato definitions versus 7 currently stored picks.
-- [ ] Confirm unresolved Malakai Toney behavior without guessing.
-- [ ] Verify seed idempotency and ownership with an integration test.
+- [x] Audit 13 Gato definitions versus 7 currently stored picks; 6 definitions remain explicitly unresolved.
+- [x] Confirm unresolved Malakai Toney behavior without guessing.
+- [x] Verify seed idempotency and ownership with an integration test.
 - [ ] Verify migrations against PostgreSQL.
 - [ ] Verify API v1 and seed behavior on Railway.
 

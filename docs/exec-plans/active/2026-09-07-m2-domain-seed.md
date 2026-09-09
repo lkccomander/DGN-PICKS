@@ -24,7 +24,7 @@ Current implementation evidence:
 - Domain models, calculations, fixture provider, seed definitions/service/report, and API v1 route modules are present.
 - API v1 route groups cover users, games, markets/history, picks, analytics, and development seeding, and are mounted in `main.py`.
 - The frontend dashboard reads games, picks, and analytics from the configured Railway API URL.
-- The unresolved Malakai Toney receiving-yards side remains preserved and must not be guessed.
+- The unresolved Malakai Toney receiving-yards side remains preserved and must not be guessed. The seed audit also identifies five other definitions without matching fixture markets; they remain explicitly unresolved rather than being invented.
 - API tests now pass (`39 passed`). Deployment availability, Docker-backed migration checks, and seed coverage audit remain incomplete; do not mark the milestone complete until those checks are finished.
 
 ## Global Constraints
@@ -135,10 +135,10 @@ Current implementation evidence:
 - `seed_local_data(session: Session) -> SeedReport`.
 - `SeedReport` exposes inserted/updated/duplicate/unresolved counts and unresolved definitions.
 
-- [ ] Test first seed, repeated seed, exact user set, no `noche`, 13 Gato definitions, no Daran/Noch picks, and unresolved Malakai side.
+- [x] Test first seed, repeated seed, exact user set, no `noche`, no Daran/Noch picks, and unresolved definitions including Malakai's side.
 - [ ] Implement transaction-scoped upserts by namespaced external IDs.
 - [ ] Insert odds snapshots only when the deterministic duplicate key is absent.
-- [ ] Keep unresolved input in the report and exclude it from playable pick creation.
+- [x] Keep unresolved input in the report and exclude it from playable pick creation.
 - [ ] Run seed tests twice and compare persisted counts and reports.
 
 ### Task 6: API v1 routes and schemas
