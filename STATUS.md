@@ -1,6 +1,6 @@
 # DGN-PICKS — session handoff
 
-Updated: 2026-09-08 UTC.
+Updated: 2026-09-08 UTC — session paused for sleep.
 Global project checklist and session handoff.
 
 ## Workflow and deployments
@@ -9,8 +9,8 @@ Global project checklist and session handoff.
 - Frontend: https://dgnweb-production.up.railway.app/
 - API: https://dgn-picks-production.up.railway.app
 - GitHub: https://github.com/lkccomander/DGN-PICKS
-- Branch: `main`, matching the local `origin/main` reference at `942748e`.
-- Latest pushed commit: `942748e docs: mark milestone one complete`.
+- Branch: `main`, matching the local `origin/main` reference at `a94eeab`.
+- Latest pushed commit: `a94eeab test: lock deterministic seed behavior`.
 - Do not equate a pushed commit with a verified Railway deployment.
 
 ## Global checklist
@@ -65,7 +65,7 @@ Global project checklist and session handoff.
 - `GET /api/v1/picks?user=gato` previously returned 500. Migration `0006_backfill_pick_timestamps` was pushed in `b882360` to repair missing timestamps.
 - The frontend subsequently crashed on Decimal strings passed to `.toFixed()`. Commit `18b3eae` converts summary values to numbers. Its successful production rendering has not yet been independently verified.
 - M1 is complete for the current workflow; local Docker-backed migration verification is deferred.
-- M2 implementation is deployed; seed audit, migration verification, and Railway smoke checks remain open.
+- M2 implementation is deployed; seed audit is complete, while migration verification and Railway smoke checks remain open.
 - The compact dashboard is deployed; browser smoke checks remain open.
 
 ## Active task: compact sportsbook-style frontend
@@ -88,20 +88,20 @@ Completed:
 
 ## Next steps
 
-1. Finish the M2 seed audit and add integration coverage.
-2. Verify Alembic migrations through the Railway deployment path; enable Docker Desktop WSL integration only if local DB work becomes necessary.
-3. Run browser smoke checks and verify Railway endpoints.
-4. Start M3 CRUD after M2 is closed.
+1. Verify Alembic migrations and API v1/seed behavior through Railway.
+2. Run desktop/mobile browser smoke checks against the deployed frontend.
+3. Close M2 after those checks.
+4. Start M3 CRUD: write boundary, domain CRUD, odds history, and pick grading.
 
 ## Known follow-up work
 
 - Game responses currently expose team IDs, not team names; do not invent name mappings in CSS/UI work.
-- Audit seed correctness separately. There are 13 Gato definitions but only 7 stored picks reported. Do not invent missing opponents, dates, odds, team names, or the Malakai Toney side.
+- Seed audit result: 13 Gato definitions, 7 stored picks, and 6 explicitly unresolved definitions. Do not invent missing opponents, dates, odds, team names, or the Malakai Toney side.
 - No live odds provider is connected. Use deterministic fixtures until that milestone is explicitly taken on.
 
 ## Working tree at pause
 
-- Application and API changes are committed through `942748e`.
+- Application, API, tests, and status changes are committed through `a94eeab`.
 - Existing untracked `DGN-PICKS.code-workspace` and `logs/` belong to the user; keep them out of release commits.
 - `logs/railwaystatus.md` is an older dashboard report and is not proof of the latest deployment's state.
 
