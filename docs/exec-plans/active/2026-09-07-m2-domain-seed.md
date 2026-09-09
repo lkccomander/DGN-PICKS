@@ -10,7 +10,7 @@
 
 ## Current status — 2026-09-07
 
-The M2 domain, migration alignment, calculation, deterministic fixture, seed, and API v1 route implementation exists in the working tree. The `/api/v1` routers are now mounted alongside `/api/health`, and the frontend dashboard integration is present. The work remains active because dependency-based validation, deployment, and Railway smoke checks are incomplete.
+The M2 domain, migration alignment, calculation, deterministic fixture, seed, and API v1 route implementation exists and is deployed. The `/api/v1` routers are mounted alongside `/api/health`, and the frontend dashboard integration is present. The work remains active because seed coverage, Docker-backed migration checks, and Railway smoke checks are incomplete.
 
 The repository workflow is GitHub → Railway. Deployment references are:
 
@@ -25,7 +25,7 @@ Current implementation evidence:
 - API v1 route groups cover users, games, markets/history, picks, analytics, and development seeding, and are mounted in `main.py`.
 - The frontend dashboard reads games, picks, and analytics from the configured Railway API URL.
 - The unresolved Malakai Toney receiving-yards side remains preserved and must not be guessed.
-- API tests and deployment availability remain unverified here; do not mark the milestone complete until dependency-based validation and GitHub → Railway smoke checks are finished.
+- API tests now pass (`39 passed`). Deployment availability, Docker-backed migration checks, and seed coverage audit remain incomplete; do not mark the milestone complete until those checks are finished.
 
 ## Global Constraints
 

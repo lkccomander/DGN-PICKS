@@ -31,9 +31,9 @@ These URLs are deployment references. No live Railway verification is claimed he
 
 ## Current milestone status
 
-- **M1 foundation:** present — web shell, FastAPI health endpoint, PostgreSQL migration foundation, and deterministic fixture direction.
-- **M2 domain/seed:** implementation is present in the working tree — domain models, migrations, calculations, fixture provider, seed definitions/service, and seed report.
-- **API v1:** route modules and schemas are mounted under `/api/v1`; runtime and Railway smoke validation remain pending.
+- **M1 foundation:** complete — web shell, FastAPI health endpoint, PostgreSQL migration foundation, developer commands, and deterministic fixture direction. API tests pass; Docker-backed migration verification still requires Docker Desktop WSL integration.
+- **M2 domain/seed:** implementation is present — domain models, migrations, calculations, fixture provider, seed definitions/service, and seed report. Seed coverage audit remains active.
+- **API v1:** route modules and schemas are mounted under `/api/v1`; automated API tests pass, while Railway smoke validation remains pending.
 - **Frontend dashboard:** connected dashboard implementation is present; production smoke validation remains pending.
 - **Live odds provider:** intentionally not connected. Deterministic local fixtures remain the source for MVP data.
 
