@@ -23,7 +23,7 @@ Global project checklist and session handoff.
 - [x] PostgreSQL Compose service and Alembic foundation.
 - [x] Frontend lint and production build.
 - [x] API test suite: `39 passed`.
-- [ ] Docker Compose migration upgrade/downgrade verification — requires Docker Desktop WSL integration.
+- [~] Docker Compose migration upgrade/downgrade verification — N/A for the current GitHub → Railway workflow; deferred unless a local DB environment is requested.
 
 ### M2 — Domain, deterministic seed, and API v1
 
@@ -64,7 +64,7 @@ Global project checklist and session handoff.
 - Last user-provided Railway results showed 4 games, 7 pending picks, 7 units risked, and zero profit. These are historical observations, not a fresh live check at handoff.
 - `GET /api/v1/picks?user=gato` previously returned 500. Migration `0006_backfill_pick_timestamps` was pushed in `b882360` to repair missing timestamps.
 - The frontend subsequently crashed on Decimal strings passed to `.toFixed()`. Commit `18b3eae` converts summary values to numbers. Its successful production rendering has not yet been independently verified.
-- M1 is complete except Docker-backed migration verification.
+- M1 is complete for the current workflow; local Docker-backed migration verification is deferred.
 - M2 implementation is deployed; seed audit, migration verification, and Railway smoke checks remain open.
 - The compact dashboard is deployed; browser smoke checks remain open.
 
@@ -89,7 +89,7 @@ Completed:
 ## Next steps
 
 1. Finish the M2 seed audit and add integration coverage.
-2. Enable Docker Desktop WSL integration and verify Alembic migrations.
+2. Verify Alembic migrations through the Railway deployment path; enable Docker Desktop WSL integration only if local DB work becomes necessary.
 3. Run browser smoke checks and verify Railway endpoints.
 4. Start M3 CRUD after M2 is closed.
 
@@ -107,4 +107,4 @@ Completed:
 
 ## Validation tooling
 
-Windows Node.js is available at `C:\Program Files\nodejs`; frontend lint/build pass through PowerShell. Docker is not currently available inside this WSL distro because Docker Desktop WSL integration is disabled. API tests pass with the project virtual environment; browser checks remain pending.
+Windows Node.js is available at `C:\Program Files\nodejs`; frontend lint/build pass through PowerShell. Docker is not currently available inside this WSL distro, but that is not required for the current workflow. API tests pass with the project virtual environment; browser checks remain pending.

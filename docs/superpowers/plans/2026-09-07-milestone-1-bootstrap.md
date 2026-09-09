@@ -4,7 +4,7 @@
 
 **Goal:** Create a runnable local DGN-PICKS monorepo foundation with web, API, PostgreSQL, migrations, health checks, and baseline developer commands.
 
-**Status:** Implementation complete. API tests pass (`39 passed`), frontend lint/build pass through Windows Node, and Compose remains dependent on Docker Desktop WSL integration being enabled in the local environment.
+**Status:** Complete for the current GitHub → Railway workflow. API tests pass (`39 passed`) and frontend lint/build pass through Windows Node. Local Compose migration verification is deferred because a separate local runtime is not required.
 
 **Architecture:** A modular monorepo contains a Next.js App Router frontend in `apps/web` and a FastAPI backend in `apps/api`. PostgreSQL runs as a local Docker Compose dependency; the first migration establishes the shared database schema foundation without connecting a live odds provider.
 
@@ -69,7 +69,7 @@
 
     - [x] Add Alembic configuration driven by `DATABASE_URL`.
     - [x] Add initial tables for users, sports, events, markets, odds snapshots, picks, and pick legs.
-    - [ ] Verify migration upgrade and downgrade against local PostgreSQL when Docker Desktop WSL integration is available.
+    - [~] Verify migration upgrade and downgrade against local PostgreSQL — deferred; local PostgreSQL is not required for the current workflow.
 
 ### Task 5: Documentation and verification
 
