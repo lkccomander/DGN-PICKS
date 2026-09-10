@@ -9,8 +9,8 @@ Global project checklist and session handoff.
 - Frontend: https://dgnweb-production.up.railway.app/
 - API: https://dgn-picks-production.up.railway.app
 - GitHub: https://github.com/lkccomander/DGN-PICKS
-- Branch: `main`; `main` and `origin/main` are synchronized at `8403b7e`.
-- Latest pushed commit: `8403b7e feat: complete MVP dashboard filters and smoke check`.
+- Branch: `main`; `main` and `origin/main` are synchronized at `ebcd1bf`.
+- Latest pushed commit: `ebcd1bf docs: record Railway deployment verification`.
 - Do not equate a pushed commit with a verified Railway deployment.
 
 ## Global checklist
@@ -21,7 +21,7 @@ Global project checklist and session handoff.
 - [x] Next.js web shell with DGN-PICKS branding.
 - [x] FastAPI app and `/api/health` endpoint.
 - [x] PostgreSQL Compose service and Alembic foundation.
-- [x] Frontend lint and production build.
+- [ ] Frontend lint and production build — pending Windows PowerShell validation.
 - [x] API test suite: `39 passed`.
 - [~] Docker Compose migration upgrade/downgrade verification — N/A for the current GitHub → Railway workflow; deferred unless a local DB environment is requested.
 
@@ -81,7 +81,7 @@ Global project checklist and session handoff.
 - `GET /api/v1/picks?user=gato` previously returned 500. Migration `0006_backfill_pick_timestamps` was pushed in `b882360` to repair missing timestamps.
 - The frontend subsequently crashed on Decimal strings passed to `.toFixed()`. Commit `18b3eae` converts summary values to numbers. Its successful production rendering has not yet been independently verified.
 - M1 is complete for the current workflow; local Docker-backed migration verification is deferred.
-- M2 implementation is deployed; seed audit is complete. The API suite passes locally (`56 passed`) and the migration chain generates valid offline SQL through `0006_backfill_pick_timestamps`; live PostgreSQL/Railway verification remains open.
+- M2 implementation is deployed; seed audit is complete. The API suite passes locally (`56 passed`) and the migration chain generates valid offline SQL through `0006_backfill_pick_timestamps`.
 - The compact dashboard is deployed; browser smoke checks remain open.
 - Railway verification completed after the latest push: API health, teams, games,
   analytics, and frontend all returned HTTP 200; the API smoke check reported 8
@@ -110,8 +110,9 @@ Completed:
 
 ## Next steps
 
-1. Verify the Railway pre-deploy migration against PostgreSQL when database access is available.
+1. Run `npm run lint:web` and `npm run build:web` from Windows PowerShell.
 2. Run desktop/mobile browser smoke checks against the deployed frontend.
+3. Verify the Railway pre-deploy migration against PostgreSQL when database access is available.
 
 ## Known follow-up work
 
@@ -122,10 +123,10 @@ Completed:
 
 ## Working tree at pause
 
-- Users CRUD is committed in `a4bc03c`, catalog CRUD in `c4a64cc`, odds/pick lifecycle in `ecd0190`, and final dashboard/smoke integration in `8403b7e`; `main` is synchronized with `origin/main`.
+- Users CRUD is committed in `a4bc03c`, catalog CRUD in `c4a64cc`, odds/pick lifecycle in `ecd0190`, final dashboard/smoke integration in `8403b7e`, and Railway verification in `ebcd1bf`; `main` is synchronized with `origin/main`.
 - Existing untracked `DGN-PICKS.code-workspace` and `logs/` belong to the user; keep them out of release commits.
 - `logs/railwaystatus.md` is an older dashboard report and is not proof of the latest deployment's state.
 
 ## Validation tooling
 
-Windows Node.js is available at `C:\Program Files\nodejs`, but the WSL1-to-Windows bridge currently fails before npm starts. API pytest passes locally (`56 passed`); Railway HTTP/API smoke checks pass; Docker-backed migration verification, frontend lint/build, and browser viewport checks remain pending.
+Windows Node.js is available at `C:\Program Files\nodejs`, but the WSL1-to-Windows bridge currently fails before npm starts. API pytest passes locally (`56 passed`); Railway HTTP/API smoke checks pass; frontend lint/build, Docker-backed migration verification, and browser viewport checks remain pending.
