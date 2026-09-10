@@ -1,6 +1,6 @@
 # DGN-PICKS — session handoff
 
-Updated: 2026-09-10 UTC — M3 data-management API implemented locally.
+Updated: 2026-09-10 UTC — M3 data-management API complete; final validation open.
 Global project checklist and session handoff.
 
 ## Workflow and deployments
@@ -64,10 +64,10 @@ Global project checklist and session handoff.
 - M3 user CRUD slice is implemented: read detail,
   create, update, and delete routes; writes require `DGN_API_WRITE_MODE=development`,
   `DGN_API_WRITE_KEY`, and `X-DGN-Write-Key`; users with picks cannot be deleted.
-- M3 catalog CRUD is implemented locally: Teams, Players, Games, Markets, and
+- M3 catalog CRUD is implemented and committed in `c4a64cc`: Teams, Players, Games, Markets, and
   Selections routes are mounted under `/api/v1`, use the development write
   boundary, validate references, and block deletion when dependent records exist.
-- M3 odds and pick lifecycle API is implemented locally: odds snapshots append
+- M3 odds and pick lifecycle API is implemented and committed in `ecd0190`: odds snapshots append
   through `/markets/{id}/history` with duplicate protection; pick creation is
   write-protected; pending picks can be retrieved and graded once through
   `/picks/{id}/grade` while preserving the taken line and price.
@@ -101,7 +101,7 @@ Completed:
 
 1. Verify Alembic migrations and API v1/seed behavior through Railway when DNS/credentials are available.
 2. Run desktop/mobile browser smoke checks against the deployed frontend.
-3. Commit and push the M3 data-management API, then complete deployment and browser smoke validation.
+3. Push the M3 commits, then complete deployment and browser smoke validation.
 
 ## Known follow-up work
 
@@ -112,7 +112,7 @@ Completed:
 
 ## Working tree at pause
 
-- Application, API, tests, and status changes through the Users CRUD slice are committed in `a4bc03c`; the catalog, odds, pick-lifecycle changes and this handoff update are currently uncommitted.
+- Users CRUD is committed in `a4bc03c`, catalog CRUD in `c4a64cc`, and odds/pick lifecycle in `ecd0190`; this handoff update is currently uncommitted.
 - Existing untracked `DGN-PICKS.code-workspace` and `logs/` belong to the user; keep them out of release commits.
 - `logs/railwaystatus.md` is an older dashboard report and is not proof of the latest deployment's state.
 

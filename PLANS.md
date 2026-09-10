@@ -1,6 +1,6 @@
 # PLANS.md — DGN-PICKS
 
-Read [STATUS.md](STATUS.md) for the latest session handoff, verified progress, and next steps. The next backend task is the M3 teams/players/games/markets/selections CRUD slice.
+Read [STATUS.md](STATUS.md) for the latest session handoff, verified progress, and next steps. M3 API implementation is complete; remaining work is final validation and deployment verification.
 
 For work spanning multiple files, migrations, or UI/API integration, create an ExecPlan in `docs/exec-plans/active/`.
 
