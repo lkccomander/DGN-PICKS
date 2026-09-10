@@ -9,8 +9,8 @@ Global project checklist and session handoff.
 - Frontend: https://dgnweb-production.up.railway.app/
 - API: https://dgn-picks-production.up.railway.app
 - GitHub: https://github.com/lkccomander/DGN-PICKS
-- Branch: `main`; local commit `a4bc03c` contains the completed Users CRUD slice and is not pushed yet.
-- Latest pushed commit: `a94eeab test: lock deterministic seed behavior`.
+- Branch: `main`; local commit `6431dd2` contains the completed market-movement dashboard and is one commit ahead of `origin/main`.
+- Latest pushed commit: `3a1e15a docs: close M3 data management plan`.
 - Do not equate a pushed commit with a verified Railway deployment.
 
 ## Global checklist
@@ -115,7 +115,7 @@ Completed:
 
 ## Working tree at pause
 
-- Users CRUD is committed in `a4bc03c`, catalog CRUD in `c4a64cc`, and odds/pick lifecycle in `ecd0190`; dashboard integration and this handoff update are currently uncommitted.
+- Users CRUD is committed in `a4bc03c`, catalog CRUD in `c4a64cc`, odds/pick lifecycle in `ecd0190`, and market-movement dashboard integration in `6431dd2`; only `6431dd2` remains to be pushed.
 - Existing untracked `DGN-PICKS.code-workspace` and `logs/` belong to the user; keep them out of release commits.
 - `logs/railwaystatus.md` is an older dashboard report and is not proof of the latest deployment's state.
 
