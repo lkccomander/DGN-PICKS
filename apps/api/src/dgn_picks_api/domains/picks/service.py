@@ -7,6 +7,8 @@ from dgn_picks_api.api.v1.schemas import PickCreate
 from dgn_picks_api.domains.markets.models import Market, Selection
 from dgn_picks_api.domains.odds.models import OddsSnapshot
 from dgn_picks_api.domains.picks.models import Pick
+from dgn_picks_api.domains.picks.calculations import profit_units
+from dgn_picks_api.domains.common.enums import PickResult
 from dgn_picks_api.domains.users.models import User
 
 
@@ -53,6 +55,20 @@ def create_pick(session: Session, payload: PickCreate) -> Pick:
         notes=payload.notes,
     )
     session.add(pick)
+    session.commit()
+    session.refresh(pick)
+    return pick
+
+
+def grade_pick(session: Session, pick_id: int, result: PickResult) -> Pick:
+    pick = session.get(Pick, pick_id)
+    if pick is None:
+        raise ValueError("Unknown pick")
+    current_result = PickResult(pick.result)
+    if current_result is not PickResult.PENDING:
+        raise ValueError("Pick is already graded")
+    pick.result = result
+    pick.profit_units = profit_units(pick.stake_units, pick.decimal_odds, result)
     session.commit()
     session.refresh(pick)
     return pick

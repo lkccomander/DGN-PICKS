@@ -2,19 +2,22 @@
 
 ## Purpose
 
-Add development-only CRUD for teams, players, games, markets, and selections
-as the catalog slice of M3 data management.
+Complete the M3 data-management API with catalog CRUD, append-only odds
+history, and pick creation/grading.
 
 ## Scope / Non-scope
 
-- In scope: team, player, game, market, and selection list/detail/create/update/delete routes, request validation, foreign-key existence checks, and safe deletion conflicts.
-- Non-scope: odds history, pick grading, and production authentication.
+- In scope: team, player, game, market, and selection CRUD; append-only odds
+  history; pick creation, retrieval, and grading; validation and safe deletion.
+- Non-scope: production authentication and live odds-provider integration.
 
 ## Progress
 
 - [x] Add catalog request schemas.
 - [x] Add catalog routes and mount them under `/api/v1`.
 - [x] Add contract tests; full runtime validation remains open.
+- [x] Add append-only odds snapshot creation with duplicate protection.
+- [x] Add pick detail and one-way grading with taken-price profit calculation.
 
 ## Validation
 
@@ -29,4 +32,6 @@ hang is resolved.
 
 ## Outcomes & Retrospective
 
-Catalog CRUD is implemented without schema changes. Full pytest execution remains blocked by the local SQLAlchemy import hang.
+Catalog CRUD, odds history, and pick lifecycle are implemented without schema
+changes. Full pytest execution remains blocked by the local SQLAlchemy import
+hang.

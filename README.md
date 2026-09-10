@@ -59,9 +59,13 @@ Available route shapes:
 - `POST /games`, `PATCH /games/{id}`, `DELETE /games/{id}` (development write boundary)
 - `GET /markets?game_id={id}`
 - `POST /markets`, `PATCH /markets/{id}`, `DELETE /markets/{id}` (development write boundary)
+- `GET /markets/{id}/history`
+- `POST /markets/{id}/history` (development write boundary; append-only)
 - `POST /markets/{id}/selections` (development write boundary)
 - `GET /selections/{id}`
 - `PATCH /selections/{id}`, `DELETE /selections/{id}` (development write boundary)
+- `GET /picks/{id}`
+- `PATCH /picks/{id}/grade` (development write boundary)
 - `GET /games?date=YYYY-MM-DD&conference=SEC`
 - `GET /games/{game_id}`
 - `GET /games/{game_id}/markets`

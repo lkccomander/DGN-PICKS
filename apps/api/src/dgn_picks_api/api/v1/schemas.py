@@ -147,6 +147,17 @@ class OddsSnapshotResponse(ORMModel):
     created_at: datetime
 
 
+class OddsSnapshotCreate(BaseModel):
+    selection_id: int = Field(gt=0)
+    sportsbook_id: int = Field(gt=0)
+    observed_at: datetime
+    line_value: Decimal | None = None
+    american_odds: int | None = None
+    decimal_odds: Decimal = Field(gt=1)
+    implied_probability: Decimal | None = Field(default=None, gt=0, le=1)
+    source_event_id: str | None = Field(default=None, max_length=160)
+
+
 class MarketResponse(ORMModel):
     id: int
     game_id: int
@@ -213,6 +224,10 @@ class PickResponse(ORMModel):
     result: PickResult
     profit_units: Decimal | None = None
     notes: str | None = None
+
+
+class PickGrade(BaseModel):
+    result: PickResult
 
 
 class AnalyticsSummary(BaseModel):

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -8,6 +8,7 @@ from dgn_picks_api.api.v1.schemas import (
     MarketCreate,
     MarketResponse,
     MarketUpdate,
+    OddsSnapshotCreate,
     OddsSnapshotResponse,
     SelectionCreate,
     SelectionResponse,
@@ -15,7 +16,7 @@ from dgn_picks_api.api.v1.schemas import (
 )
 from dgn_picks_api.domains.games.models import Game
 from dgn_picks_api.domains.markets.models import Market, Selection
-from dgn_picks_api.domains.odds.models import OddsSnapshot
+from dgn_picks_api.domains.odds.models import OddsSnapshot, SportsbookSource
 from dgn_picks_api.domains.picks.models import Pick, PickLeg
 from dgn_picks_api.domains.teams.models import Player, Team
 
@@ -44,12 +45,16 @@ def _validate_market_refs(payload: MarketCreate | MarketUpdate, db: Session, gam
 
 
 @router.get("", response_model=list[MarketResponse])
-def list_markets(game_id: int | None = None, status_filter: str | None = None, db: Session = Depends(get_db)) -> list[Market]:
+def list_markets(
+    game_id: int | None = Query(default=None),
+    market_status: str | None = Query(default=None, alias="status"),
+    db: Session = Depends(get_db),
+) -> list[Market]:
     statement = select(Market).order_by(Market.game_id, Market.market_type, Market.period, Market.id)
     if game_id is not None:
         statement = statement.where(Market.game_id == game_id)
-    if status_filter is not None:
-        statement = statement.where(Market.status == status_filter)
+    if market_status is not None:
+        statement = statement.where(Market.status == market_status)
     return list(db.scalars(statement).all())
 
 
@@ -170,3 +175,41 @@ def market_history(market_id: int, db: Session = Depends(get_db)) -> list[OddsSn
         .order_by(OddsSnapshot.observed_at, OddsSnapshot.id)
     )
     return list(db.scalars(statement).all())
+
+
+@router.post("/{market_id}/history", response_model=OddsSnapshotResponse,
+            status_code=status.HTTP_201_CREATED,
+            dependencies=[Depends(require_development_write_access)])
+def append_market_snapshot(
+    market_id: int,
+    payload: OddsSnapshotCreate,
+    db: Session = Depends(get_db),
+) -> OddsSnapshot:
+    if db.get(Market, market_id) is None:
+        raise HTTPException(status_code=404, detail="Market not found")
+    if payload.selection_id <= 0:
+        raise HTTPException(status_code=422, detail="Selection is required")
+    selection = db.get(Selection, payload.selection_id)
+    if selection is None or selection.market_id != market_id:
+        raise HTTPException(status_code=422, detail="Selection does not belong to market")
+    if db.get(SportsbookSource, payload.sportsbook_id) is None:
+        raise HTTPException(status_code=422, detail="Sportsbook source not found")
+    duplicate = db.scalar(
+        select(OddsSnapshot.id).where(
+            OddsSnapshot.selection_id == payload.selection_id,
+            OddsSnapshot.sportsbook_id == payload.sportsbook_id,
+            OddsSnapshot.observed_at == payload.observed_at,
+            OddsSnapshot.source_event_id == payload.source_event_id
+            if payload.source_event_id is not None
+            else OddsSnapshot.source_event_id.is_(None),
+        ).limit(1)
+    )
+    if duplicate is not None:
+        raise HTTPException(status_code=409, detail="Duplicate odds snapshot")
+    snapshot = OddsSnapshot(**payload.model_dump())
+    if snapshot.implied_probability is None:
+        snapshot.implied_probability = Decimal(1) / snapshot.decimal_odds
+    db.add(snapshot)
+    _commit_or_conflict(db, "Duplicate odds snapshot")
+    db.refresh(snapshot)
+    return snapshot

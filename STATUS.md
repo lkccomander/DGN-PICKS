@@ -1,6 +1,6 @@
 # DGN-PICKS — session handoff
 
-Updated: 2026-09-10 UTC — M3 catalog CRUD implemented locally.
+Updated: 2026-09-10 UTC — M3 data-management API implemented locally.
 Global project checklist and session handoff.
 
 ## Workflow and deployments
@@ -54,9 +54,9 @@ Global project checklist and session handoff.
 - [x] Define development-only write boundary for initial write operations.
 - [x] User CRUD/API contract slice with ownership-safe deletion.
 - [x] CRUD for teams, players, games, markets, and selections.
-- [ ] Append/read-only history operations for odds snapshots.
-- [ ] Pick create/read/grade operations preserving taken price.
-- [ ] CRUD/API contract tests and documentation.
+- [x] Append/read-only history operations for odds snapshots.
+- [x] Pick create/read/grade operations preserving taken price.
+- [x] CRUD/API contract tests and documentation.
 
 ## Current status
 
@@ -67,6 +67,10 @@ Global project checklist and session handoff.
 - M3 catalog CRUD is implemented locally: Teams, Players, Games, Markets, and
   Selections routes are mounted under `/api/v1`, use the development write
   boundary, validate references, and block deletion when dependent records exist.
+- M3 odds and pick lifecycle API is implemented locally: odds snapshots append
+  through `/markets/{id}/history` with duplicate protection; pick creation is
+  write-protected; pending picks can be retrieved and graded once through
+  `/picks/{id}/grade` while preserving the taken line and price.
 - PostgreSQL URL normalization and frontend CORS fixes were pushed; subsequent API checks succeeded.
 - Last user-provided Railway results showed 4 games, 7 pending picks, 7 units risked, and zero profit. These are historical observations, not a fresh live check at handoff.
 - `GET /api/v1/picks?user=gato` previously returned 500. Migration `0006_backfill_pick_timestamps` was pushed in `b882360` to repair missing timestamps.
@@ -97,7 +101,7 @@ Completed:
 
 1. Verify Alembic migrations and API v1/seed behavior through Railway when DNS/credentials are available.
 2. Run desktop/mobile browser smoke checks against the deployed frontend.
-3. Commit and push the catalog CRUD slice, then add append-only odds history and pick grading.
+3. Commit and push the M3 data-management API, then complete deployment and browser smoke validation.
 
 ## Known follow-up work
 
@@ -108,7 +112,7 @@ Completed:
 
 ## Working tree at pause
 
-- Application, API, tests, and status changes through the Users CRUD slice are committed in `a4bc03c`; the catalog CRUD changes and this handoff update are currently uncommitted.
+- Application, API, tests, and status changes through the Users CRUD slice are committed in `a4bc03c`; the catalog, odds, pick-lifecycle changes and this handoff update are currently uncommitted.
 - Existing untracked `DGN-PICKS.code-workspace` and `logs/` belong to the user; keep them out of release commits.
 - `logs/railwaystatus.md` is an older dashboard report and is not proof of the latest deployment's state.
 
