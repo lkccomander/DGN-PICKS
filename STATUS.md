@@ -1,6 +1,6 @@
 # DGN-PICKS — session handoff
 
-Updated: 2026-09-10 UTC — M3 catalog CRUD in progress.
+Updated: 2026-09-10 UTC — M3 catalog CRUD implemented locally.
 Global project checklist and session handoff.
 
 ## Workflow and deployments
@@ -53,7 +53,7 @@ Global project checklist and session handoff.
 
 - [x] Define development-only write boundary for initial write operations.
 - [x] User CRUD/API contract slice with ownership-safe deletion.
-- [~] CRUD for teams and players; games, markets, and selections remain open.
+- [x] CRUD for teams, players, games, markets, and selections.
 - [ ] Append/read-only history operations for odds snapshots.
 - [ ] Pick create/read/grade operations preserving taken price.
 - [ ] CRUD/API contract tests and documentation.
@@ -64,9 +64,9 @@ Global project checklist and session handoff.
 - M3 user CRUD slice is implemented: read detail,
   create, update, and delete routes; writes require `DGN_API_WRITE_MODE=development`,
   `DGN_API_WRITE_KEY`, and `X-DGN-Write-Key`; users with picks cannot be deleted.
-- M3 catalog sub-slice is in progress: Teams and Players CRUD routes are mounted
-  under `/api/v1`, use the development write boundary, validate team references,
-  and block deletion when dependent records exist.
+- M3 catalog CRUD is implemented locally: Teams, Players, Games, Markets, and
+  Selections routes are mounted under `/api/v1`, use the development write
+  boundary, validate references, and block deletion when dependent records exist.
 - PostgreSQL URL normalization and frontend CORS fixes were pushed; subsequent API checks succeeded.
 - Last user-provided Railway results showed 4 games, 7 pending picks, 7 units risked, and zero profit. These are historical observations, not a fresh live check at handoff.
 - `GET /api/v1/picks?user=gato` previously returned 500. Migration `0006_backfill_pick_timestamps` was pushed in `b882360` to repair missing timestamps.
@@ -97,7 +97,7 @@ Completed:
 
 1. Verify Alembic migrations and API v1/seed behavior through Railway when DNS/credentials are available.
 2. Run desktop/mobile browser smoke checks against the deployed frontend.
-3. Finish catalog CRUD with games, markets, and selections, then add odds history and pick grading.
+3. Commit and push the catalog CRUD slice, then add append-only odds history and pick grading.
 
 ## Known follow-up work
 

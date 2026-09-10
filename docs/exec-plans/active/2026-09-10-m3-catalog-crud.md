@@ -2,21 +2,19 @@
 
 ## Purpose
 
-Add development-only CRUD for teams and players as the first catalog slice of
-M3 data management.
+Add development-only CRUD for teams, players, games, markets, and selections
+as the catalog slice of M3 data management.
 
 ## Scope / Non-scope
 
-- In scope: team and player list/detail/create/update/delete routes, request
-  validation, foreign-key existence checks, and safe deletion conflicts.
-- Non-scope: games, markets, selections, odds history, pick grading, and
-  production authentication.
+- In scope: team, player, game, market, and selection list/detail/create/update/delete routes, request validation, foreign-key existence checks, and safe deletion conflicts.
+- Non-scope: odds history, pick grading, and production authentication.
 
 ## Progress
 
-- [x] Add team and player request schemas.
+- [x] Add catalog request schemas.
 - [x] Add catalog routes and mount them under `/api/v1`.
-- [x] Add contract tests; documentation and full runtime validation remain open.
+- [x] Add contract tests; full runtime validation remains open.
 
 ## Validation
 
@@ -31,4 +29,4 @@ hang is resolved.
 
 ## Outcomes & Retrospective
 
-To be completed when this slice is finished.
+Catalog CRUD is implemented without schema changes. Full pytest execution remains blocked by the local SQLAlchemy import hang.

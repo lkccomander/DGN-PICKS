@@ -87,6 +87,7 @@ class PlayerUpdate(BaseModel):
 
 class GameResponse(ORMModel):
     id: int
+    external_ids: dict = Field(default_factory=dict)
     season: int
     week: int
     kickoff_at: datetime
@@ -96,6 +97,32 @@ class GameResponse(ORMModel):
     status: GameStatus
     home_score: int | None = None
     away_score: int | None = None
+
+
+class GameCreate(BaseModel):
+    external_ids: dict = Field(default_factory=dict)
+    season: int = Field(gt=0)
+    week: int = Field(gt=0)
+    kickoff_at: datetime
+    home_team_id: int = Field(gt=0)
+    away_team_id: int = Field(gt=0)
+    venue: str | None = Field(default=None, max_length=160)
+    status: GameStatus = GameStatus.SCHEDULED
+    home_score: int | None = Field(default=None, ge=0)
+    away_score: int | None = Field(default=None, ge=0)
+
+
+class GameUpdate(BaseModel):
+    external_ids: dict | None = None
+    season: int | None = Field(default=None, gt=0)
+    week: int | None = Field(default=None, gt=0)
+    kickoff_at: datetime | None = None
+    home_team_id: int | None = Field(default=None, gt=0)
+    away_team_id: int | None = Field(default=None, gt=0)
+    venue: str | None = Field(default=None, max_length=160)
+    status: GameStatus | None = None
+    home_score: int | None = Field(default=None, ge=0)
+    away_score: int | None = Field(default=None, ge=0)
 
 
 class SelectionResponse(ORMModel):
@@ -129,6 +156,38 @@ class MarketResponse(ORMModel):
     team_id: int | None = None
     status: MarketStatus
     selections: list[SelectionResponse] = Field(default_factory=list)
+
+
+class MarketCreate(BaseModel):
+    game_id: int = Field(gt=0)
+    market_type: str = Field(min_length=1, max_length=48)
+    period: str = Field(default="game", min_length=1, max_length=24)
+    player_id: int | None = Field(default=None, gt=0)
+    team_id: int | None = Field(default=None, gt=0)
+    status: MarketStatus = MarketStatus.OPEN
+
+
+class MarketUpdate(BaseModel):
+    market_type: str | None = Field(default=None, min_length=1, max_length=48)
+    period: str | None = Field(default=None, min_length=1, max_length=24)
+    player_id: int | None = Field(default=None, gt=0)
+    team_id: int | None = Field(default=None, gt=0)
+    status: MarketStatus | None = None
+
+
+class SelectionCreate(BaseModel):
+    market_id: int = Field(gt=0)
+    selection_key: str = Field(min_length=1, max_length=80)
+    team_id: int | None = Field(default=None, gt=0)
+    player_id: int | None = Field(default=None, gt=0)
+    side: str | None = Field(default=None, max_length=16)
+
+
+class SelectionUpdate(BaseModel):
+    selection_key: str | None = Field(default=None, min_length=1, max_length=80)
+    team_id: int | None = Field(default=None, gt=0)
+    player_id: int | None = Field(default=None, gt=0)
+    side: str | None = Field(default=None, max_length=16)
 
 
 class PickCreate(BaseModel):
