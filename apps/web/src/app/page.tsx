@@ -17,6 +17,15 @@ type Game = {
   venue?: string | null;
 };
 
+type Team = {
+  id: number;
+  name: string;
+  short_name: string;
+  abbreviation: string;
+  conference: string;
+  active: boolean;
+};
+
 type Pick = {
   id: number;
   game_id: number;
@@ -93,7 +102,7 @@ function normalizePick(pick: Pick): Pick {
   };
 }
 
-type DashboardData = { games: Game[]; picks: Pick[]; summary: Summary; markets: Market[]; history: OddsSnapshot[] };
+type DashboardData = { games: Game[]; picks: Pick[]; summary: Summary; markets: Market[]; history: OddsSnapshot[]; teams: Team[] };
 type ResultFilter = "all" | Pick["result"];
 
 const emptySummary: Summary = { wins: 0, losses: 0, pushes: 0, pending: 0, void: 0, total_units_risked: 0, profit_units: 0, roi: null };
@@ -105,10 +114,11 @@ async function fetchJson<T>(path: string, signal?: AbortSignal): Promise<T> {
 }
 
 async function fetchDashboardData(signal?: AbortSignal): Promise<DashboardData> {
-  const [games, picks, summaryResponse] = await Promise.all([
+  const [games, picks, summaryResponse, teams] = await Promise.all([
     fetchJson<Game[]>("/api/v1/games", signal),
     fetchJson<Pick[]>(`/api/v1/picks?user=${ACTIVE_USER}`, signal),
     fetchJson<Summary>("/api/v1/analytics/summary", signal),
+    fetchJson<Team[]>("/api/v1/teams", signal),
   ]);
   const markets = (await Promise.all(
     games.map((game) => fetchJson<Market[]>(`/api/v1/games/${game.id}/markets`, signal)),
@@ -121,14 +131,14 @@ async function fetchDashboardData(signal?: AbortSignal): Promise<DashboardData> 
     american_odds: snapshot.american_odds == null ? null : Number(snapshot.american_odds),
     decimal_odds: Number(snapshot.decimal_odds),
   }));
-  return { games, picks: picks.map(normalizePick), summary: normalizeSummary(summaryResponse), markets, history: histories };
+  return { games, picks: picks.map(normalizePick), summary: normalizeSummary(summaryResponse), markets, history: histories, teams };
 }
 
 function formatKickoff(value: string) {
   return new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(value));
 }
 
-function teamLabel(id: number) { return `Team ${id}`; }
+function teamLabel(id: number, teamsById?: Map<number, Team>) { return teamsById?.get(id)?.short_name || `Team ${id}`; }
 
 function lineLabel(pick: Pick) {
   const line = pick.line_value == null ? "Line pending" : `${pick.line_value > 0 ? "+" : ""}${pick.line_value}`;
@@ -143,6 +153,10 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [resultFilter, setResultFilter] = useState<ResultFilter>("all");
   const [gameFilter, setGameFilter] = useState<"all" | Game["status"]>("all");
+  const [teamFilter, setTeamFilter] = useState("all");
+  const [conferenceFilter, setConferenceFilter] = useState("all");
+  const [boardDate, setBoardDate] = useState("");
+  const [marketStatusFilter, setMarketStatusFilter] = useState<"all" | Market["status"]>("all");
 
   const loadDashboard = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
@@ -170,6 +184,7 @@ export default function Home() {
   }, []);
 
   const gamesById = useMemo(() => new Map((data?.games ?? []).map((game) => [game.id, game])), [data?.games]);
+  const teamsById = useMemo(() => new Map((data?.teams ?? []).map((team) => [team.id, team])), [data?.teams]);
   const snapshotsBySelection = useMemo(() => {
     const map = new Map<number, OddsSnapshot[]>();
     for (const snapshot of data?.history ?? []) {
@@ -185,11 +200,22 @@ export default function Home() {
     const normalizedQuery = query.trim().toLowerCase();
     return (data?.picks ?? []).filter((pick) => {
       const game = gamesById.get(pick.game_id);
-      const searchable = `${pick.notes ?? ""} ${pick.market_id} ${pick.selection_id ?? ""} ${game ? `${teamLabel(game.away_team_id)} ${teamLabel(game.home_team_id)}` : ""}`.toLowerCase();
+      const searchable = `${pick.notes ?? ""} ${pick.market_id} ${pick.selection_id ?? ""} ${game ? `${teamLabel(game.away_team_id, teamsById)} ${teamLabel(game.home_team_id, teamsById)}` : ""}`.toLowerCase();
       return (resultFilter === "all" || pick.result === resultFilter) && (!normalizedQuery || searchable.includes(normalizedQuery));
     });
-  }, [data?.picks, gamesById, query, resultFilter]);
-  const visibleGames = useMemo(() => (data?.games ?? []).filter((game) => gameFilter === "all" || game.status === gameFilter), [data?.games, gameFilter]);
+  }, [data?.picks, gamesById, query, resultFilter, teamsById]);
+  const visibleGames = useMemo(() => (data?.games ?? []).filter((game) => {
+    const home = teamsById.get(game.home_team_id);
+    const away = teamsById.get(game.away_team_id);
+    const gameDate = game.kickoff_at.slice(0, 10);
+    return (gameFilter === "all" || game.status === gameFilter)
+      && (!boardDate || gameDate === boardDate)
+      && (teamFilter === "all" || game.home_team_id.toString() === teamFilter || game.away_team_id.toString() === teamFilter)
+      && (conferenceFilter === "all" || home?.conference === conferenceFilter || away?.conference === conferenceFilter);
+  }), [boardDate, conferenceFilter, data?.games, gameFilter, teamFilter, teamsById]);
+  const visibleGameIds = useMemo(() => new Set(visibleGames.map((game) => game.id)), [visibleGames]);
+  const visibleMarkets = useMemo(() => (data?.markets ?? []).filter((market) => visibleGameIds.has(market.game_id) && (marketStatusFilter === "all" || market.status === marketStatusFilter)), [data?.markets, marketStatusFilter, visibleGameIds]);
+  const conferences = useMemo(() => [...new Set((data?.teams ?? []).map((team) => team.conference).filter(Boolean))].sort(), [data?.teams]);
 
   return (
     <main className="app-shell">
@@ -246,18 +272,20 @@ export default function Home() {
                 <label className="filter-box"><span className="sr-only">Filter result</span><select value={resultFilter} onChange={(event) => setResultFilter(event.target.value as ResultFilter)}><option value="all">All results</option><option value="pending">Pending</option><option value="win">Wins</option><option value="loss">Losses</option><option value="push">Pushes</option><option value="void">Voids</option></select></label>
               </div>
               <div className="table-head"><span>Selection</span><span>Line / price</span><span>Risk</span><span>Status</span></div>
-              {visiblePicks.length ? <div className="pick-list">{visiblePicks.map((pick) => <PickRow key={pick.id} pick={pick} game={gamesById.get(pick.game_id)} />)}</div> : <PanelEmpty text={data.picks.length ? "No picks match the current filters." : "No picks have been recorded for this user yet."} />}
+              {visiblePicks.length ? <div className="pick-list">{visiblePicks.map((pick) => <PickRow key={pick.id} pick={pick} game={gamesById.get(pick.game_id)} teamsById={teamsById} />)}</div> : <PanelEmpty text={data.picks.length ? "No picks match the current filters." : "No picks have been recorded for this user yet."} />}
             </section>
             <aside id="games" className="panel games-panel">
               <PanelHeading eyebrow="The slate" title="Games" count={visibleGames.length} />
+              <div className="game-controls"><label>Date<input type="date" value={boardDate} onChange={(event) => setBoardDate(event.target.value)} /></label><label>Conference<select value={conferenceFilter} onChange={(event) => setConferenceFilter(event.target.value)}><option value="all">All conferences</option>{conferences.map((conference) => <option key={conference} value={conference}>{conference}</option>)}</select></label><label>Team<select value={teamFilter} onChange={(event) => setTeamFilter(event.target.value)}><option value="all">All teams</option>{(data.teams ?? []).filter((team) => team.active).map((team) => <option key={team.id} value={team.id}>{team.short_name}</option>)}</select></label></div>
               <div className="game-filter" role="group" aria-label="Filter games"><button type="button" aria-pressed={gameFilter === "all"} className={gameFilter === "all" ? "selected" : ""} onClick={() => setGameFilter("all")}>All</button><button type="button" aria-pressed={gameFilter === "scheduled"} className={gameFilter === "scheduled" ? "selected" : ""} onClick={() => setGameFilter("scheduled")}>Scheduled</button><button type="button" aria-pressed={gameFilter === "live"} className={gameFilter === "live" ? "selected" : ""} onClick={() => setGameFilter("live")}>Live</button><button type="button" aria-pressed={gameFilter === "final"} className={gameFilter === "final" ? "selected" : ""} onClick={() => setGameFilter("final")}>Final</button></div>
-              {visibleGames.length ? <div className="game-list">{visibleGames.slice(0, 6).map((game) => <GameRow key={game.id} game={game} />)}</div> : <PanelEmpty text={data.games.length ? "No games match this filter." : "No games are available for this board."} />}
+              {visibleGames.length ? <div className="game-list">{visibleGames.slice(0, 6).map((game) => <GameRow key={game.id} game={game} teamsById={teamsById} />)}</div> : <PanelEmpty text={data.games.length ? "No games match this filter." : "No games are available for this board."} />}
               <div className="panel-foot">Source · Railway API <span>UTC timestamps</span></div>
             </aside>
           </div>
           <section id="markets" className="panel market-panel">
-            <PanelHeading eyebrow="The board" title="Market movement" count={data.markets.length} />
-            {data.markets.length ? <div className="market-list">{data.markets.slice(0, 12).map((market) => <MarketRow key={market.id} market={market} game={gamesById.get(market.game_id)} snapshotsBySelection={snapshotsBySelection} />)}</div> : <PanelEmpty text="No market lines are available for the current slate." />}
+            <PanelHeading eyebrow="The board" title="Market movement" count={visibleMarkets.length} />
+            <div className="market-tools"><label>Availability<select value={marketStatusFilter} onChange={(event) => setMarketStatusFilter(event.target.value as "all" | Market["status"])}><option value="all">All markets</option><option value="open">Open</option><option value="suspended">Suspended</option><option value="closed">Closed</option></select></label></div>
+            {visibleMarkets.length ? <div className="market-list">{visibleMarkets.slice(0, 12).map((market) => <MarketRow key={market.id} market={market} game={gamesById.get(market.game_id)} teamsById={teamsById} snapshotsBySelection={snapshotsBySelection} />)}</div> : <PanelEmpty text="No market lines are available for the current slate." />}
             <div className="panel-foot">Opening → current <span>Persisted snapshots · local-fixture</span></div>
           </section>
         </> : null}
@@ -275,13 +303,13 @@ function PanelHeading({ eyebrow, title, count }: { eyebrow: string; title: strin
   return <div className="panel-heading"><div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div><span className="count">{count.toString().padStart(2, "0")}</span></div>;
 }
 
-function PickRow({ pick, game }: { pick: Pick; game?: Game }) {
-  return <article className="pick-row"><div className="pick-main"><span className={`result-dot ${pick.result}`} /><div><strong>{pick.notes || `Market ${pick.market_id} · Selection ${pick.selection_id ?? "—"}`}</strong><span>{game ? `${teamLabel(game.away_team_id)} at ${teamLabel(game.home_team_id)}` : `Game ${pick.game_id}`}</span></div></div><span className="pick-line">{lineLabel(pick)}</span><span className="pick-stake">{pick.stake_units.toFixed(1)}u</span><span className={`status-pill ${pick.result}`}>{pick.result}</span></article>;
+function PickRow({ pick, game, teamsById }: { pick: Pick; game?: Game; teamsById: Map<number, Team> }) {
+  return <article className="pick-row"><div className="pick-main"><span className={`result-dot ${pick.result}`} /><div><strong>{pick.notes || `Market ${pick.market_id} · Selection ${pick.selection_id ?? "—"}`}</strong><span>{game ? `${teamLabel(game.away_team_id, teamsById)} at ${teamLabel(game.home_team_id, teamsById)}` : `Game ${pick.game_id}`}</span></div></div><span className="pick-line">{lineLabel(pick)}</span><span className="pick-stake">{pick.stake_units.toFixed(1)}u</span><span className={`status-pill ${pick.result}`}>{pick.result}</span></article>;
 }
 
-function GameRow({ game }: { game: Game }) {
+function GameRow({ game, teamsById }: { game: Game; teamsById: Map<number, Team> }) {
   const isFinal = game.status === "final";
-  return <article className="game-row"><div className="game-time"><span className={game.status === "live" ? "live-label" : ""}>{game.status === "live" ? "Live" : isFinal ? "Final" : formatKickoff(game.kickoff_at)}</span><small>{game.venue || `Game ${game.id}`}</small></div><div className="matchup"><span>{teamLabel(game.away_team_id)} {isFinal && game.away_score != null ? <b>{game.away_score}</b> : null}</span><span>{teamLabel(game.home_team_id)} {isFinal && game.home_score != null ? <b>{game.home_score}</b> : null}</span></div><span className="chevron">›</span></article>;
+  return <article className="game-row"><div className="game-time"><span className={game.status === "live" ? "live-label" : ""}>{game.status === "live" ? "Live" : isFinal ? "Final" : formatKickoff(game.kickoff_at)}</span><small>{game.venue || `Game ${game.id}`}</small></div><div className="matchup"><span>{teamLabel(game.away_team_id, teamsById)} {isFinal && game.away_score != null ? <b>{game.away_score}</b> : null}</span><span>{teamLabel(game.home_team_id, teamsById)} {isFinal && game.home_score != null ? <b>{game.home_score}</b> : null}</span></div><span className="chevron">›</span></article>;
 }
 
 function marketLabel(market: Market) {
@@ -295,12 +323,12 @@ function snapshotLine(snapshot?: OddsSnapshot) {
   return `${line}${odds}`;
 }
 
-function MarketRow({ market, game, snapshotsBySelection }: { market: Market; game?: Game; snapshotsBySelection: Map<number, OddsSnapshot[]> }) {
+function MarketRow({ market, game, teamsById, snapshotsBySelection }: { market: Market; game?: Game; teamsById: Map<number, Team>; snapshotsBySelection: Map<number, OddsSnapshot[]> }) {
   const selection = market.selections[0];
   const history = selection ? snapshotsBySelection.get(selection.id) ?? [] : [];
   const first = history[0];
   const current = history[history.length - 1];
-  return <article className="market-row"><div className="market-ident"><strong>{marketLabel(market)}</strong><span>{game ? `${teamLabel(game.away_team_id)} at ${teamLabel(game.home_team_id)}` : `Game ${market.game_id}`} · {market.status}</span></div><div className="market-selections">{market.selections.slice(0, 3).map((item) => { const itemHistory = snapshotsBySelection.get(item.id) ?? []; return <span key={item.id}>{item.side || item.selection_key}<b>{snapshotLine(itemHistory[itemHistory.length - 1])}</b></span>; })}</div><div className="movement"><MovementStrip history={history} /><small>{first ? snapshotLine(first) : "Opening —"} <i>→</i> {current ? snapshotLine(current) : "Current —"}</small></div></article>;
+  return <article className="market-row"><div className="market-ident"><strong>{marketLabel(market)}</strong><span>{game ? `${teamLabel(game.away_team_id, teamsById)} at ${teamLabel(game.home_team_id, teamsById)}` : `Game ${market.game_id}`} · {market.status}</span></div><div className="market-selections">{market.selections.slice(0, 3).map((item) => { const itemHistory = snapshotsBySelection.get(item.id) ?? []; return <span key={item.id}>{item.side || item.selection_key}<b>{snapshotLine(itemHistory[itemHistory.length - 1])}</b></span>; })}</div><div className="movement"><MovementStrip history={history} /><small>{first ? snapshotLine(first) : "Opening —"} <i>→</i> {current ? snapshotLine(current) : "Current —"}</small></div></article>;
 }
 
 function MovementStrip({ history }: { history: OddsSnapshot[] }) {

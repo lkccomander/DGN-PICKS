@@ -80,3 +80,5 @@ The development seed endpoint is idempotent and reports unresolved input. The Ma
 ## Validation and handoff
 
 Push documentation and implementation changes to GitHub; Railway then deploys from the configured repository. This documentation does not claim that the Railway endpoints, migrations, or API v1 routes have been live-verified from the current environment.
+
+For a read-only deployed API smoke check, run `python scripts/smoke_api.py` or provide another origin with `python scripts/smoke_api.py --base-url https://example.invalid`.
