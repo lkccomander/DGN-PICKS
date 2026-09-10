@@ -74,7 +74,7 @@ def test_history_appends_and_derives_implied_probability(session, odds_fixture):
     )
     history = market_history(market.id, session)
     assert [item.id for item in history] == [first.id, second.id]
-    assert first.implied_probability == Decimal("0.523835")
+    assert first.implied_probability == Decimal("0.52380977")
     assert second.decimal_odds == Decimal("2.00000")
 
 

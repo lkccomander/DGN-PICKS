@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 import pytest
 from fastapi import HTTPException
 from sqlalchemy import create_engine
@@ -70,7 +72,7 @@ def test_team_and_player_references_block_deletion(session):
     game = Game(
         season=2026,
         week=1,
-        kickoff_at="2026-09-07 20:00:00",
+        kickoff_at=datetime(2026, 9, 7, 20, tzinfo=UTC),
         home_team_id=team.id,
         away_team_id=team.id,
     )

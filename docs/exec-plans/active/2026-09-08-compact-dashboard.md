@@ -15,7 +15,7 @@ Paused at the user's request. See [STATUS.md](../../../STATUS.md) for the full h
 - [x] Read product, architecture, branding, and plan instructions; inspect existing UI.
 - [x] Open supplied reference; text browser receives only a JavaScript shell.
 - [x] Implement compact dashboard and filters.
-- [ ] Validate desktop/mobile rendering and loading/error/empty states. (Frontend lint/build and backend pytest completed; browser rendering and Railway smoke check remain pending.)
+- [ ] Validate desktop/mobile rendering and loading/error/empty states. (Market/history integration is implemented; frontend lint/build and browser rendering remain pending because the WSL1-to-Windows Node bridge currently fails before npm starts.)
 - [x] Commit and push through the established GitHub → Railway workflow; check deployment.
 
 ## Implementation plan
@@ -40,4 +40,4 @@ The games API exposes only team IDs. Keep those as honest fallbacks; do not inve
 
 ## Outcomes & Retrospective
 
-Implemented the compact board UI in `apps/web/src/app/page.tsx` and `globals.css`: section navigation, searchable/result-filtered picks, game-status filters, aligned selection/line/risk/status columns, cancellable refreshes, and numeric normalization for Decimal-shaped API values. Frontend lint/build completed through PowerShell; backend pytest and browser checks are still pending.
+Implemented the compact board UI in `apps/web/src/app/page.tsx` and `globals.css`: section navigation, searchable/result-filtered picks, game-status filters, aligned selection/line/risk/status columns, concurrent market/history loading, opening/current line values, SVG movement traces, cancellable refreshes, and numeric normalization for Decimal-shaped API values. Backend pytest passes (`56 passed`); frontend lint/build and browser checks remain pending.

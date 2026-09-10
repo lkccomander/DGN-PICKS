@@ -473,13 +473,13 @@ Clean bootstrap, automated tests, E2E, docs sync.
 - [x] Domain model
 - [x] Seed users
 - [x] Gato pick definitions
-- [ ] Repository bootstrap
-- [ ] Database implementation
-- [ ] FixtureProvider
-- [ ] UI shell
-- [ ] Market board
-- [ ] Line movement
-- [ ] Pick tracker
+- [x] Repository bootstrap
+- [x] Database implementation
+- [x] FixtureProvider
+- [x] UI shell
+- [x] Market board
+- [x] Line movement
+- [x] Pick tracker
 - [ ] MVP validation
 
 ## 23. Codex implementation rules

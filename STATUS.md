@@ -1,6 +1,6 @@
 # DGN-PICKS — session handoff
 
-Updated: 2026-09-10 UTC — M3 data-management API complete; final validation open.
+Updated: 2026-09-10 UTC — API suite green; final frontend/deployment validation open.
 Global project checklist and session handoff.
 
 ## Workflow and deployments
@@ -71,12 +71,15 @@ Global project checklist and session handoff.
   through `/markets/{id}/history` with duplicate protection; pick creation is
   write-protected; pending picks can be retrieved and graded once through
   `/picks/{id}/grade` while preserving the taken line and price.
+- The dashboard now fetches all game markets and persisted histories concurrently,
+  and renders market selections with opening/current values and a compact line
+  movement trace.
 - PostgreSQL URL normalization and frontend CORS fixes were pushed; subsequent API checks succeeded.
 - Last user-provided Railway results showed 4 games, 7 pending picks, 7 units risked, and zero profit. These are historical observations, not a fresh live check at handoff.
 - `GET /api/v1/picks?user=gato` previously returned 500. Migration `0006_backfill_pick_timestamps` was pushed in `b882360` to repair missing timestamps.
 - The frontend subsequently crashed on Decimal strings passed to `.toFixed()`. Commit `18b3eae` converts summary values to numbers. Its successful production rendering has not yet been independently verified.
 - M1 is complete for the current workflow; local Docker-backed migration verification is deferred.
-- M2 implementation is deployed; seed audit is complete. The API suite now passes locally (`45 passed`) and the migration chain generates valid offline SQL through `0006_backfill_pick_timestamps`; live PostgreSQL/Railway verification remains open.
+- M2 implementation is deployed; seed audit is complete. The API suite passes locally (`56 passed`) and the migration chain generates valid offline SQL through `0006_backfill_pick_timestamps`; live PostgreSQL/Railway verification remains open.
 - The compact dashboard is deployed; browser smoke checks remain open.
 
 ## Active task: compact sportsbook-style frontend
@@ -101,7 +104,7 @@ Completed:
 
 1. Verify Alembic migrations and API v1/seed behavior through Railway when DNS/credentials are available.
 2. Run desktop/mobile browser smoke checks against the deployed frontend.
-3. Push the M3 commits, then complete deployment and browser smoke validation.
+3. Push the dashboard integration, then complete deployment and browser smoke validation.
 
 ## Known follow-up work
 
@@ -112,10 +115,10 @@ Completed:
 
 ## Working tree at pause
 
-- Users CRUD is committed in `a4bc03c`, catalog CRUD in `c4a64cc`, and odds/pick lifecycle in `ecd0190`; this handoff update is currently uncommitted.
+- Users CRUD is committed in `a4bc03c`, catalog CRUD in `c4a64cc`, and odds/pick lifecycle in `ecd0190`; dashboard integration and this handoff update are currently uncommitted.
 - Existing untracked `DGN-PICKS.code-workspace` and `logs/` belong to the user; keep them out of release commits.
 - `logs/railwaystatus.md` is an older dashboard report and is not proof of the latest deployment's state.
 
 ## Validation tooling
 
-Windows Node.js is available at `C:\Program Files\nodejs`; frontend lint/build pass through PowerShell. Docker is not currently available inside this WSL distro, but that is not required for the current workflow. The API virtualenv is present, but pytest currently hangs during SQLAlchemy import before collection in this WSL session; browser checks remain pending.
+Windows Node.js is available at `C:\Program Files\nodejs`, but the WSL1-to-Windows bridge currently fails before npm starts. API pytest passes locally (`56 passed`); Docker-backed migrations, frontend lint/build, browser checks, and Railway smoke checks remain pending.

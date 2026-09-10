@@ -31,6 +31,34 @@ type Pick = {
   notes?: string | null;
 };
 
+type Selection = {
+  id: number;
+  market_id: number;
+  selection_key: string;
+  team_id?: number | null;
+  player_id?: number | null;
+  side?: string | null;
+};
+
+type Market = {
+  id: number;
+  game_id: number;
+  market_type: string;
+  period: string;
+  status: "open" | "suspended" | "closed";
+  selections: Selection[];
+};
+
+type OddsSnapshot = {
+  id: number;
+  selection_id: number;
+  sportsbook_id: number;
+  observed_at: string;
+  line_value?: number | null;
+  american_odds?: number | null;
+  decimal_odds: number;
+};
+
 type Summary = {
   wins: number;
   losses: number;
@@ -65,7 +93,7 @@ function normalizePick(pick: Pick): Pick {
   };
 }
 
-type DashboardData = { games: Game[]; picks: Pick[]; summary: Summary };
+type DashboardData = { games: Game[]; picks: Pick[]; summary: Summary; markets: Market[]; history: OddsSnapshot[] };
 type ResultFilter = "all" | Pick["result"];
 
 const emptySummary: Summary = { wins: 0, losses: 0, pushes: 0, pending: 0, void: 0, total_units_risked: 0, profit_units: 0, roi: null };
@@ -82,7 +110,18 @@ async function fetchDashboardData(signal?: AbortSignal): Promise<DashboardData> 
     fetchJson<Pick[]>(`/api/v1/picks?user=${ACTIVE_USER}`, signal),
     fetchJson<Summary>("/api/v1/analytics/summary", signal),
   ]);
-  return { games, picks: picks.map(normalizePick), summary: normalizeSummary(summaryResponse) };
+  const markets = (await Promise.all(
+    games.map((game) => fetchJson<Market[]>(`/api/v1/games/${game.id}/markets`, signal)),
+  )).flat();
+  const histories = (await Promise.all(
+    markets.map((market) => fetchJson<OddsSnapshot[]>(`/api/v1/markets/${market.id}/history`, signal)),
+  )).flat().map((snapshot) => ({
+    ...snapshot,
+    line_value: snapshot.line_value == null ? null : Number(snapshot.line_value),
+    american_odds: snapshot.american_odds == null ? null : Number(snapshot.american_odds),
+    decimal_odds: Number(snapshot.decimal_odds),
+  }));
+  return { games, picks: picks.map(normalizePick), summary: normalizeSummary(summaryResponse), markets, history: histories };
 }
 
 function formatKickoff(value: string) {
@@ -131,6 +170,15 @@ export default function Home() {
   }, []);
 
   const gamesById = useMemo(() => new Map((data?.games ?? []).map((game) => [game.id, game])), [data?.games]);
+  const snapshotsBySelection = useMemo(() => {
+    const map = new Map<number, OddsSnapshot[]>();
+    for (const snapshot of data?.history ?? []) {
+      const history = map.get(snapshot.selection_id) ?? [];
+      history.push(snapshot);
+      map.set(snapshot.selection_id, history);
+    }
+    return map;
+  }, [data?.history]);
   const activeGames = data?.games.filter((game) => game.status === "live" || game.status === "scheduled") ?? [];
   const summary = data?.summary ?? emptySummary;
   const visiblePicks = useMemo(() => {
@@ -163,6 +211,7 @@ export default function Home() {
           <a className="active" href="#board">Board</a>
           <a href="#picks">Picks</a>
           <a href="#games">Games</a>
+          <a href="#markets">Markets</a>
           <span className="nav-season">2026 / NCAA</span>
         </nav>
         <section className="intro-row">
@@ -206,6 +255,11 @@ export default function Home() {
               <div className="panel-foot">Source · Railway API <span>UTC timestamps</span></div>
             </aside>
           </div>
+          <section id="markets" className="panel market-panel">
+            <PanelHeading eyebrow="The board" title="Market movement" count={data.markets.length} />
+            {data.markets.length ? <div className="market-list">{data.markets.slice(0, 12).map((market) => <MarketRow key={market.id} market={market} game={gamesById.get(market.game_id)} snapshotsBySelection={snapshotsBySelection} />)}</div> : <PanelEmpty text="No market lines are available for the current slate." />}
+            <div className="panel-foot">Opening → current <span>Persisted snapshots · local-fixture</span></div>
+          </section>
         </> : null}
       </div>
       <footer><span>DGN-PICKS / 2026</span><span>Track the call. Keep the receipt.</span></footer>
@@ -228,6 +282,35 @@ function PickRow({ pick, game }: { pick: Pick; game?: Game }) {
 function GameRow({ game }: { game: Game }) {
   const isFinal = game.status === "final";
   return <article className="game-row"><div className="game-time"><span className={game.status === "live" ? "live-label" : ""}>{game.status === "live" ? "Live" : isFinal ? "Final" : formatKickoff(game.kickoff_at)}</span><small>{game.venue || `Game ${game.id}`}</small></div><div className="matchup"><span>{teamLabel(game.away_team_id)} {isFinal && game.away_score != null ? <b>{game.away_score}</b> : null}</span><span>{teamLabel(game.home_team_id)} {isFinal && game.home_score != null ? <b>{game.home_score}</b> : null}</span></div><span className="chevron">›</span></article>;
+}
+
+function marketLabel(market: Market) {
+  return market.market_type.replaceAll("_", " ");
+}
+
+function snapshotLine(snapshot?: OddsSnapshot) {
+  if (!snapshot) return "—";
+  const line = snapshot.line_value == null ? "—" : `${snapshot.line_value > 0 ? "+" : ""}${snapshot.line_value}`;
+  const odds = snapshot.american_odds == null ? "" : ` / ${snapshot.american_odds > 0 ? "+" : ""}${snapshot.american_odds}`;
+  return `${line}${odds}`;
+}
+
+function MarketRow({ market, game, snapshotsBySelection }: { market: Market; game?: Game; snapshotsBySelection: Map<number, OddsSnapshot[]> }) {
+  const selection = market.selections[0];
+  const history = selection ? snapshotsBySelection.get(selection.id) ?? [] : [];
+  const first = history[0];
+  const current = history[history.length - 1];
+  return <article className="market-row"><div className="market-ident"><strong>{marketLabel(market)}</strong><span>{game ? `${teamLabel(game.away_team_id)} at ${teamLabel(game.home_team_id)}` : `Game ${market.game_id}`} · {market.status}</span></div><div className="market-selections">{market.selections.slice(0, 3).map((item) => { const itemHistory = snapshotsBySelection.get(item.id) ?? []; return <span key={item.id}>{item.side || item.selection_key}<b>{snapshotLine(itemHistory[itemHistory.length - 1])}</b></span>; })}</div><div className="movement"><MovementStrip history={history} /><small>{first ? snapshotLine(first) : "Opening —"} <i>→</i> {current ? snapshotLine(current) : "Current —"}</small></div></article>;
+}
+
+function MovementStrip({ history }: { history: OddsSnapshot[] }) {
+  const values = history.map((snapshot) => snapshot.line_value).filter((value): value is number => value != null);
+  if (values.length < 2) return <span className="movement-empty">No movement</span>;
+  const minimum = Math.min(...values);
+  const maximum = Math.max(...values);
+  const spread = maximum - minimum || 1;
+  const points = values.map((value, index) => `${(index / (values.length - 1)) * 96 + 2},${30 - ((value - minimum) / spread) * 24}`).join(" ");
+  return <svg className="movement-chart" viewBox="0 0 100 32" role="img" aria-label={`${values.length} stored line observations`}><polyline points={points} fill="none" vectorEffect="non-scaling-stroke" /></svg>;
 }
 
 function PanelEmpty({ text }: { text: string }) { return <div className="panel-empty"><span>—</span><p>{text}</p></div>; }
