@@ -176,6 +176,9 @@ def seed_local_data(session: Session) -> SeedReport:
     session.flush()
     gato = users["gato"]
     for definition in GATO_PICK_DEFINITIONS:
+        if definition.side is None:
+            report.unresolved_definitions.append(definition.description)
+            continue
         match = next(
             (
                 (game, market, selection, snapshot)

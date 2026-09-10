@@ -32,7 +32,7 @@ Global project checklist and session handoff.
 - [x] Seed users: `gato`, `daran`, `noch`.
 - [x] API v1 routes for users, games, markets/history, picks, analytics, and seed.
 - [x] API test suite passing locally.
-- [x] Audit 13 Gato definitions versus 7 currently stored picks; 6 definitions remain explicitly unresolved.
+- [x] Audit 13 Gato definitions versus 6 stored picks; 7 definitions remain explicitly unmatched or unresolved.
 - [x] Confirm unresolved Malakai Toney behavior without guessing.
 - [x] Verify seed idempotency and ownership with an integration test.
 - [ ] Verify migrations against PostgreSQL.
@@ -89,7 +89,7 @@ Global project checklist and session handoff.
 - Added `scripts/smoke_api.py`, a dependency-free read-only check for health,
   teams, games, and analytics endpoints.
 - The web app now uses `packages/api-client`, generated from the API OpenAPI
-  document. It displays the seven stored Gato picks alongside six explicitly
+  document. It displays the six stored Gato picks alongside seven explicitly
   unmatched/unresolved seed definitions, so all 13 supplied definitions remain
   visible without guessed opponents, odds, or sides.
 - A local-only Next proxy enables the create-pick UI only when explicit
@@ -126,7 +126,7 @@ Completed:
 ## Known follow-up work
 
 - Game responses currently expose team IDs, not team names; do not invent name mappings in CSS/UI work.
-- Seed audit result: 13 Gato definitions, 7 stored picks, and 6 explicitly unresolved definitions. Do not invent missing opponents, dates, odds, team names, or the Malakai Toney side.
+- Seed audit result: 13 Gato definitions, 6 stored picks, and 7 explicitly unmatched or unresolved definitions. Do not invent missing opponents, dates, odds, team names, or the Malakai Toney side.
 - No live odds provider is connected. Use deterministic fixtures until that milestone is explicitly taken on.
 - `apps/api/alembic.ini` has incomplete logging configuration for direct Alembic CLI use; `railway-alembic.ini` works for offline SQL generation.
 

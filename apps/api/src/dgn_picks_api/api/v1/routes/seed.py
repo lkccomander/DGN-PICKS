@@ -12,10 +12,10 @@ router = APIRouter(prefix="/seed", tags=["seed"])
 
 
 def definition_state(definition: PickDefinition, materialized_descriptions: set[str]) -> str:
-    if definition.description in materialized_descriptions:
-        return "tracked"
     if definition.side is None:
         return "unresolved"
+    if definition.description in materialized_descriptions:
+        return "tracked"
     return "unmatched"
 
 
