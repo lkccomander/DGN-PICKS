@@ -1,6 +1,6 @@
 # DGN-PICKS — session handoff
 
-Updated: 2026-09-10 UTC — API suite green; final frontend/deployment validation open.
+Updated: 2026-09-10 UTC — Railway deployment verified; browser viewport checks remain open.
 Global project checklist and session handoff.
 
 ## Workflow and deployments
@@ -9,8 +9,8 @@ Global project checklist and session handoff.
 - Frontend: https://dgnweb-production.up.railway.app/
 - API: https://dgn-picks-production.up.railway.app
 - GitHub: https://github.com/lkccomander/DGN-PICKS
-- Branch: `main`; local commits `6431dd2` and `374d682` contain the completed market-movement dashboard and handoff refresh and are ahead of `origin/main`.
-- Latest pushed commit: `3a1e15a docs: close M3 data management plan`.
+- Branch: `main`; `main` and `origin/main` are synchronized at `8403b7e`.
+- Latest pushed commit: `8403b7e feat: complete MVP dashboard filters and smoke check`.
 - Do not equate a pushed commit with a verified Railway deployment.
 
 ## Global checklist
@@ -37,7 +37,7 @@ Global project checklist and session handoff.
 - [x] Confirm unresolved Malakai Toney behavior without guessing.
 - [x] Verify seed idempotency and ownership with an integration test.
 - [ ] Verify migrations against PostgreSQL.
-- [ ] Verify API v1 and seed behavior on Railway.
+- [x] Verify API v1 and seed behavior on Railway.
 
 ### Dashboard frontend
 
@@ -47,7 +47,7 @@ Global project checklist and session handoff.
 - [x] Decimal-shaped API value normalization.
 - [x] Loading, error, and empty-state components.
 - [ ] Desktop/mobile browser smoke checks.
-- [ ] Verify deployed frontend against the live API.
+- [x] Verify deployed frontend responds HTTP 200 and its bundle contains the market board/filter integration.
 
 ### M3 — CRUD and data management
 
@@ -83,6 +83,10 @@ Global project checklist and session handoff.
 - M1 is complete for the current workflow; local Docker-backed migration verification is deferred.
 - M2 implementation is deployed; seed audit is complete. The API suite passes locally (`56 passed`) and the migration chain generates valid offline SQL through `0006_backfill_pick_timestamps`; live PostgreSQL/Railway verification remains open.
 - The compact dashboard is deployed; browser smoke checks remain open.
+- Railway verification completed after the latest push: API health, teams, games,
+  analytics, and frontend all returned HTTP 200; the API smoke check reported 8
+  teams, 4 games, and 7 pending picks. The deployed JS bundle contains the
+  market availability and movement UI.
 - Added `scripts/smoke_api.py`, a dependency-free read-only check for health,
   teams, games, and analytics endpoints.
 
@@ -106,9 +110,8 @@ Completed:
 
 ## Next steps
 
-1. Verify Alembic migrations and API v1/seed behavior through Railway when DNS/credentials are available.
+1. Verify the Railway pre-deploy migration against PostgreSQL when database access is available.
 2. Run desktop/mobile browser smoke checks against the deployed frontend.
-3. Push the dashboard integration and smoke script, then complete deployment and browser smoke validation.
 
 ## Known follow-up work
 
@@ -119,10 +122,10 @@ Completed:
 
 ## Working tree at pause
 
-- Users CRUD is committed in `a4bc03c`, catalog CRUD in `c4a64cc`, odds/pick lifecycle in `ecd0190`, and market-movement dashboard integration in `6431dd2`; commits `6431dd2` and `374d682` remain to be pushed.
+- Users CRUD is committed in `a4bc03c`, catalog CRUD in `c4a64cc`, odds/pick lifecycle in `ecd0190`, and final dashboard/smoke integration in `8403b7e`; `main` is synchronized with `origin/main`.
 - Existing untracked `DGN-PICKS.code-workspace` and `logs/` belong to the user; keep them out of release commits.
 - `logs/railwaystatus.md` is an older dashboard report and is not proof of the latest deployment's state.
 
 ## Validation tooling
 
-Windows Node.js is available at `C:\Program Files\nodejs`, but the WSL1-to-Windows bridge currently fails before npm starts. API pytest passes locally (`56 passed`); Docker-backed migrations, frontend lint/build, browser checks, and Railway smoke checks remain pending.
+Windows Node.js is available at `C:\Program Files\nodejs`, but the WSL1-to-Windows bridge currently fails before npm starts. API pytest passes locally (`56 passed`); Railway HTTP/API smoke checks pass; Docker-backed migration verification, frontend lint/build, and browser viewport checks remain pending.
