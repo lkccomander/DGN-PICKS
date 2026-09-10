@@ -48,6 +48,10 @@ https://dgn-picks-production.up.railway.app/api/v1
 Available route shapes:
 
 - `GET /users?user=gato`
+- `GET /users/{id}`
+- `POST /users` (development write boundary)
+- `PATCH /users/{id}` (development write boundary)
+- `DELETE /users/{id}` (development write boundary; users with picks cannot be deleted)
 - `GET /games?date=YYYY-MM-DD&conference=SEC`
 - `GET /games/{game_id}`
 - `GET /games/{game_id}/markets`

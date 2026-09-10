@@ -1,6 +1,6 @@
 # PLANS.md — DGN-PICKS
 
-Read [STATUS.md](STATUS.md) for the latest session handoff, verified progress, and next steps. The current frontend task is tracked in [the compact-dashboard plan](docs/exec-plans/active/2026-09-08-compact-dashboard.md).
+Read [STATUS.md](STATUS.md) for the latest session handoff, verified progress, and next steps. The next backend task is the M3 teams/players/games/markets/selections CRUD slice.
 
 For work spanning multiple files, migrations, or UI/API integration, create an ExecPlan in `docs/exec-plans/active/`.
 

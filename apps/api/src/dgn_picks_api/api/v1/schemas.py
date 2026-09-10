@@ -18,6 +18,17 @@ class UserResponse(ORMModel):
     created_at: datetime
 
 
+class UserCreate(BaseModel):
+    username: str = Field(min_length=1, max_length=32)
+    display_name: str = Field(min_length=1, max_length=80)
+    active: bool = True
+
+
+class UserUpdate(BaseModel):
+    display_name: str | None = Field(default=None, min_length=1, max_length=80)
+    active: bool | None = None
+
+
 class TeamResponse(ORMModel):
     id: int
     name: str
@@ -120,4 +131,3 @@ class SeedReportResponse(BaseModel):
     duplicate_snapshots: int
     unresolved_definitions: list[str]
     unresolved_count: int
-
