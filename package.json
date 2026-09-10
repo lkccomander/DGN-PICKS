@@ -7,6 +7,7 @@
     "lint:web": "npm --prefix apps/web run lint",
     "build:web": "npm --prefix apps/web run build",
     "test:api": "python -m pytest apps/api/tests",
+    "test:e2e": "npm --prefix apps/web run test:e2e",
     "db:up": "docker compose up -d db",
     "db:down": "docker compose down",
     "db:migrate": "python -m alembic -c apps/api/alembic.ini upgrade head"

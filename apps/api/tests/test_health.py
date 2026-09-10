@@ -24,5 +24,6 @@ def test_api_v1_routes_are_mounted() -> None:
     assert "/api/v1/games" in paths
     assert "/api/v1/markets/{market_id}/history" in paths
     assert "/api/v1/picks" in paths
+    assert "/api/v1/seed/pick-definitions" in paths
     assert "/api/v1/analytics/summary" in paths
     assert "/api/v1/dev/seed" in paths

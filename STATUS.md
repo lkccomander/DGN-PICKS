@@ -1,6 +1,6 @@
 # DGN-PICKS — session handoff
 
-Updated: 2026-09-10 UTC — Railway deployment verified; browser viewport checks remain open.
+Updated: 2026-09-10 UTC — Railway deployment verified; final frontend/browser validation remains open.
 Global project checklist and session handoff.
 
 ## Workflow and deployments
@@ -9,8 +9,7 @@ Global project checklist and session handoff.
 - Frontend: https://dgnweb-production.up.railway.app/
 - API: https://dgn-picks-production.up.railway.app
 - GitHub: https://github.com/lkccomander/DGN-PICKS
-- Branch: `main`; `main` and `origin/main` are synchronized at `ebcd1bf`.
-- Latest pushed commit: `ebcd1bf docs: record Railway deployment verification`.
+- Branch: `main`; see `git log -1 --oneline` for the latest validation release.
 - Do not equate a pushed commit with a verified Railway deployment.
 
 ## Global checklist
@@ -89,6 +88,15 @@ Global project checklist and session handoff.
   market availability and movement UI.
 - Added `scripts/smoke_api.py`, a dependency-free read-only check for health,
   teams, games, and analytics endpoints.
+- The web app now uses `packages/api-client`, generated from the API OpenAPI
+  document. It displays the seven stored Gato picks alongside six explicitly
+  unmatched/unresolved seed definitions, so all 13 supplied definitions remain
+  visible without guessed opponents, odds, or sides.
+- A local-only Next proxy enables the create-pick UI only when explicit
+  development variables are set; it keeps `DGN_API_WRITE_KEY` out of the
+  browser bundle. Playwright covers the resulting taken-price lifecycle.
+- `apps/api/requirements.txt` now matches the FastAPI upper bound in
+  `pyproject.toml`; the full API suite passes with `58 passed`.
 
 ## Active task: compact sportsbook-style frontend
 
@@ -111,8 +119,9 @@ Completed:
 ## Next steps
 
 1. Run `npm run lint:web` and `npm run build:web` from Windows PowerShell.
-2. Run desktop/mobile browser smoke checks against the deployed frontend.
-3. Verify the Railway pre-deploy migration against PostgreSQL when database access is available.
+2. Run `npm run test:e2e` against the documented local API/PostgreSQL stack.
+3. Run desktop/mobile browser smoke checks against the deployed frontend.
+4. Verify the Railway pre-deploy migration against PostgreSQL when database access is available.
 
 ## Known follow-up work
 
@@ -129,4 +138,4 @@ Completed:
 
 ## Validation tooling
 
-Windows Node.js is available at `C:\Program Files\nodejs`, but the WSL1-to-Windows bridge currently fails before npm starts. API pytest passes locally (`56 passed`); Railway HTTP/API smoke checks pass; frontend lint/build, Docker-backed migration verification, and browser viewport checks remain pending.
+Windows Node.js is available at `C:\Program Files\nodejs`, but the WSL1-to-Windows bridge does not return reliable npm exit codes. API pytest passes locally (`58 passed`); offline migration SQL and Railway HTTP/API smoke checks pass. Frontend lint/build, Playwright execution, Docker-backed migration verification, and browser viewport checks remain pending.

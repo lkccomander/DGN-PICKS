@@ -9,6 +9,7 @@ from dgn_picks_api.api.v1.routes.dev import router as dev_router
 from dgn_picks_api.api.v1.routes.games import router as games_router
 from dgn_picks_api.api.v1.routes.markets import router as markets_router, selections_router
 from dgn_picks_api.api.v1.routes.picks import router as picks_router
+from dgn_picks_api.api.v1.routes.seed import router as seed_router
 from dgn_picks_api.api.v1.routes.teams import players_router, router as teams_router
 from dgn_picks_api.api.v1.routes.users import router as users_router
 
@@ -40,6 +41,7 @@ for router in (
     markets_router,
     selections_router,
     picks_router,
+    seed_router,
     analytics_router,
     dev_router,
 ):

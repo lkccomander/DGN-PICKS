@@ -465,6 +465,10 @@ Clean bootstrap, automated tests, E2E, docs sync.
 - 2026-09-07: seed users are `gato`, `daran`, `noch`; `noche` is incorrect.
 - 2026-09-07: all 13 supplied initial picks belong to `gato`.
 - 2026-09-07: missing sports data must remain unresolved rather than guessed.
+- 2026-09-10: the web app consumes a checked-in TypeScript client generated from
+  FastAPI OpenAPI; regenerate it whenever the API contract changes.
+- 2026-09-10: development pick writes use a server-side Next proxy so the
+  browser never receives the API write key; the proxy is disabled by default.
 
 ## 22. Progress
 - [x] Product concept

@@ -251,3 +251,13 @@ class SeedReportResponse(BaseModel):
     duplicate_snapshots: int
     unresolved_definitions: list[str]
     unresolved_count: int
+
+
+class SeedPickDefinitionResponse(BaseModel):
+    number: int
+    description: str
+    market_type: str
+    line_value: Decimal
+    side: str | None = None
+    team_or_player: str
+    state: str

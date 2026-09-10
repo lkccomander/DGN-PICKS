@@ -82,3 +82,22 @@ The development seed endpoint is idempotent and reports unresolved input. The Ma
 Push documentation and implementation changes to GitHub; Railway then deploys from the configured repository. This documentation does not claim that the Railway endpoints, migrations, or API v1 routes have been live-verified from the current environment.
 
 For a read-only deployed API smoke check, run `python scripts/smoke_api.py` or provide another origin with `python scripts/smoke_api.py --base-url https://example.invalid`.
+
+## Local E2E validation
+
+The Playwright test uses a local development API and Next server. It never
+sends the API write key to the browser: Next's local-only proxy keeps that key
+server-side. With PostgreSQL migrated and the API seeded, set the local values
+from `.env.example`, start the API and web server, then run:
+
+```powershell
+$env:E2E_API_URL = "http://127.0.0.1:8000"
+$env:E2E_WEB_URL = "http://127.0.0.1:3000"
+$env:DGN_API_WRITE_KEY = "replace-with-a-local-secret"
+npm --prefix apps/web exec playwright install chromium
+npm run test:e2e
+```
+
+The test selects a game, opens its detail, tracks an open selection, appends a
+later odds snapshot through the local development boundary, and verifies the
+pick still displays its stored taken line and price.
