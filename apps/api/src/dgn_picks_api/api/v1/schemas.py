@@ -31,12 +31,58 @@ class UserUpdate(BaseModel):
 
 class TeamResponse(ORMModel):
     id: int
+    external_ids: dict = Field(default_factory=dict)
     name: str
     short_name: str
     abbreviation: str
     conference: str
     logo_url: str | None = None
     active: bool
+
+
+class TeamCreate(BaseModel):
+    external_ids: dict = Field(default_factory=dict)
+    name: str = Field(min_length=1, max_length=120)
+    short_name: str = Field(min_length=1, max_length=80)
+    abbreviation: str = Field(min_length=1, max_length=8)
+    conference: str = Field(min_length=1, max_length=64)
+    logo_url: str | None = Field(default=None, max_length=500)
+    active: bool = True
+
+
+class TeamUpdate(BaseModel):
+    external_ids: dict | None = None
+    name: str | None = Field(default=None, min_length=1, max_length=120)
+    short_name: str | None = Field(default=None, min_length=1, max_length=80)
+    abbreviation: str | None = Field(default=None, min_length=1, max_length=8)
+    conference: str | None = Field(default=None, min_length=1, max_length=64)
+    logo_url: str | None = Field(default=None, max_length=500)
+    active: bool | None = None
+
+
+class PlayerResponse(ORMModel):
+    id: int
+    external_ids: dict = Field(default_factory=dict)
+    team_id: int
+    name: str
+    position: str
+    active: bool
+
+
+class PlayerCreate(BaseModel):
+    external_ids: dict = Field(default_factory=dict)
+    team_id: int = Field(gt=0)
+    name: str = Field(min_length=1, max_length=120)
+    position: str = Field(min_length=1, max_length=16)
+    active: bool = True
+
+
+class PlayerUpdate(BaseModel):
+    external_ids: dict | None = None
+    team_id: int | None = Field(default=None, gt=0)
+    name: str | None = Field(default=None, min_length=1, max_length=120)
+    position: str | None = Field(default=None, min_length=1, max_length=16)
+    active: bool | None = None
 
 
 class GameResponse(ORMModel):

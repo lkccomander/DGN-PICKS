@@ -52,6 +52,10 @@ Available route shapes:
 - `POST /users` (development write boundary)
 - `PATCH /users/{id}` (development write boundary)
 - `DELETE /users/{id}` (development write boundary; users with picks cannot be deleted)
+- `GET /teams?conference=SEC&active=true`
+- `POST /teams`, `PATCH /teams/{id}`, `DELETE /teams/{id}` (development write boundary)
+- `GET /players?team_id={id}&active=true`
+- `POST /players`, `PATCH /players/{id}`, `DELETE /players/{id}` (development write boundary)
 - `GET /games?date=YYYY-MM-DD&conference=SEC`
 - `GET /games/{game_id}`
 - `GET /games/{game_id}/markets`

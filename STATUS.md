@@ -1,6 +1,6 @@
 # DGN-PICKS — session handoff
 
-Updated: 2026-09-10 UTC — M3 users CRUD slice reviewed.
+Updated: 2026-09-10 UTC — M3 catalog CRUD in progress.
 Global project checklist and session handoff.
 
 ## Workflow and deployments
@@ -9,7 +9,7 @@ Global project checklist and session handoff.
 - Frontend: https://dgnweb-production.up.railway.app/
 - API: https://dgn-picks-production.up.railway.app
 - GitHub: https://github.com/lkccomander/DGN-PICKS
-- Branch: `main`, matching the local `origin/main` reference at `a94eeab`.
+- Branch: `main`; local commit `a4bc03c` contains the completed Users CRUD slice and is not pushed yet.
 - Latest pushed commit: `a94eeab test: lock deterministic seed behavior`.
 - Do not equate a pushed commit with a verified Railway deployment.
 
@@ -53,18 +53,20 @@ Global project checklist and session handoff.
 
 - [x] Define development-only write boundary for initial write operations.
 - [x] User CRUD/API contract slice with ownership-safe deletion.
-- [x] CRUD for users (development-only write boundary; ownership-safe deletion).
-- [ ] CRUD for teams, players, games, markets, and selections.
+- [~] CRUD for teams and players; games, markets, and selections remain open.
 - [ ] Append/read-only history operations for odds snapshots.
 - [ ] Pick create/read/grade operations preserving taken price.
 - [ ] CRUD/API contract tests and documentation.
 
 ## Current status
 
-- API v1 routes and the initial dashboard are committed and pushed.
-- M3 user CRUD slice is implemented locally: read detail,
+- API v1 routes and the initial dashboard are committed and pushed; the Users CRUD extension is committed locally in `a4bc03c`.
+- M3 user CRUD slice is implemented: read detail,
   create, update, and delete routes; writes require `DGN_API_WRITE_MODE=development`,
   `DGN_API_WRITE_KEY`, and `X-DGN-Write-Key`; users with picks cannot be deleted.
+- M3 catalog sub-slice is in progress: Teams and Players CRUD routes are mounted
+  under `/api/v1`, use the development write boundary, validate team references,
+  and block deletion when dependent records exist.
 - PostgreSQL URL normalization and frontend CORS fixes were pushed; subsequent API checks succeeded.
 - Last user-provided Railway results showed 4 games, 7 pending picks, 7 units risked, and zero profit. These are historical observations, not a fresh live check at handoff.
 - `GET /api/v1/picks?user=gato` previously returned 500. Migration `0006_backfill_pick_timestamps` was pushed in `b882360` to repair missing timestamps.
@@ -95,7 +97,7 @@ Completed:
 
 1. Verify Alembic migrations and API v1/seed behavior through Railway when DNS/credentials are available.
 2. Run desktop/mobile browser smoke checks against the deployed frontend.
-3. Continue M3 with teams/games/markets/selections CRUD, odds history, and pick grading.
+3. Finish catalog CRUD with games, markets, and selections, then add odds history and pick grading.
 
 ## Known follow-up work
 
@@ -106,10 +108,10 @@ Completed:
 
 ## Working tree at pause
 
-- Application, API, tests, and status changes were committed through `a94eeab`; the M3 user CRUD slice and this handoff update are the current release changes.
+- Application, API, tests, and status changes through the Users CRUD slice are committed in `a4bc03c`; the catalog CRUD changes and this handoff update are currently uncommitted.
 - Existing untracked `DGN-PICKS.code-workspace` and `logs/` belong to the user; keep them out of release commits.
 - `logs/railwaystatus.md` is an older dashboard report and is not proof of the latest deployment's state.
 
 ## Validation tooling
 
-Windows Node.js is available at `C:\Program Files\nodejs`; frontend lint/build pass through PowerShell. Docker is not currently available inside this WSL distro, but that is not required for the current workflow. API tests pass with the project virtual environment; browser checks remain pending.
+Windows Node.js is available at `C:\Program Files\nodejs`; frontend lint/build pass through PowerShell. Docker is not currently available inside this WSL distro, but that is not required for the current workflow. The API virtualenv is present, but pytest currently hangs during SQLAlchemy import before collection in this WSL session; browser checks remain pending.
