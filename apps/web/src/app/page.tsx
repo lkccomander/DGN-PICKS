@@ -286,11 +286,12 @@ function snapshotLine(snapshot?: OddsSnapshot) {
 }
 
 function MarketRow({ market, game, teamsById, snapshotsBySelection, canTrack, onTrack }: { market: Market; game?: Game; teamsById: Map<number, Team>; snapshotsBySelection: Map<number, OddsSnapshot[]>; canTrack: boolean; onTrack: (market: Market, selection: { id: number; selection_key: string; side?: string | null }) => void }) {
-  const selection = market.selections[0];
+  const selections = market.selections ?? [];
+  const selection = selections[0];
   const history = selection ? snapshotsBySelection.get(selection.id) ?? [] : [];
   const first = history[0];
   const current = history[history.length - 1];
-  return <article className="market-row"><div className="market-ident"><strong>{marketLabel(market)}</strong><span>{game ? `${teamLabel(game.away_team_id, teamsById)} at ${teamLabel(game.home_team_id, teamsById)}` : `Game ${market.game_id}`} · {market.status}</span></div><div className="market-selections">{market.selections.slice(0, 3).map((item) => { const itemHistory = snapshotsBySelection.get(item.id) ?? []; return <span key={item.id}>{item.side || item.selection_key}<b>{snapshotLine(itemHistory[itemHistory.length - 1])}</b>{canTrack && market.status === "open" && item.side ? <button type="button" className="track-selection" onClick={() => onTrack(market, item)}>Track {item.side}</button> : null}</span>; })}</div><div className="movement"><MovementStrip history={history} /><small>{first ? snapshotLine(first) : "Opening —"} <i>→</i> {current ? snapshotLine(current) : "Current —"}</small></div></article>;
+  return <article className="market-row"><div className="market-ident"><strong>{marketLabel(market)}</strong><span>{game ? `${teamLabel(game.away_team_id, teamsById)} at ${teamLabel(game.home_team_id, teamsById)}` : `Game ${market.game_id}`} · {market.status}</span></div><div className="market-selections">{selections.slice(0, 3).map((item) => { const itemHistory = snapshotsBySelection.get(item.id) ?? []; return <span key={item.id}>{item.side || item.selection_key}<b>{snapshotLine(itemHistory[itemHistory.length - 1])}</b>{canTrack && market.status === "open" && item.side ? <button type="button" className="track-selection" onClick={() => onTrack(market, item)}>Track {item.side}</button> : null}</span>; })}</div><div className="movement"><MovementStrip history={history} /><small>{first ? snapshotLine(first) : "Opening —"} <i>→</i> {current ? snapshotLine(current) : "Current —"}</small></div></article>;
 }
 
 function MovementStrip({ history }: { history: OddsSnapshot[] }) {

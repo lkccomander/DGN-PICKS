@@ -3,7 +3,7 @@
 from alembic import op
 
 
-revision = "0007_remove_unresolved_malakai_seed_pick"
+revision = "0007_remove_malakai_seed_pick"
 down_revision = "0006_backfill_pick_timestamps"
 branch_labels = None
 depends_on = None
