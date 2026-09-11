@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = ROOT / "packages" / "api-client"
 SCHEMA_PATH = PACKAGE / "openapi.json"
 CLIENT_PATH = PACKAGE / "src" / "index.ts"
+WEB_CLIENT_PATH = ROOT / "apps" / "web" / "src" / "lib" / "generated-api-client.ts"
 
 
 def schema_type(schema: dict[str, Any]) -> str:
@@ -137,10 +138,19 @@ def main() -> None:
         from dgn_picks_api.main import app
 
         document = app.openapi()
+    client = render_client(document)
     CLIENT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    WEB_CLIENT_PATH.parent.mkdir(parents=True, exist_ok=True)
     SCHEMA_PATH.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    CLIENT_PATH.write_text(render_client(document), encoding="utf-8")
-    print(f"Generated {SCHEMA_PATH.relative_to(ROOT)} and {CLIENT_PATH.relative_to(ROOT)}")
+    CLIENT_PATH.write_text(client, encoding="utf-8")
+    # Railway builds the web service from apps/web, so keep an equivalent
+    # generated copy inside that build context.
+    WEB_CLIENT_PATH.write_text(client, encoding="utf-8")
+    print(
+        "Generated "
+        f"{SCHEMA_PATH.relative_to(ROOT)}, {CLIENT_PATH.relative_to(ROOT)}, and "
+        f"{WEB_CLIENT_PATH.relative_to(ROOT)}"
+    )
 
 
 if __name__ == "__main__":

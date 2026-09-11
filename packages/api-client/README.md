@@ -1,8 +1,10 @@
 # DGN-PICKS API client
 
 This package is generated from the FastAPI OpenAPI contract. Do not edit
-`src/index.ts` or `openapi.json` directly. Regenerate both after an API
-contract change:
+`src/index.ts` or `openapi.json` directly. Regenerate after an API contract
+change. The generator also writes `apps/web/src/lib/generated-api-client.ts`:
+that checked-in copy keeps the Railway web build self-contained when its root
+directory is `/apps/web`.
 
 ```powershell
 $env:PYTHONPATH = "apps/api/src"

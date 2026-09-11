@@ -1,4 +1,4 @@
-import { DgnPicksApiClient, type Components } from "../../../../packages/api-client/src";
+import { DgnPicksApiClient, type Components } from "./generated-api-client";
 
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "https://dgn-picks-production.up.railway.app").replace(/\/$/, "");
 
