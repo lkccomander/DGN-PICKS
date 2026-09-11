@@ -37,6 +37,7 @@ The games API exposes only team IDs. Keep those as honest fallbacks; do not inve
 
 - 2026-09-08: Use original DGN-PICKS CSS with sportsbook-style density and tabular values. Preserve distinct branding; no Pinnacle CSS, assets, or exact layout copied.
 - 2026-09-08: Keep this milestone presentational and preserve the existing API calculations and data.
+- 2026-09-10: Serve the dashboard read model through a same-origin Next.js route. The route aggregates the existing read-only FastAPI calls server-side, preserving their contract while avoiding browser-to-API cross-origin failures.
 
 ## Outcomes & Retrospective
 

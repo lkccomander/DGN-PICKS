@@ -1,4 +1,4 @@
-import { DgnPicksApiClient, type Components } from "./generated-api-client";
+import { type Components } from "./generated-api-client";
 
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "https://dgn-picks-production.up.railway.app").replace(/\/$/, "");
 
@@ -44,8 +44,6 @@ export type DashboardData = {
   definitions: SeedPickDefinition[];
 };
 
-const client = new DgnPicksApiClient(API_URL);
-
 function normalizeSummary(summary: ApiSummary): Summary {
   return {
     ...summary,
@@ -83,18 +81,23 @@ function normalizeSeedPickDefinition(definition: ApiSeedPickDefinition): SeedPic
 }
 
 export async function fetchDashboardData(user: string, signal?: AbortSignal): Promise<DashboardData> {
-  const [games, picks, summary, teams, definitions] = await Promise.all([
-    client.get<Game[]>("/api/v1/games", signal),
-    client.get<ApiPick[]>(`/api/v1/picks?user=${encodeURIComponent(user)}`, signal),
-    client.get<ApiSummary>("/api/v1/analytics/summary", signal),
-    client.get<Team[]>("/api/v1/teams", signal),
-    client.get<ApiSeedPickDefinition[]>(`/api/v1/seed/pick-definitions?user=${encodeURIComponent(user)}`, signal),
-  ]);
-  const markets = (await Promise.all(
-    games.map((game) => client.get<Market[]>(`/api/v1/games/${game.id}/markets`, signal)),
-  )).flat();
-  const history = (await Promise.all(
-    markets.map((market) => client.get<ApiOddsSnapshot[]>(`/api/v1/markets/${market.id}/history`, signal)),
-  )).flat().map(normalizeSnapshot);
-  return { games, picks: picks.map(normalizePick), summary: normalizeSummary(summary), markets, history, teams, definitions: definitions.map(normalizeSeedPickDefinition) };
+  const response = await fetch(`/api/dashboard?user=${encodeURIComponent(user)}`, {
+    cache: "no-store",
+    headers: { Accept: "application/json" },
+    signal,
+  });
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(detail || `Dashboard API returned ${response.status}`);
+  }
+  const { games, picks, summary, teams, definitions, markets, history } = await response.json() as {
+    games: Game[];
+    picks: ApiPick[];
+    summary: ApiSummary;
+    teams: Team[];
+    definitions: ApiSeedPickDefinition[];
+    markets: Market[];
+    history: ApiOddsSnapshot[];
+  };
+  return { games, picks: picks.map(normalizePick), summary: normalizeSummary(summary), markets, history: history.map(normalizeSnapshot), teams, definitions: definitions.map(normalizeSeedPickDefinition) };
 }
