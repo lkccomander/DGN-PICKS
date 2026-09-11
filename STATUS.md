@@ -92,8 +92,10 @@ Completed:
 
 ## Next steps
 
-1. Run `npm run test:e2e` against the documented local API/PostgreSQL stack when a local database and development write key are available.
-2. Run desktop/mobile browser smoke checks against the deployed frontend.
+1. Complete the planned M5 pick-management GUI: expose the user-facing create/read/update/delete flow for picks, with ownership and the existing server-side development-write boundary. The product spec requires a create-pick action and pick-tracker CRUD; it does not yet define a production admin panel.
+2. Define authentication and roles before adding a production `/admin` GUI for teams, players, games, markets, and selections; catalog CRUD currently exists as protected API operations only.
+3. Run `npm run test:e2e` against the documented local API/PostgreSQL stack when a local database and development write key are available.
+4. Run desktop/mobile browser smoke checks against the deployed frontend.
 
 ## Known follow-up work
 
