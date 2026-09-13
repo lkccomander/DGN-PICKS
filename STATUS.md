@@ -71,7 +71,7 @@ Global project checklist and session handoff.
 - [x] Protect catalog and pick mutations with authenticated editor/admin access when auth is configured.
 - [x] Add authenticated `/admin` console for teams, players, games, markets, and selections.
 - [x] Add selection listing endpoint and regenerate the API client.
-- [x] Configure production auth in Railway; live login endpoint rejects invalid credentials with HTTP 401.
+- [ ] Configure production auth variables in Railway; the auth route is deployed, but live mutations currently return `403 Development write access is disabled` because the variables are absent.
 - [ ] Verify an authenticated live mutation with a supplied operator credential.
 
 ## Current status
@@ -86,8 +86,9 @@ Global project checklist and session handoff.
 - The API test suite passes locally (`65 passed`); the Next.js production build
   passes; the Alembic chain produces PostgreSQL SQL through revision
   `0007_remove_malakai_seed_pick`.
-- Production mutation routes now accept signed bearer sessions for `admin` and
-  `editor` roles when the Railway auth variables are configured; the browser
+- Production mutation routes accept signed bearer sessions for `admin` and
+  `editor` roles when the Railway auth variables are configured; until then,
+  the safe development fallback remains disabled in production and the browser
   does not receive the API write key.
 
 ## Active task: compact sportsbook-style frontend
