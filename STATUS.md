@@ -65,6 +65,14 @@ Global project checklist and session handoff.
 - [x] Delete pending picks with ownership validation.
 - [x] Update OpenAPI client, API tests, and development documentation.
 
+### M6 — Authentication and admin catalog
+
+- [x] Signed bearer sessions with `admin`, `editor`, and `viewer` roles.
+- [x] Protect catalog and pick mutations with authenticated editor/admin access when auth is configured.
+- [x] Add authenticated `/admin` console for teams, players, games, markets, and selections.
+- [x] Add selection listing endpoint and regenerate the API client.
+- [ ] Configure production auth secrets in Railway and verify authenticated live mutations.
+
 ## Current status
 
 - `main` is deployed successfully at commit `dd55a7c` to both Railway services.
@@ -100,9 +108,9 @@ Completed:
 
 ## Next steps
 
-1. Define authentication and roles before adding a production `/admin` GUI for teams, players, games, markets, and selections; catalog CRUD currently exists as protected API operations only.
+1. Configure `DGN_AUTH_SECRET`, `DGN_AUTH_USERNAME`, `DGN_AUTH_PASSWORD`, and `DGN_AUTH_ROLE` in Railway, then verify `/api/v1/auth/login` and authenticated catalog mutations.
 2. Run `npm run test:e2e` against the documented local API/PostgreSQL stack when a local database and development write key are available.
-3. Run desktop/mobile browser smoke checks against the deployed frontend.
+3. Run desktop/mobile browser smoke checks against the deployed frontend, including `/admin`.
 
 ## Known follow-up work
 

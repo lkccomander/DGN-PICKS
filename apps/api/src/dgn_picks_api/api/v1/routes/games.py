@@ -5,7 +5,7 @@ from sqlalchemy import or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
-from dgn_picks_api.api.v1.dependencies import get_db, require_development_write_access
+from dgn_picks_api.api.v1.dependencies import get_db, require_authenticated_write_access
 from dgn_picks_api.api.v1.schemas import GameCreate, GameResponse, GameUpdate, MarketResponse
 from dgn_picks_api.domains.games.models import Game
 from dgn_picks_api.domains.picks.models import Pick
@@ -58,7 +58,7 @@ def list_games(
 
 
 @router.post("", response_model=GameResponse, status_code=status.HTTP_201_CREATED,
-            dependencies=[Depends(require_development_write_access)])
+            dependencies=[Depends(require_authenticated_write_access)])
 def create_game(payload: GameCreate, db: Session = Depends(get_db)) -> Game:
     _validate_game_teams(payload.home_team_id, payload.away_team_id, db)
     game = Game(**payload.model_dump())
@@ -77,7 +77,7 @@ def get_game(game_id: int, db: Session = Depends(get_db)) -> Game:
 
 
 @router.patch("/{game_id}", response_model=GameResponse,
-             dependencies=[Depends(require_development_write_access)])
+             dependencies=[Depends(require_authenticated_write_access)])
 def update_game(game_id: int, payload: GameUpdate, db: Session = Depends(get_db)) -> Game:
     game = db.get(Game, game_id)
     if game is None:
@@ -94,7 +94,7 @@ def update_game(game_id: int, payload: GameUpdate, db: Session = Depends(get_db)
 
 
 @router.delete("/{game_id}", status_code=status.HTTP_204_NO_CONTENT,
-              dependencies=[Depends(require_development_write_access)])
+              dependencies=[Depends(require_authenticated_write_access)])
 def delete_game(game_id: int, db: Session = Depends(get_db)) -> None:
     game = db.get(Game, game_id)
     if game is None:

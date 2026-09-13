@@ -29,6 +29,18 @@ class UserUpdate(BaseModel):
     active: bool | None = None
 
 
+class LoginRequest(BaseModel):
+    username: str = Field(min_length=1, max_length=64)
+    password: str = Field(min_length=1, max_length=256)
+
+
+class AuthResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    username: str
+    role: str
+
+
 class TeamResponse(ORMModel):
     id: int
     external_ids: dict = Field(default_factory=dict)

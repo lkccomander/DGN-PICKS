@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from dgn_picks_api.api.v1.dependencies import get_db, require_development_write_access
+from dgn_picks_api.api.v1.dependencies import get_db, require_authenticated_write_access
 from dgn_picks_api.api.v1.schemas import (
     PlayerCreate,
     PlayerResponse,
@@ -51,7 +51,7 @@ def get_team(team_id: int, db: Session = Depends(get_db)) -> Team:
 
 
 @router.post("", response_model=TeamResponse, status_code=status.HTTP_201_CREATED,
-            dependencies=[Depends(require_development_write_access)])
+            dependencies=[Depends(require_authenticated_write_access)])
 def create_team(payload: TeamCreate, db: Session = Depends(get_db)) -> Team:
     team = Team(**payload.model_dump())
     db.add(team)
@@ -61,7 +61,7 @@ def create_team(payload: TeamCreate, db: Session = Depends(get_db)) -> Team:
 
 
 @router.patch("/{team_id}", response_model=TeamResponse,
-             dependencies=[Depends(require_development_write_access)])
+             dependencies=[Depends(require_authenticated_write_access)])
 def update_team(team_id: int, payload: TeamUpdate, db: Session = Depends(get_db)) -> Team:
     team = db.get(Team, team_id)
     if team is None:
@@ -74,7 +74,7 @@ def update_team(team_id: int, payload: TeamUpdate, db: Session = Depends(get_db)
 
 
 @router.delete("/{team_id}", status_code=status.HTTP_204_NO_CONTENT,
-              dependencies=[Depends(require_development_write_access)])
+              dependencies=[Depends(require_authenticated_write_access)])
 def delete_team(team_id: int, db: Session = Depends(get_db)) -> None:
     team = db.get(Team, team_id)
     if team is None:
@@ -111,7 +111,7 @@ def _require_team(team_id: int, db: Session) -> None:
 
 
 @players_router.post("", response_model=PlayerResponse, status_code=status.HTTP_201_CREATED,
-                    dependencies=[Depends(require_development_write_access)])
+                    dependencies=[Depends(require_authenticated_write_access)])
 def create_player(payload: PlayerCreate, db: Session = Depends(get_db)) -> Player:
     _require_team(payload.team_id, db)
     player = Player(**payload.model_dump())
@@ -122,7 +122,7 @@ def create_player(payload: PlayerCreate, db: Session = Depends(get_db)) -> Playe
 
 
 @players_router.patch("/{player_id}", response_model=PlayerResponse,
-                     dependencies=[Depends(require_development_write_access)])
+                     dependencies=[Depends(require_authenticated_write_access)])
 def update_player(player_id: int, payload: PlayerUpdate, db: Session = Depends(get_db)) -> Player:
     player = db.get(Player, player_id)
     if player is None:
@@ -138,7 +138,7 @@ def update_player(player_id: int, payload: PlayerUpdate, db: Session = Depends(g
 
 
 @players_router.delete("/{player_id}", status_code=status.HTTP_204_NO_CONTENT,
-                      dependencies=[Depends(require_development_write_access)])
+                      dependencies=[Depends(require_authenticated_write_access)])
 def delete_player(player_id: int, db: Session = Depends(get_db)) -> None:
     player = db.get(Player, player_id)
     if player is None:

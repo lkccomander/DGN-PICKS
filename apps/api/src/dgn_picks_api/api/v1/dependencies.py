@@ -6,6 +6,7 @@ from fastapi import Header, HTTPException
 from sqlalchemy.orm import Session
 
 from dgn_picks_api.db.session import SessionLocal
+from dgn_picks_api.api.v1.auth import auth_configured, current_identity
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -31,3 +32,18 @@ def require_development_write_access(
         raise HTTPException(status_code=403, detail="Development write access is disabled")
     if not secrets.compare_digest(x_dgn_write_key, expected_key):
         raise HTTPException(status_code=403, detail="Invalid development write key")
+
+
+def require_authenticated_write_access(
+    authorization: str | None = Header(default=None),
+    x_dgn_write_key: str | None = Header(default=None),
+) -> None:
+    """Require an authenticated editor/admin once production auth is configured.
+
+    The development key fallback is retained only for local migration and tests.
+    """
+    if not auth_configured():
+        return require_development_write_access(x_dgn_write_key)
+    identity = current_identity(authorization)
+    if identity["role"] not in {"admin", "editor"}:
+        raise HTTPException(status_code=403, detail="Editor role required")

@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from dgn_picks_api.api.v1.dependencies import get_db, require_development_write_access
+from dgn_picks_api.api.v1.dependencies import get_db, require_authenticated_write_access
 from dgn_picks_api.api.v1.schemas import UserCreate, UserResponse, UserUpdate
 from dgn_picks_api.domains.picks.models import Pick
 from dgn_picks_api.domains.users.models import User
@@ -32,7 +32,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)) -> User:
     "",
     response_model=UserResponse,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(require_development_write_access)],
+    dependencies=[Depends(require_authenticated_write_access)],
 )
 def create_user(payload: UserCreate, db: Session = Depends(get_db)) -> User:
     user = User(**payload.model_dump())
@@ -49,7 +49,7 @@ def create_user(payload: UserCreate, db: Session = Depends(get_db)) -> User:
 @router.patch(
     "/{user_id}",
     response_model=UserResponse,
-    dependencies=[Depends(require_development_write_access)],
+    dependencies=[Depends(require_authenticated_write_access)],
 )
 def update_user(user_id: int, payload: UserUpdate, db: Session = Depends(get_db)) -> User:
     user = db.get(User, user_id)
@@ -66,7 +66,7 @@ def update_user(user_id: int, payload: UserUpdate, db: Session = Depends(get_db)
     "/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     response_class=Response,
-    dependencies=[Depends(require_development_write_access)],
+    dependencies=[Depends(require_authenticated_write_access)],
 )
 def delete_user(user_id: int, db: Session = Depends(get_db)) -> Response:
     user = db.get(User, user_id)

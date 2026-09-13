@@ -5,7 +5,7 @@ from fastapi.params import Query as QueryParam
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from dgn_picks_api.api.v1.dependencies import get_db, require_development_write_access
+from dgn_picks_api.api.v1.dependencies import get_db, require_authenticated_write_access
 from dgn_picks_api.api.v1.schemas import PickCreate, PickGrade, PickResponse, PickUpdate
 from dgn_picks_api.domains.picks.models import Pick
 from dgn_picks_api.domains.picks.service import delete_pending_pick, create_pick, grade_pick, update_pending_pick
@@ -36,7 +36,7 @@ def list_picks(
 
 
 @router.post("", response_model=PickResponse, status_code=status.HTTP_201_CREATED,
-            dependencies=[Depends(require_development_write_access)])
+            dependencies=[Depends(require_authenticated_write_access)])
 def post_pick(payload: PickCreate, db: Session = Depends(get_db)) -> Pick:
     try:
         return create_pick(db, payload)
@@ -53,7 +53,7 @@ def get_pick(pick_id: int, db: Session = Depends(get_db)) -> Pick:
 
 
 @router.patch("/{pick_id}", response_model=PickResponse,
-             dependencies=[Depends(require_development_write_access)])
+             dependencies=[Depends(require_authenticated_write_access)])
 def patch_pick(pick_id: int, payload: PickUpdate, db: Session = Depends(get_db)) -> Pick:
     try:
         return update_pending_pick(db, pick_id, payload)
@@ -64,7 +64,7 @@ def patch_pick(pick_id: int, payload: PickUpdate, db: Session = Depends(get_db))
 
 
 @router.delete("/{pick_id}", status_code=status.HTTP_204_NO_CONTENT,
-              dependencies=[Depends(require_development_write_access)])
+              dependencies=[Depends(require_authenticated_write_access)])
 def remove_pick(pick_id: int, user: str = Query(..., min_length=1, max_length=32), db: Session = Depends(get_db)) -> None:
     try:
         delete_pending_pick(db, pick_id, user)
@@ -75,7 +75,7 @@ def remove_pick(pick_id: int, user: str = Query(..., min_length=1, max_length=32
 
 
 @router.patch("/{pick_id}/grade", response_model=PickResponse,
-             dependencies=[Depends(require_development_write_access)])
+             dependencies=[Depends(require_authenticated_write_access)])
 def patch_grade(pick_id: int, payload: PickGrade, db: Session = Depends(get_db)) -> Pick:
     try:
         return grade_pick(db, pick_id, payload.result)

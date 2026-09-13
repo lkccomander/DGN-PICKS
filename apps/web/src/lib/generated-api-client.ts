@@ -7,12 +7,14 @@
 export type Components = {
   schemas: {
       "AnalyticsSummary": { "wins" : number; "losses" : number; "pushes" : number; "pending" : number; "void" : number; "total_units_risked" : string; "profit_units" : string; "roi" : string | null };
+      "AuthResponse": { "access_token" : string; "token_type"?: string; "username" : string; "role" : string };
       "GameCreate": { "external_ids"?: Record<string, unknown>; "season" : number; "week" : number; "kickoff_at" : string; "home_team_id" : number; "away_team_id" : number; "venue"?: string | null; "status"?: Components["schemas"]["GameStatus"]; "home_score"?: number | null; "away_score"?: number | null };
       "GameResponse": { "id" : number; "external_ids"?: Record<string, unknown>; "season" : number; "week" : number; "kickoff_at" : string; "home_team_id" : number; "away_team_id" : number; "venue"?: string | null; "status" : Components["schemas"]["GameStatus"]; "home_score"?: number | null; "away_score"?: number | null };
       "GameStatus": "scheduled" | "live" | "final" | "postponed" | "cancelled";
       "GameUpdate": { "external_ids"?: Record<string, unknown> | null; "season"?: number | null; "week"?: number | null; "kickoff_at"?: string | null; "home_team_id"?: number | null; "away_team_id"?: number | null; "venue"?: string | null; "status"?: Components["schemas"]["GameStatus"] | null; "home_score"?: number | null; "away_score"?: number | null };
       "HTTPValidationError": { "detail"?: Array<Components["schemas"]["ValidationError"]> };
       "HealthResponse": { "status" : string; "service" : string };
+      "LoginRequest": { "username" : string; "password" : string };
       "MarketCreate": { "game_id" : number; "market_type" : string; "period"?: string; "player_id"?: number | null; "team_id"?: number | null; "status"?: Components["schemas"]["MarketStatus"] };
       "MarketResponse": { "id" : number; "game_id" : number; "market_type" : string; "period" : string; "player_id"?: number | null; "team_id"?: number | null; "status" : Components["schemas"]["MarketStatus"]; "selections"?: Array<Components["schemas"]["SelectionResponse"]> };
       "MarketStatus": "open" | "suspended" | "closed";
@@ -45,6 +47,8 @@ export type Components = {
 export type ApiPath =
   | `/api/health`
   | `/api/v1/analytics/summary`
+  | `/api/v1/auth/login`
+  | `/api/v1/auth/me`
   | `/api/v1/dev/seed`
   | `/api/v1/games`
   | `/api/v1/games/${number}`
@@ -59,6 +63,7 @@ export type ApiPath =
   | `/api/v1/players`
   | `/api/v1/players/${number}`
   | `/api/v1/seed/pick-definitions`
+  | `/api/v1/selections`
   | `/api/v1/selections/${number}`
   | `/api/v1/teams`
   | `/api/v1/teams/${number}`

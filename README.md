@@ -80,6 +80,10 @@ Available route shapes:
 
 The development seed endpoint is idempotent and reports unresolved input. The Malakai Toney 72.5 receiving-yards definition remains unresolved because its Over/Under side was not supplied; it must not be guessed.
 
+## Authentication and admin catalog
+
+Set `DGN_AUTH_SECRET`, `DGN_AUTH_USERNAME`, and `DGN_AUTH_PASSWORD` in the API environment to enable signed bearer sessions. `DGN_AUTH_ROLE` may be `admin`, `editor`, or `viewer`; admin/editor roles can mutate catalog and pick resources, while viewer is read-only. The web admin console is available at `/admin` and manages teams, players, games, markets, and selections through the authenticated API proxy.
+
 ## Validation and handoff
 
 Push documentation and implementation changes to GitHub; Railway then deploys from the configured repository. Consult `STATUS.md` for the latest verification evidence and optional browser/E2E follow-up.

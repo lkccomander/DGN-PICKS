@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from dgn_picks_api.api.v1.dependencies import get_db, require_development_write_access
+from dgn_picks_api.api.v1.dependencies import get_db, require_authenticated_write_access
 from dgn_picks_api.api.v1.schemas import (
     MarketCreate,
     MarketResponse,
@@ -69,7 +69,7 @@ def get_market(market_id: int, db: Session = Depends(get_db)) -> Market:
 
 
 @router.post("", response_model=MarketResponse, status_code=status.HTTP_201_CREATED,
-            dependencies=[Depends(require_development_write_access)])
+            dependencies=[Depends(require_authenticated_write_access)])
 def create_market(payload: MarketCreate, db: Session = Depends(get_db)) -> Market:
     _validate_market_refs(payload, db)
     market = Market(**payload.model_dump())
@@ -80,7 +80,7 @@ def create_market(payload: MarketCreate, db: Session = Depends(get_db)) -> Marke
 
 
 @router.patch("/{market_id}", response_model=MarketResponse,
-             dependencies=[Depends(require_development_write_access)])
+             dependencies=[Depends(require_authenticated_write_access)])
 def update_market(market_id: int, payload: MarketUpdate, db: Session = Depends(get_db)) -> Market:
     market = db.get(Market, market_id)
     if market is None:
@@ -94,7 +94,7 @@ def update_market(market_id: int, payload: MarketUpdate, db: Session = Depends(g
 
 
 @router.delete("/{market_id}", status_code=status.HTTP_204_NO_CONTENT,
-              dependencies=[Depends(require_development_write_access)])
+              dependencies=[Depends(require_authenticated_write_access)])
 def delete_market(market_id: int, db: Session = Depends(get_db)) -> None:
     market = db.get(Market, market_id)
     if market is None:
@@ -109,7 +109,7 @@ def delete_market(market_id: int, db: Session = Depends(get_db)) -> None:
 
 @router.post("/{market_id}/selections", response_model=SelectionResponse,
             status_code=status.HTTP_201_CREATED,
-            dependencies=[Depends(require_development_write_access)])
+            dependencies=[Depends(require_authenticated_write_access)])
 def create_selection(market_id: int, payload: SelectionCreate, db: Session = Depends(get_db)) -> Selection:
     if payload.market_id != market_id:
         raise HTTPException(status_code=422, detail="Market path and payload must match")
@@ -134,8 +134,16 @@ def get_selection(selection_id: int, db: Session = Depends(get_db)) -> Selection
     return selection
 
 
+@selections_router.get("", response_model=list[SelectionResponse])
+def list_selections(market_id: int | None = Query(default=None), db: Session = Depends(get_db)) -> list[Selection]:
+    statement = select(Selection).order_by(Selection.market_id, Selection.selection_key, Selection.id)
+    if market_id is not None:
+        statement = statement.where(Selection.market_id == market_id)
+    return list(db.scalars(statement).all())
+
+
 @selections_router.patch("/{selection_id}", response_model=SelectionResponse,
-                        dependencies=[Depends(require_development_write_access)])
+                        dependencies=[Depends(require_authenticated_write_access)])
 def update_selection(selection_id: int, payload: SelectionUpdate, db: Session = Depends(get_db)) -> Selection:
     selection = db.get(Selection, selection_id)
     if selection is None:
@@ -152,7 +160,7 @@ def update_selection(selection_id: int, payload: SelectionUpdate, db: Session = 
 
 
 @selections_router.delete("/{selection_id}", status_code=status.HTTP_204_NO_CONTENT,
-                         dependencies=[Depends(require_development_write_access)])
+                         dependencies=[Depends(require_authenticated_write_access)])
 def delete_selection(selection_id: int, db: Session = Depends(get_db)) -> None:
     selection = db.get(Selection, selection_id)
     if selection is None:
@@ -181,7 +189,7 @@ def market_history(market_id: int, db: Session = Depends(get_db)) -> list[OddsSn
 
 @router.post("/{market_id}/history", response_model=OddsSnapshotResponse,
             status_code=status.HTTP_201_CREATED,
-            dependencies=[Depends(require_development_write_access)])
+            dependencies=[Depends(require_authenticated_write_access)])
 def append_market_snapshot(
     market_id: int,
     payload: OddsSnapshotCreate,
