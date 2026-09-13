@@ -66,6 +66,8 @@ Available route shapes:
 - `GET /selections/{id}`
 - `PATCH /selections/{id}`, `DELETE /selections/{id}` (development write boundary)
 - `GET /picks/{id}`
+- `PATCH /picks/{id}` (development write boundary; pending stake/notes only)
+- `DELETE /picks/{id}?user=<username>` (development write boundary; pending picks only)
 - `PATCH /picks/{id}/grade` (development write boundary)
 - `GET /games?date=YYYY-MM-DD&conference=SEC`
 - `GET /games/{game_id}`

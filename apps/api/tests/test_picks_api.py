@@ -5,12 +5,13 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from dgn_picks_api.api.v1.routes.picks import get_pick, list_picks, patch_grade, post_pick
-from dgn_picks_api.api.v1.schemas import PickCreate, PickGrade
+from dgn_picks_api.api.v1.routes.picks import get_pick, list_picks, patch_grade, patch_pick, post_pick, remove_pick
+from dgn_picks_api.api.v1.schemas import PickCreate, PickGrade, PickUpdate
 from dgn_picks_api.db.base import Base
 from dgn_picks_api.domains.games.models import Game
 from dgn_picks_api.domains.markets.models import Market, Selection
 from dgn_picks_api.domains.odds.models import OddsSnapshot, SportsbookSource
+from dgn_picks_api.domains.picks.models import Pick
 from dgn_picks_api.domains.picks.service import create_pick
 from dgn_picks_api.domains.common.enums import PickResult
 from dgn_picks_api.domains.teams.models import Team
@@ -156,3 +157,31 @@ def test_grade_unknown_pick_returns_not_found(session):
     with pytest.raises(Exception) as missing:
         patch_grade(999, PickGrade(result=PickResult.WIN), session)
     assert getattr(missing.value, "status_code", None) == 404
+
+
+def test_pending_pick_can_update_stake_and_notes_but_not_taken_price(session, market_fixture):
+    pick = create_pick(session, payload(market_fixture))
+    updated = patch_pick(pick.id, PickUpdate(user="gato", stake_units=Decimal("2.5"), notes="updated"), session)
+    assert updated.stake_units == Decimal("2.5")
+    assert updated.notes == "updated"
+    assert updated.line_value == Decimal("52.500")
+
+
+def test_pick_update_requires_owner_and_pending_result(session, market_fixture):
+    pick = create_pick(session, payload(market_fixture))
+    with pytest.raises(Exception) as wrong_user:
+        patch_pick(pick.id, PickUpdate(user="daran", notes="nope"), session)
+    assert getattr(wrong_user.value, "status_code", None) == 409
+    patch_grade(pick.id, PickGrade(result=PickResult.WIN), session)
+    with pytest.raises(Exception) as graded:
+        patch_pick(pick.id, PickUpdate(user="gato", notes="nope"), session)
+    assert getattr(graded.value, "status_code", None) == 409
+
+
+def test_pending_pick_can_be_deleted_only_by_owner(session, market_fixture):
+    pick = create_pick(session, payload(market_fixture))
+    with pytest.raises(Exception) as wrong_user:
+        remove_pick(pick.id, "daran", session)
+    assert getattr(wrong_user.value, "status_code", None) == 409
+    remove_pick(pick.id, "gato", session)
+    assert session.get(Pick, pick.id) is None

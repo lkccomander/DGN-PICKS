@@ -3,7 +3,7 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from dgn_picks_api.api.v1.schemas import PickCreate
+from dgn_picks_api.api.v1.schemas import PickCreate, PickUpdate
 from dgn_picks_api.domains.markets.models import Market, Selection
 from dgn_picks_api.domains.odds.models import OddsSnapshot
 from dgn_picks_api.domains.picks.models import Pick
@@ -72,3 +72,32 @@ def grade_pick(session: Session, pick_id: int, result: PickResult) -> Pick:
     session.commit()
     session.refresh(pick)
     return pick
+
+
+def update_pending_pick(session: Session, pick_id: int, payload: PickUpdate) -> Pick:
+    pick = session.get(Pick, pick_id)
+    if pick is None:
+        raise ValueError("Unknown pick")
+    if pick.user.username != payload.user:
+        raise ValueError("Pick does not belong to user")
+    if PickResult(pick.result) is not PickResult.PENDING:
+        raise ValueError("Only pending picks can be edited")
+    if payload.stake_units is not None:
+        pick.stake_units = payload.stake_units
+    if "notes" in payload.model_fields_set:
+        pick.notes = payload.notes
+    session.commit()
+    session.refresh(pick)
+    return pick
+
+
+def delete_pending_pick(session: Session, pick_id: int, username: str) -> None:
+    pick = session.get(Pick, pick_id)
+    if pick is None:
+        raise ValueError("Unknown pick")
+    if pick.user.username != username:
+        raise ValueError("Pick does not belong to user")
+    if PickResult(pick.result) is not PickResult.PENDING:
+        raise ValueError("Only pending picks can be deleted")
+    session.delete(pick)
+    session.commit()

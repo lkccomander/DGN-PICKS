@@ -51,6 +51,9 @@ export default function Home() {
   const [pickNotes, setPickNotes] = useState("");
   const [pickError, setPickError] = useState<string | null>(null);
   const [savingPick, setSavingPick] = useState(false);
+  const [editingPick, setEditingPick] = useState<Pick | null>(null);
+  const [editStake, setEditStake] = useState("1");
+  const [editNotes, setEditNotes] = useState("");
 
   const loadDashboard = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
@@ -158,6 +161,37 @@ export default function Home() {
       setSavingPick(false);
     }
   }, [loadDashboard, pickDraft, pickNotes, stakeUnits]);
+  const mutatePick = useCallback(async (pick: Pick, method: "PATCH" | "DELETE", body?: Record<string, unknown>) => {
+    setPickError(null);
+    setSavingPick(true);
+    try {
+      const response = await fetch(`/api/development/picks/${pick.id}${method === "DELETE" ? `?user=${ACTIVE_USER}` : ""}`, {
+        method,
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        ...(body ? { body: JSON.stringify({ user: ACTIVE_USER, ...body }) } : {}),
+      });
+      if (!response.ok) {
+        const failure = await response.json().catch(() => null) as { detail?: string } | null;
+        throw new Error(failure?.detail || "The pick could not be updated.");
+      }
+      setEditingPick(null);
+      await loadDashboard();
+    } catch (mutationError) {
+      setPickError(mutationError instanceof Error ? mutationError.message : "The pick could not be updated.");
+    } finally {
+      setSavingPick(false);
+    }
+  }, [loadDashboard]);
+  const submitEdit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!editingPick) return;
+    const stake = Number(editStake);
+    if (!Number.isFinite(stake) || stake <= 0) {
+      setPickError("Enter a positive stake in units.");
+      return;
+    }
+    await mutatePick(editingPick, "PATCH", { stake_units: stake, notes: editNotes.trim() || null });
+  }, [editNotes, editStake, editingPick, mutatePick]);
   const selectedGame = selectedGameId == null ? null : gamesById.get(selectedGameId) ?? null;
   const selectedGameMarkets = selectedGame == null ? [] : (data?.markets ?? []).filter((market) => market.game_id === selectedGame.id);
 
@@ -216,7 +250,7 @@ export default function Home() {
                 <label className="filter-box"><span className="sr-only">Filter result</span><select value={resultFilter} onChange={(event) => setResultFilter(event.target.value as ResultFilter)}><option value="all">All results</option><option value="pending">Pending</option><option value="win">Wins</option><option value="loss">Losses</option><option value="push">Pushes</option><option value="void">Voids</option></select></label>
               </div>
               <div className="table-head"><span>Selection</span><span>Line / price</span><span>Risk</span><span>Status</span></div>
-              {visiblePicks.length || visibleDefinitions.length ? <div className="pick-list">{visiblePicks.map((pick) => <PickRow key={pick.id} pick={pick} game={gamesById.get(pick.game_id)} teamsById={teamsById} />)}{visibleDefinitions.map((definition) => <SeedDefinitionRow key={definition.number} definition={definition} />)}</div> : <PanelEmpty text={data.picks.length ? "No picks match the current filters." : "No picks have been recorded for this user yet."} />}
+              {visiblePicks.length || visibleDefinitions.length ? <div className="pick-list">{visiblePicks.map((pick) => <PickRow key={pick.id} pick={pick} game={gamesById.get(pick.game_id)} teamsById={teamsById} canManage={DEVELOPMENT_PICK_WRITES} onEdit={(value) => { setEditingPick(value); setEditStake(value.stake_units.toString()); setEditNotes(value.notes ?? ""); setPickError(null); }} onDelete={(value) => { if (window.confirm("Delete this pending pick?")) void mutatePick(value, "DELETE"); }} onGrade={(value, result) => void mutatePick(value, "PATCH", { result })} />)}{visibleDefinitions.map((definition) => <SeedDefinitionRow key={definition.number} definition={definition} />)}</div> : <PanelEmpty text={data.picks.length ? "No picks match the current filters." : "No picks have been recorded for this user yet."} />}
             </section>
             <aside id="games" className="panel games-panel">
               <PanelHeading eyebrow="The slate" title="Games" count={visibleGames.length} />
@@ -245,6 +279,15 @@ export default function Home() {
               <div className="pick-dialog-actions"><button type="button" onClick={() => setPickDraft(null)} disabled={savingPick}>Cancel</button><button type="submit" disabled={savingPick}>{savingPick ? "Saving…" : "Create pick"}</button></div>
             </form>
           </section> : null}
+          {editingPick ? <section className="pick-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-pick-dialog-title">
+            <form onSubmit={submitEdit}>
+              <div><span className="eyebrow">Development edit</span><h2 id="edit-pick-dialog-title">Edit pick</h2><p>The taken line and price remain locked. Only pending stake and notes can change.</p></div>
+              <label>Stake (units)<input name="edit-stake" type="number" min="0.1" step="0.1" value={editStake} onChange={(event) => setEditStake(event.target.value)} required /></label>
+              <label>Note (optional)<input name="edit-notes" maxLength={1000} value={editNotes} onChange={(event) => setEditNotes(event.target.value)} /></label>
+              {pickError ? <p className="pick-form-error" role="alert">{pickError}</p> : null}
+              <div className="pick-dialog-actions"><button type="button" onClick={() => setEditingPick(null)} disabled={savingPick}>Cancel</button><button type="submit" disabled={savingPick}>{savingPick ? "Saving…" : "Save changes"}</button></div>
+            </form>
+          </section> : null}
         </> : null}
       </div>
       <footer><span>DGN-PICKS / 2026</span><span>Track the call. Keep the receipt.</span></footer>
@@ -260,8 +303,8 @@ function PanelHeading({ eyebrow, title, count }: { eyebrow: string; title: strin
   return <div className="panel-heading"><div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div><span className="count">{count.toString().padStart(2, "0")}</span></div>;
 }
 
-function PickRow({ pick, game, teamsById }: { pick: Pick; game?: Game; teamsById: Map<number, Team> }) {
-  return <article className="pick-row"><div className="pick-main"><span className={`result-dot ${pick.result}`} /><div><strong>{pick.notes || `Market ${pick.market_id} · Selection ${pick.selection_id ?? "—"}`}</strong><span>{game ? `${teamLabel(game.away_team_id, teamsById)} at ${teamLabel(game.home_team_id, teamsById)}` : `Game ${pick.game_id}`}</span></div></div><span className="pick-line">{lineLabel(pick)}</span><span className="pick-stake">{pick.stake_units.toFixed(1)}u</span><span className={`status-pill ${pick.result}`}>{pick.result}</span></article>;
+function PickRow({ pick, game, teamsById, canManage, onEdit, onDelete, onGrade }: { pick: Pick; game?: Game; teamsById: Map<number, Team>; canManage: boolean; onEdit: (pick: Pick) => void; onDelete: (pick: Pick) => void; onGrade: (pick: Pick, result: "win" | "loss" | "push" | "void") => void }) {
+  return <article className="pick-row"><div className="pick-main"><span className={`result-dot ${pick.result}`} /><div><strong>{pick.notes || `Market ${pick.market_id} · Selection ${pick.selection_id ?? "—"}`}</strong><span>{game ? `${teamLabel(game.away_team_id, teamsById)} at ${teamLabel(game.home_team_id, teamsById)}` : `Game ${pick.game_id}`}</span></div></div><span className="pick-line">{lineLabel(pick)}</span><span className="pick-stake">{pick.stake_units.toFixed(1)}u</span><span className={`status-pill ${pick.result}`}>{pick.result}</span>{canManage ? <div className="pick-actions">{pick.result === "pending" ? <><button type="button" onClick={() => onEdit(pick)}>Edit</button><button type="button" onClick={() => onDelete(pick)}>Delete</button><button type="button" onClick={() => onGrade(pick, "win")}>Win</button><button type="button" onClick={() => onGrade(pick, "loss")}>Loss</button></> : null}</div> : null}</article>;
 }
 
 function SeedDefinitionRow({ definition }: { definition: SeedPickDefinition }) {

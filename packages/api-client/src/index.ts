@@ -23,6 +23,7 @@ export type Components = {
       "PickGrade": { "result" : Components["schemas"]["PickResult"] };
       "PickResponse": { "id" : number; "user_id" : number; "game_id" : number; "market_id" : number; "selection_id"?: number | null; "picked_at" : string; "line_value"?: string | null; "american_odds"?: number | null; "decimal_odds"?: string | null; "stake_units" : string; "result" : Components["schemas"]["PickResult"]; "profit_units"?: string | null; "notes"?: string | null };
       "PickResult": "pending" | "win" | "loss" | "push" | "void";
+      "PickUpdate": { "user" : string; "stake_units"?: number | string | null; "notes"?: string | null };
       "PlayerCreate": { "external_ids"?: Record<string, unknown>; "team_id" : number; "name" : string; "position" : string; "active"?: boolean };
       "PlayerResponse": { "id" : number; "external_ids"?: Record<string, unknown>; "team_id" : number; "name" : string; "position" : string; "active" : boolean };
       "PlayerUpdate": { "external_ids"?: Record<string, unknown> | null; "team_id"?: number | null; "name"?: string | null; "position"?: string | null; "active"?: boolean | null };

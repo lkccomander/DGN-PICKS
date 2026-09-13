@@ -1,6 +1,6 @@
 # DGN-PICKS — session handoff
 
-Updated: 2026-09-10 UTC — production deployment verified for API and web; browser E2E remains optional follow-up.
+Updated: 2026-09-12 UTC — pick-management slice implemented; deployment and browser validation remain follow-up.
 Global project checklist and session handoff.
 
 ## Workflow and deployments
@@ -21,7 +21,7 @@ Global project checklist and session handoff.
 - [x] FastAPI app and `/api/health` endpoint.
 - [x] PostgreSQL Compose service and Alembic foundation.
 - [x] Frontend production build — verified with `npm run build` on Windows Node.js.
-- [x] API test suite: `59 passed`.
+- [x] API test suite: `62 passed`.
 - [~] Docker Compose migration upgrade/downgrade verification — N/A for the current GitHub → Railway workflow; deferred unless a local DB environment is requested.
 
 ### M2 — Domain, deterministic seed, and API v1
@@ -57,6 +57,14 @@ Global project checklist and session handoff.
 - [x] Pick create/read/grade operations preserving taken price.
 - [x] CRUD/API contract tests and documentation.
 
+### M5 — Pick management GUI
+
+- [x] Create/read pick flow through the same-origin development proxy.
+- [x] Edit pending pick stake and notes without changing taken price or ownership.
+- [x] Grade pending picks from the dashboard.
+- [x] Delete pending picks with ownership validation.
+- [x] Update OpenAPI client, API tests, and development documentation.
+
 ## Current status
 
 - `main` is deployed successfully at commit `dd55a7c` to both Railway services.
@@ -66,7 +74,7 @@ Global project checklist and session handoff.
 - The web build is self-contained under Railway's `/apps/web` root: its generated
   OpenAPI client is written into the app at generation time. The production
   dashboard responds HTTP 200.
-- The API test suite passes locally (`59 passed`); the Next.js production build
+- The API test suite passes locally (`62 passed`); the Next.js production build
   passes; the Alembic chain produces PostgreSQL SQL through revision
   `0007_remove_malakai_seed_pick`.
 - M3 writes remain explicitly development-only and the live production API has
@@ -92,10 +100,9 @@ Completed:
 
 ## Next steps
 
-1. Complete the planned M5 pick-management GUI: expose the user-facing create/read/update/delete flow for picks, with ownership and the existing server-side development-write boundary. The product spec requires a create-pick action and pick-tracker CRUD; it does not yet define a production admin panel.
-2. Define authentication and roles before adding a production `/admin` GUI for teams, players, games, markets, and selections; catalog CRUD currently exists as protected API operations only.
-3. Run `npm run test:e2e` against the documented local API/PostgreSQL stack when a local database and development write key are available.
-4. Run desktop/mobile browser smoke checks against the deployed frontend.
+1. Define authentication and roles before adding a production `/admin` GUI for teams, players, games, markets, and selections; catalog CRUD currently exists as protected API operations only.
+2. Run `npm run test:e2e` against the documented local API/PostgreSQL stack when a local database and development write key are available.
+3. Run desktop/mobile browser smoke checks against the deployed frontend.
 
 ## Known follow-up work
 

@@ -230,6 +230,12 @@ class PickGrade(BaseModel):
     result: PickResult
 
 
+class PickUpdate(BaseModel):
+    user: str = Field(min_length=1, max_length=32)
+    stake_units: Decimal | None = Field(default=None, gt=0)
+    notes: str | None = Field(default=None, max_length=1000)
+
+
 class AnalyticsSummary(BaseModel):
     wins: int
     losses: int
