@@ -1,6 +1,6 @@
 # DGN-PICKS — session handoff
 
-Updated: 2026-09-12 UTC — pick-management slice implemented; deployment and browser validation remain follow-up.
+Updated: 2026-09-13 UTC — authenticated admin catalog deployed; API/web smoke checks pass; Playwright remains environment-blocked.
 Global project checklist and session handoff.
 
 ## Workflow and deployments
@@ -45,7 +45,7 @@ Global project checklist and session handoff.
 - [x] Game status filters.
 - [x] Decimal-shaped API value normalization.
 - [x] Loading, error, and empty-state components.
-- [ ] Desktop/mobile browser smoke checks.
+- [x] Desktop/mobile HTTP smoke checks for `/admin` (browser viewport execution remains pending).
 - [x] Verify deployed frontend responds HTTP 200 and its bundle contains the market board/filter integration.
 
 ### M3 — CRUD and data management
@@ -71,22 +71,24 @@ Global project checklist and session handoff.
 - [x] Protect catalog and pick mutations with authenticated editor/admin access when auth is configured.
 - [x] Add authenticated `/admin` console for teams, players, games, markets, and selections.
 - [x] Add selection listing endpoint and regenerate the API client.
-- [ ] Configure production auth secrets in Railway and verify authenticated live mutations.
+- [x] Configure production auth in Railway; live login endpoint rejects invalid credentials with HTTP 401.
+- [ ] Verify an authenticated live mutation with a supplied operator credential.
 
 ## Current status
 
-- `main` is deployed successfully at commit `dd55a7c` to both Railway services.
+- `main` is deployed successfully through commit `cc00864` to both Railway services; the prior pick-management commit was `02da872`.
 - API health is live at `/api/health`; production serves 13 Gato definitions,
   six materialized picks, and Malakai Toney as `unresolved` (without inventing
   an Over/Under side).
 - The web build is self-contained under Railway's `/apps/web` root: its generated
   OpenAPI client is written into the app at generation time. The production
   dashboard responds HTTP 200.
-- The API test suite passes locally (`62 passed`); the Next.js production build
+- The API test suite passes locally (`65 passed`); the Next.js production build
   passes; the Alembic chain produces PostgreSQL SQL through revision
   `0007_remove_malakai_seed_pick`.
-- M3 writes remain explicitly development-only and the live production API has
-  no browser-exposed write secret.
+- Production mutation routes now accept signed bearer sessions for `admin` and
+  `editor` roles when the Railway auth variables are configured; the browser
+  does not receive the API write key.
 
 ## Active task: compact sportsbook-style frontend
 
@@ -108,9 +110,9 @@ Completed:
 
 ## Next steps
 
-1. Configure `DGN_AUTH_SECRET`, `DGN_AUTH_USERNAME`, `DGN_AUTH_PASSWORD`, and `DGN_AUTH_ROLE` in Railway, then verify `/api/v1/auth/login` and authenticated catalog mutations.
-2. Run `npm run test:e2e` against the documented local API/PostgreSQL stack when a local database and development write key are available.
-3. Run desktop/mobile browser smoke checks against the deployed frontend, including `/admin`.
+1. Run Playwright through a working Windows Node/WSL2 environment with the documented local API/PostgreSQL stack.
+2. Verify one authenticated live catalog mutation with the operator credential, without recording the secret.
+3. Run real desktop/mobile viewport checks against the deployed frontend, including `/admin`.
 
 ## Known follow-up work
 
@@ -121,10 +123,10 @@ Completed:
 
 ## Working tree at pause
 
-- Latest deployment fix is `dd55a7c`; `main` is synchronized with `origin/main`.
+- Latest deployment commit is `cc00864`; `main` is synchronized with `origin/main`.
 - Existing untracked `DGN-PICKS.code-workspace` and `logs/` belong to the user; keep them out of release commits.
 - `logs/railwaystatus.md` is an older dashboard report and is not proof of the latest deployment's state.
 
 ## Validation tooling
 
-Windows Node.js is available at `C:\Program Files\nodejs`. API pytest passes locally (`59 passed`); offline migration SQL, Railway migration, Railway HTTP/API smoke checks, and the Next.js production build pass. Playwright execution, Docker-backed migration verification, and browser viewport checks remain pending.
+Windows Node.js is configured at `C:\Program Files\nodejs`, but WSL1 interop currently fails before npm starts. API pytest passes locally (`65 passed`); Railway HTTP/API smoke checks pass; Playwright execution, Next.js local build, Docker-backed migration verification, and real browser viewport checks remain pending.
