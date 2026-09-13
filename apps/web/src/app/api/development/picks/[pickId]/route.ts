@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 
 type PickRequest = { user?: unknown; stake_units?: unknown; notes?: unknown; result?: unknown };
 
-function developmentWritesEnabled() {
-  return process.env.DGN_WEB_WRITE_MODE === "development" && Boolean(process.env.DGN_API_WRITE_KEY);
+function writesEnabled(request: Request) {
+  return Boolean(request.headers.get("authorization")) || (process.env.DGN_WEB_WRITE_MODE === "development" && Boolean(process.env.DGN_API_WRITE_KEY));
 }
 
 function apiUrl() {
@@ -11,7 +11,7 @@ function apiUrl() {
 }
 
 async function forward(request: Request, pickId: string, method: "PATCH" | "DELETE") {
-  if (!developmentWritesEnabled()) {
+  if (!writesEnabled(request)) {
     return NextResponse.json({ detail: "Development pick writes are disabled" }, { status: 404 });
   }
   const url = new URL(request.url);
@@ -32,12 +32,13 @@ async function forward(request: Request, pickId: string, method: "PATCH" | "DELE
   }
 
   const isGrade = method === "PATCH" && body.result !== undefined;
+  const authorization = request.headers.get("authorization");
   const response = await fetch(`${apiUrl()}/api/v1/picks/${encodeURIComponent(pickId)}${isGrade ? "/grade" : method === "DELETE" ? `?user=${encodeURIComponent(String(body.user))}` : ""}`, {
     method,
     headers: {
       Accept: "application/json",
       ...(method === "PATCH" ? { "Content-Type": "application/json" } : {}),
-      "X-DGN-Write-Key": process.env.DGN_API_WRITE_KEY as string,
+      ...(authorization ? { Authorization: authorization } : { "X-DGN-Write-Key": process.env.DGN_API_WRITE_KEY as string }),
     },
     ...(method === "PATCH" ? { body: JSON.stringify(isGrade ? { result: body.result } : body) } : {}),
     cache: "no-store",

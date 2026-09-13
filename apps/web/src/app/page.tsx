@@ -17,6 +17,12 @@ import {
 const ACTIVE_USER = "gato";
 const DEVELOPMENT_PICK_WRITES = process.env.NEXT_PUBLIC_ENABLE_DEV_PICK_WRITES === "true";
 
+function browserAuthHeaders() {
+  if (typeof window === "undefined") return {};
+  const token = window.localStorage.getItem("dgn-admin-token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 type ResultFilter = "all" | Pick["result"];
 type PickDraft = { gameId: number; marketId: number; selectionId: number; description: string };
 
@@ -51,6 +57,7 @@ export default function Home() {
   const [pickNotes, setPickNotes] = useState("");
   const [pickError, setPickError] = useState<string | null>(null);
   const [savingPick, setSavingPick] = useState(false);
+  const [hasAdminToken, setHasAdminToken] = useState(false);
   const [editingPick, setEditingPick] = useState<Pick | null>(null);
   const [editStake, setEditStake] = useState("1");
   const [editNotes, setEditNotes] = useState("");
@@ -69,6 +76,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    setHasAdminToken(Boolean(window.localStorage.getItem("dgn-admin-token")));
     const controller = new AbortController();
     fetchDashboardData(ACTIVE_USER, controller.signal)
       .then(setData)
@@ -138,7 +146,7 @@ export default function Home() {
     try {
       const response = await fetch("/api/development/picks", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/json", ...browserAuthHeaders() },
         body: JSON.stringify({
           user: ACTIVE_USER,
           game_id: pickDraft.gameId,
@@ -167,7 +175,7 @@ export default function Home() {
     try {
       const response = await fetch(`/api/development/picks/${pick.id}${method === "DELETE" ? `?user=${ACTIVE_USER}` : ""}`, {
         method,
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/json", ...browserAuthHeaders() },
         ...(body ? { body: JSON.stringify({ user: ACTIVE_USER, ...body }) } : {}),
       });
       if (!response.ok) {
@@ -250,7 +258,7 @@ export default function Home() {
                 <label className="filter-box"><span className="sr-only">Filter result</span><select value={resultFilter} onChange={(event) => setResultFilter(event.target.value as ResultFilter)}><option value="all">All results</option><option value="pending">Pending</option><option value="win">Wins</option><option value="loss">Losses</option><option value="push">Pushes</option><option value="void">Voids</option></select></label>
               </div>
               <div className="table-head"><span>Selection</span><span>Line / price</span><span>Risk</span><span>Status</span></div>
-              {visiblePicks.length || visibleDefinitions.length ? <div className="pick-list">{visiblePicks.map((pick) => <PickRow key={pick.id} pick={pick} game={gamesById.get(pick.game_id)} teamsById={teamsById} canManage={DEVELOPMENT_PICK_WRITES} onEdit={(value) => { setEditingPick(value); setEditStake(value.stake_units.toString()); setEditNotes(value.notes ?? ""); setPickError(null); }} onDelete={(value) => { if (window.confirm("Delete this pending pick?")) void mutatePick(value, "DELETE"); }} onGrade={(value, result) => void mutatePick(value, "PATCH", { result })} />)}{visibleDefinitions.map((definition) => <SeedDefinitionRow key={definition.number} definition={definition} />)}</div> : <PanelEmpty text={data.picks.length ? "No picks match the current filters." : "No picks have been recorded for this user yet."} />}
+              {visiblePicks.length || visibleDefinitions.length ? <div className="pick-list">{visiblePicks.map((pick) => <PickRow key={pick.id} pick={pick} game={gamesById.get(pick.game_id)} teamsById={teamsById} canManage={DEVELOPMENT_PICK_WRITES || hasAdminToken} onEdit={(value) => { setEditingPick(value); setEditStake(value.stake_units.toString()); setEditNotes(value.notes ?? ""); setPickError(null); }} onDelete={(value) => { if (window.confirm("Delete this pending pick?")) void mutatePick(value, "DELETE"); }} onGrade={(value, result) => void mutatePick(value, "PATCH", { result })} />)}{visibleDefinitions.map((definition) => <SeedDefinitionRow key={definition.number} definition={definition} />)}</div> : <PanelEmpty text={data.picks.length ? "No picks match the current filters." : "No picks have been recorded for this user yet."} />}
             </section>
             <aside id="games" className="panel games-panel">
               <PanelHeading eyebrow="The slate" title="Games" count={visibleGames.length} />
@@ -267,7 +275,7 @@ export default function Home() {
           <section id="markets" className="panel market-panel">
             <PanelHeading eyebrow="The board" title="Market movement" count={visibleMarkets.length} />
             <div className="market-tools"><label>Availability<select value={marketStatusFilter} onChange={(event) => setMarketStatusFilter(event.target.value as "all" | Market["status"])}><option value="all">All markets</option><option value="open">Open</option><option value="suspended">Suspended</option><option value="closed">Closed</option></select></label></div>
-            {visibleMarkets.length ? <div className="market-list">{visibleMarkets.slice(0, 12).map((market) => <MarketRow key={market.id} market={market} game={gamesById.get(market.game_id)} teamsById={teamsById} snapshotsBySelection={snapshotsBySelection} canTrack={DEVELOPMENT_PICK_WRITES} onTrack={beginPick} />)}</div> : <PanelEmpty text="No market lines are available for the current slate." />}
+            {visibleMarkets.length ? <div className="market-list">{visibleMarkets.slice(0, 12).map((market) => <MarketRow key={market.id} market={market} game={gamesById.get(market.game_id)} teamsById={teamsById} snapshotsBySelection={snapshotsBySelection} canTrack={DEVELOPMENT_PICK_WRITES || hasAdminToken} onTrack={beginPick} />)}</div> : <PanelEmpty text="No market lines are available for the current slate." />}
             <div className="panel-foot">Opening → current <span>Persisted snapshots · local-fixture</span></div>
           </section>
           {pickDraft ? <section className="pick-dialog" role="dialog" aria-modal="true" aria-labelledby="pick-dialog-title">

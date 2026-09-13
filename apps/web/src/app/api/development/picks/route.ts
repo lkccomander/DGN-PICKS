@@ -9,8 +9,8 @@ type PickRequest = {
   notes?: unknown;
 };
 
-function developmentWritesEnabled() {
-  return process.env.DGN_WEB_WRITE_MODE === "development" && Boolean(process.env.DGN_API_WRITE_KEY);
+function writesEnabled(request: Request) {
+  return Boolean(request.headers.get("authorization")) || (process.env.DGN_WEB_WRITE_MODE === "development" && Boolean(process.env.DGN_API_WRITE_KEY));
 }
 
 function validPickRequest(value: PickRequest) {
@@ -27,7 +27,7 @@ function validPickRequest(value: PickRequest) {
 }
 
 export async function POST(request: Request) {
-  if (!developmentWritesEnabled()) {
+  if (!writesEnabled(request)) {
     return NextResponse.json({ detail: "Development pick writes are disabled" }, { status: 404 });
   }
 
@@ -42,12 +42,13 @@ export async function POST(request: Request) {
   }
 
   const apiUrl = (process.env.DGN_API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000").replace(/\/$/, "");
+  const authorization = request.headers.get("authorization");
   const response = await fetch(`${apiUrl}/api/v1/picks`, {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "X-DGN-Write-Key": process.env.DGN_API_WRITE_KEY as string,
+      ...(authorization ? { Authorization: authorization } : { "X-DGN-Write-Key": process.env.DGN_API_WRITE_KEY as string }),
     },
     body: JSON.stringify(payload),
     cache: "no-store",
