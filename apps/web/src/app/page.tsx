@@ -17,7 +17,7 @@ import {
 const ACTIVE_USER = "gato";
 const DEVELOPMENT_PICK_WRITES = process.env.NEXT_PUBLIC_ENABLE_DEV_PICK_WRITES === "true";
 
-function browserAuthHeaders() {
+function browserAuthHeaders(): Record<string, string> {
   if (typeof window === "undefined") return {};
   const token = window.localStorage.getItem("dgn-admin-token");
   return token ? { Authorization: `Bearer ${token}` } : {};
