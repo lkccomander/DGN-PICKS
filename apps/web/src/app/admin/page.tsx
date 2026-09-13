@@ -3,59 +3,33 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 type Resource = "teams" | "players" | "games" | "markets" | "selections";
+type Field = { key: string; label: string; type?: "number" | "date" | "checkbox"; required?: boolean; options?: string[] };
+type RecordRow = Record<string, unknown>;
 const resources: Resource[] = ["teams", "players", "games", "markets", "selections"];
+const fields: Record<Resource, Field[]> = {
+  teams: [{ key: "name", label: "Name", required: true }, { key: "short_name", label: "Short name", required: true }, { key: "abbreviation", label: "Abbreviation", required: true }, { key: "conference", label: "Conference", required: true }, { key: "logo_url", label: "Logo URL" }, { key: "active", label: "Active", type: "checkbox" }],
+  players: [{ key: "team_id", label: "Team ID", type: "number", required: true }, { key: "name", label: "Name", required: true }, { key: "position", label: "Position", required: true }, { key: "active", label: "Active", type: "checkbox" }],
+  games: [{ key: "season", label: "Season", type: "number", required: true }, { key: "week", label: "Week", type: "number", required: true }, { key: "kickoff_at", label: "Kickoff", type: "date", required: true }, { key: "home_team_id", label: "Home team ID", type: "number", required: true }, { key: "away_team_id", label: "Away team ID", type: "number", required: true }, { key: "venue", label: "Venue" }, { key: "status", label: "Status", options: ["scheduled", "live", "final", "postponed", "cancelled"] }],
+  markets: [{ key: "game_id", label: "Game ID", type: "number", required: true }, { key: "market_type", label: "Market type", required: true }, { key: "period", label: "Period", required: true }, { key: "team_id", label: "Team ID", type: "number" }, { key: "player_id", label: "Player ID", type: "number" }, { key: "status", label: "Status", options: ["open", "suspended", "closed"] }],
+  selections: [{ key: "market_id", label: "Market ID", type: "number", required: true }, { key: "selection_key", label: "Selection key", required: true }, { key: "side", label: "Side" }, { key: "team_id", label: "Team ID", type: "number" }, { key: "player_id", label: "Player ID", type: "number" }],
+};
+function blankForm(resource: Resource) { return Object.fromEntries(fields[resource].map((field) => [field.key, field.type === "checkbox" ? "true" : ""])); }
+function title(resource: Resource) { return resource.slice(0, -1); }
 
 export default function AdminPage() {
-  const [token, setToken] = useState<string | null>(null);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [resource, setResource] = useState<Resource>("teams");
-  const [rows, setRows] = useState<Record<string, unknown>[]>([]);
-  const [draft, setDraft] = useState("{}");
-  const [busy, setBusy] = useState(false);
-
-  useEffect(() => setToken(window.localStorage.getItem("dgn-admin-token")), []);
+  const [token, setToken] = useState<string | null>(null); const [username, setUsername] = useState(""); const [password, setPassword] = useState(""); const [error, setError] = useState<string | null>(null); const [resource, setResource] = useState<Resource>("teams"); const [rows, setRows] = useState<RecordRow[]>([]); const [form, setForm] = useState<Record<string, string>>(() => blankForm("teams")); const [editingId, setEditingId] = useState<string | null>(null); const [busy, setBusy] = useState(false);
   const endpoint = useMemo(() => `/api/admin/${resource}`, [resource]);
+  useEffect(() => setToken(window.localStorage.getItem("dgn-admin-token")), []);
+  useEffect(() => { setForm(blankForm(resource)); setEditingId(null); }, [resource]);
 
-  async function login(event: FormEvent) {
-    event.preventDefault();
-    setError(null);
-    const response = await fetch("/api/admin/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password }) });
-    const body = await response.json().catch(() => ({}));
-    if (!response.ok) { setError(body.detail ?? "Login failed"); return; }
-    window.localStorage.setItem("dgn-admin-token", body.access_token);
-    setToken(body.access_token);
-  }
-
-  async function load() {
-    if (!token) return;
-    setBusy(true); setError(null);
-    const response = await fetch(endpoint, { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" });
-    const body = await response.json().catch(() => ({}));
-    setBusy(false);
-    if (!response.ok) { setError(body.detail ?? "Unable to load catalog"); return; }
-    setRows(body);
-  }
-
+  async function login(event: FormEvent) { event.preventDefault(); setError(null); const response = await fetch("/api/admin/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password }) }); const body = await response.json().catch(() => ({})); if (!response.ok) { setError(body.detail ?? "Login failed"); return; } window.localStorage.setItem("dgn-admin-token", body.access_token); setToken(body.access_token); }
+  async function load() { if (!token) return; setBusy(true); setError(null); const response = await fetch(endpoint, { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" }); const body = await response.json().catch(() => ({})); setBusy(false); if (!response.ok) { setError(body.detail ?? "Unable to load catalog"); return; } setRows(Array.isArray(body) ? body : []); }
   useEffect(() => { void load(); }, [endpoint, token]);
-
-  async function create() {
-    let payload: unknown;
-    try { payload = JSON.parse(draft); } catch { setError("Draft must be valid JSON"); return; }
-    setBusy(true); setError(null);
-    const response = await fetch(endpoint, { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    if (!response.ok) { const body = await response.json().catch(() => ({})); setError(body.detail ?? "Create failed"); setBusy(false); return; }
-    setDraft("{}"); await load();
-  }
-
-  async function remove(id: unknown) {
-    if (!window.confirm(`Delete ${resource} ${id}?`)) return;
-    setBusy(true); const response = await fetch(`${endpoint}/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
-    if (!response.ok) { const body = await response.json().catch(() => ({})); setError(body.detail ?? "Delete failed"); }
-    await load();
-  }
+  function payload() { return Object.fromEntries(fields[resource].filter((field) => form[field.key] !== "" || field.type === "checkbox").map((field) => { const value = form[field.key]; if (field.type === "number") return [field.key, value === "" ? null : Number(value)]; if (field.type === "checkbox") return [field.key, value === "true"]; return [field.key, value || null]; })); }
+  async function save(event: FormEvent) { event.preventDefault(); setBusy(true); setError(null); const path = resource === "selections" && !editingId ? `/api/admin/markets/${form.market_id}/selections` : `${endpoint}${editingId ? `/${editingId}` : ""}`; const response = await fetch(path, { method: editingId ? "PATCH" : "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify(payload()) }); if (!response.ok) { const body = await response.json().catch(() => ({})); setError(body.detail ?? "Save failed"); setBusy(false); return; } setForm(blankForm(resource)); setEditingId(null); await load(); }
+  function edit(row: RecordRow) { setEditingId(String(row.id)); setForm(Object.fromEntries(fields[resource].map((field) => [field.key, field.type === "checkbox" ? String(row[field.key] ?? true) : String(row[field.key] ?? "")]))) ; window.scrollTo({ top: 0, behavior: "smooth" }); }
+  async function remove(id: unknown) { if (!window.confirm(`Delete ${title(resource)} ${id}?`)) return; setBusy(true); const response = await fetch(`${endpoint}/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }); if (!response.ok) { const body = await response.json().catch(() => ({})); setError(body.detail ?? "Delete failed"); } await load(); }
 
   if (!token) return <main className="admin-shell"><div className="stripe" /><section className="admin-card"><span className="eyebrow">DGN-PICKS administration</span><h1>Sign in to catalog control</h1><form onSubmit={login}><label>Username<input value={username} onChange={(event) => setUsername(event.target.value)} required /></label><label>Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required /></label><button type="submit">Sign in</button></form>{error ? <p className="admin-error">{error}</p> : null}</section></main>;
-  return <main className="admin-shell"><div className="stripe" /><header className="admin-header"><div><span className="eyebrow">Authenticated catalog</span><h1>Admin control</h1></div><button onClick={() => { window.localStorage.removeItem("dgn-admin-token"); setToken(null); }}>Sign out</button></header><section className="admin-card"><nav className="admin-tabs">{resources.map((item) => <button key={item} className={item === resource ? "selected" : ""} onClick={() => setResource(item)}>{item}</button>)}</nav><div className="admin-create"><h2>Add {resource.slice(0, -1)}</h2><p>Submit the API-shaped catalog object. References are validated by the API.</p><textarea value={draft} onChange={(event) => setDraft(event.target.value)} spellCheck={false} /><button onClick={() => void create()} disabled={busy}>Create {resource.slice(0, -1)}</button></div>{error ? <p className="admin-error">{error}</p> : null}<div className="admin-table"><div className="admin-table-head"><span>Record</span><span>Actions</span></div>{rows.map((row) => <article key={String(row.id)}><pre>{JSON.stringify(row, null, 2)}</pre><button onClick={() => void remove(row.id)}>Delete</button></article>)}{!rows.length && !busy ? <p className="admin-muted">No records.</p> : null}</div></section></main>;
+  return <main className="admin-shell"><div className="stripe" /><header className="admin-header"><div><span className="eyebrow">Authenticated catalog</span><h1>Admin control</h1></div><button onClick={() => { window.localStorage.removeItem("dgn-admin-token"); setToken(null); }}>Sign out</button></header><section className="admin-card"><nav className="admin-tabs">{resources.map((item) => <button key={item} className={item === resource ? "selected" : ""} onClick={() => setResource(item)}>{item}</button>)}</nav><form className="admin-create" onSubmit={save}><h2>{editingId ? "Edit" : "Add"} {title(resource)}</h2><p>Use the catalog form; the API validates all references and lifecycle rules.</p><div className="admin-form-grid">{fields[resource].map((field) => <label key={field.key}>{field.label}{field.options ? <select value={form[field.key]} onChange={(event) => setForm({ ...form, [field.key]: event.target.value })} required={field.required}><option value="">Select…</option>{field.options.map((option) => <option key={option}>{option}</option>)}</select> : field.type === "checkbox" ? <input type="checkbox" checked={form[field.key] === "true"} onChange={(event) => setForm({ ...form, [field.key]: String(event.target.checked) })} /> : <input type={field.type === "number" ? "number" : field.type === "date" ? "datetime-local" : "text"} value={form[field.key]} onChange={(event) => setForm({ ...form, [field.key]: event.target.value })} required={field.required} />}</label>)}</div><div className="admin-form-actions"><button type="submit" disabled={busy}>{busy ? "Saving…" : editingId ? "Save changes" : `Create ${title(resource)}`}</button>{editingId ? <button type="button" onClick={() => { setEditingId(null); setForm(blankForm(resource)); }}>Cancel</button> : null}</div></form>{error ? <p className="admin-error">{error}</p> : null}<div className="admin-table"><div className="admin-table-head"><span>{resource}</span><span>Actions</span></div>{rows.map((row) => <article key={String(row.id)}><div><strong>#{String(row.id)}</strong><span>{fields[resource].map((field) => `${field.label}: ${String(row[field.key] ?? "—")}`).join(" · ")}</span></div><div className="admin-row-actions"><button onClick={() => edit(row)}>Edit</button><button onClick={() => void remove(row.id)}>Delete</button></div></article>)}{!rows.length && !busy ? <p className="admin-muted">No records.</p> : null}</div></section></main>;
 }
