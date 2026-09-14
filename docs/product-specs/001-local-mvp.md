@@ -5,9 +5,9 @@ Phase: Local MVP
 Primary sport: NCAA College Football
 
 ## 1. Vision
-DGN-PICKS is a sportsbook-style analytics and tracking site for NCAA College Football. It tracks games, game lines, props, line movement, user picks, results, units, ROI, and later closing-line value.
+DGN-PICKS is a sportsbook-style analytics and tracking site for NCAA College Football. It tracks games, game lines, props, line movement, user picks, results, virtual tokens, units, ROI, and later closing-line value.
 
-It is **not** a sportsbook and does not accept wagers, deposits, withdrawals, or payments.
+It is **not** a sportsbook and does not accept real-money wagers, deposits, withdrawals, or payments. Users may receive and spend non-redeemable virtual tokens (paper credits) to model prediction stakes.
 
 ## 2. Branding / UI direction
 - Brand: `DGN-PICKS`
@@ -32,6 +32,7 @@ It is **not** a sportsbook and does not accept wagers, deposits, withdrawals, or
 
 ## 4. Non-goals
 - No real-money wagering.
+- No monetary value, cash-out, transfer, or redemption for virtual tokens.
 - No production auth in phase 1.
 - No deployment in phase 1.
 - No ML picks engine.
@@ -103,6 +104,7 @@ dgn-picks/
 - username (unique)
 - display_name
 - active
+- virtual token balance and/or token ledger (paper credits only; exact accounting model to be finalized before implementation)
 - created_at
 
 Seed users:
@@ -469,6 +471,10 @@ Clean bootstrap, automated tests, E2E, docs sync.
   FastAPI OpenAPI; regenerate it whenever the API contract changes.
 - 2026-09-10: development pick writes use a server-side Next proxy so the
   browser never receives the API write key; the proxy is disabled by default.
+- 2026-09-14: DGN-PICKS will use non-redeemable virtual tokens (paper credits)
+  for prediction stakes. Tokens have no monetary value and cannot be deposited,
+  withdrawn, transferred, or redeemed. Before implementation, define the
+  starting balance, stake debit, and pending/win/loss/push/void settlement rules.
 
 ## 22. Progress
 - [x] Product concept

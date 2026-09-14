@@ -8,7 +8,7 @@ Browser
   -> Next.js + TypeScript
   -> FastAPI + Python
   -> PostgreSQL
-       -> domains: users, teams, players, games, markets, odds, props, picks
+       -> domains: users, token ledger, teams, players, games, markets, odds, props, picks
        -> provider boundary
             -> FixtureProvider (MVP)
             -> real provider adapter (future)
@@ -30,3 +30,7 @@ Browser
 4. Provider-specific IDs/names never leak into core UI/domain without normalization.
 5. Decimal odds are canonical for calculations.
 6. Timestamps persist in UTC.
+7. Virtual tokens are non-monetary paper credits; they cannot be deposited,
+   withdrawn, transferred, or redeemed.
+8. Token balance changes should be auditable and append-oriented through a token
+   ledger rather than unexplained direct balance edits.
