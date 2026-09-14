@@ -49,13 +49,12 @@
 @media(max-width:980px){.account-topbar,.account-primary-nav{padding-left:192px;padding-right:22px}}
 @media(max-width:800px){.account-topbar,.account-primary-nav{padding-left:18px;padding-right:18px}.account-layout{grid-template-columns:1fr}.account-content{padding-left:12px;padding-right:12px}.admin-header{padding-left:20px;padding-right:20px}.admin-card{margin-left:20px;margin-right:20px}}
 
-/* Keep the left rail inside the same outer boundary as the board. */
+/* Keep the complete three-column board, including the left rail, inside one shell. */
 .landing-layout,.account-layout{width:calc(100% - 44px)}
 .sports-rail{margin-bottom:44px;margin-top:20px}
 .account-sidebar{margin-bottom:60px;margin-top:24px}
-.landing-topbar,.landing-primary-nav{padding-left:max(22px,calc((100vw - 1480px) / 2 + 264px))}
-.account-topbar,.account-primary-nav{padding-left:max(22px,calc((100vw - 1480px) / 2 + 264px))}
-@media(max-width:980px){.landing-layout{width:calc(100% - 44px)}.landing-topbar,.landing-primary-nav{padding-left:214px}}
+.landing-topbar,.landing-primary-nav,.account-topbar,.account-primary-nav{padding-left:max(22px,calc((100vw - 1480px) / 2 + 22px))}
+@media(max-width:980px){.landing-layout{width:calc(100% - 44px)}.landing-topbar,.landing-primary-nav,.account-topbar,.account-primary-nav{padding-left:22px}}
 @media(max-width:800px){.landing-layout,.account-layout{width:calc(100% - 24px)}.landing-topbar,.landing-primary-nav,.account-topbar,.account-primary-nav{padding-left:18px}}
 @media(max-width:700px){.sports-rail{margin-bottom:0;margin-top:0}.account-sidebar{margin-bottom:0;margin-top:0}}
 
