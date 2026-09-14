@@ -10,12 +10,12 @@ Restyle the existing frontend with compact sans-serif typography, navigation, ta
 
 ## Progress
 
-Paused at the user's request. See [STATUS.md](../../../STATUS.md) for the full handoff. The attempted page/CSS replacement was rejected by patch validation; no frontend edits were applied.
+Landing-page composition updated to an original DGN-PICKS sportsbook-style board based on the user's supplied layout reference. The page now uses a utility header, primary navigation, sports rail, promotional hero, market board, games slate, bet slip, and tracked-picks drawer.
 
 - [x] Read product, architecture, branding, and plan instructions; inspect existing UI.
 - [x] Open supplied reference; text browser receives only a JavaScript shell.
 - [x] Implement compact dashboard and filters.
-- [ ] Validate desktop/mobile rendering and loading/error/empty states. (Market/history integration is implemented; frontend lint/build and browser rendering remain pending because the WSL1-to-Windows Node bridge currently fails before npm starts.)
+- [ ] Validate desktop/mobile rendering and loading/error/empty states. (Source-level checks pass; frontend lint/build and browser rendering remain pending because Node is unavailable in the current WSL1 shell.)
 - [x] Commit the dashboard integration; push and deployment check remain pending because deployment DNS is unavailable from this environment.
 
 ## Implementation plan
@@ -38,7 +38,8 @@ The games API exposes only team IDs. Keep those as honest fallbacks; do not inve
 - 2026-09-08: Use original DGN-PICKS CSS with sportsbook-style density and tabular values. Preserve distinct branding; no Pinnacle CSS, assets, or exact layout copied.
 - 2026-09-08: Keep this milestone presentational and preserve the existing API calculations and data.
 - 2026-09-10: Serve the dashboard read model through a same-origin Next.js route. The route aggregates the existing read-only FastAPI calls server-side, preserving their contract while avoiding browser-to-API cross-origin failures.
+- 2026-09-14: Recompose the landing page around the supplied sportsbook-style information hierarchy using original DGN-PICKS components, copy, colors, and CSS. Do not reuse the reference site's branding, imagery, exact layout, or assets.
 
 ## Outcomes & Retrospective
 
-Implemented the compact board UI in `apps/web/src/app/page.tsx` and `globals.css`: section navigation, searchable/result-filtered picks, date/team/conference/game-status/market-availability filters, aligned selection/line/risk/status columns, concurrent market/history loading, opening/current line values, SVG movement traces, cancellable refreshes, and numeric normalization for Decimal-shaped API values. Backend pytest passes (`56 passed`); frontend lint/build and browser checks remain pending.
+Implemented the compact board UI in `apps/web/src/app/page.tsx` and `globals.css`: original sportsbook-style landing composition, sports navigation rail, utility/auth header, promo hero, searchable/result-filtered picks, date/team/conference/game-status/market-availability filters, aligned market selections, concurrent market/history loading, opening/current line values, SVG movement traces, cancellable refreshes, and numeric normalization for Decimal-shaped API values. Backend pytest was previously passing; frontend lint/build and browser checks remain pending in the current Node-unavailable environment.

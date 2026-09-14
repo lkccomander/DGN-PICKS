@@ -206,97 +206,40 @@ export default function Home() {
   return (
     <main className="app-shell">
       <div className="stripe" aria-hidden="true" />
-      <header className="topbar">
-        <div className="brand-lockup">
-          <span className="wordmark">DGN<span>-</span>PICKS</span>
-          <span className="brand-caption">College football intelligence</span>
-        </div>
-        <div className="topbar-actions">
-          <span className={`connection ${loading ? "is-loading" : error ? "is-error" : ""}`}><i /> {loading ? "Syncing" : error ? "Offline" : "Live API"}</span>
-          <span className="user-chip"><b>G</b> {ACTIVE_USER}</span>
-        </div>
+      <header className="landing-topbar">
+        <a className="landing-brand" href="#board" aria-label="DGN-PICKS home"><span>DGN<span>-</span>PICKS</span><small>college football intelligence</small></a>
+        <div className="landing-auth"><span className={`connection ${loading ? "is-loading" : error ? "is-error" : ""}`}><i /> {loading ? "Syncing" : error ? "Offline" : "Live API"}</span><label><span className="sr-only">Search</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search teams, games or picks" /></label><a href="/admin">Admin</a><button type="button" className="landing-login">LOG IN</button><button type="button" className="landing-join">JOIN</button></div>
       </header>
 
-      <div className="page-wrap">
-        <nav className="section-nav" aria-label="Dashboard sections">
-          <span className="nav-mark">D</span>
-          <a className="active" href="#board">Board</a>
-          <a href="#picks">Picks</a>
-          <a href="#games">Games</a>
-          <a href="#markets">Markets</a>
-          <span className="nav-season">2026 / NCAA</span>
-        </nav>
-        <section className="intro-row">
-          <div>
-            <p className="eyebrow">Week {activeGames[0]?.week ?? "—"} · 2026 season</p>
-            <h1>The board<br /><em>has receipts.</em></h1>
-            <p className="intro-copy">A clean read on the games, lines, and calls your group is tracking.</p>
-          </div>
-          <div className="date-card">
-            <span className="date-label">Today&apos;s board</span>
-            <strong>{new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date())}</strong>
-            <span>{activeGames.length} active {activeGames.length === 1 ? "game" : "games"}</span>
-          </div>
-        </section>
+      <nav className="landing-primary-nav" aria-label="Primary navigation"><a className="active" href="#board">◉ <span>BOARD</span></a><a href="#games">◌ <span>LIVE CENTRE</span></a><a href="#markets">◆ <span>MARKETS</span></a><a href="#picks">▣ <span>MY PICKS</span></a><a href="#insights">◈ <span>INSIGHTS</span></a><span className="nav-clock">2026 / NCAA · {activeGames.length} active</span></nav>
 
-        {error ? <section className="notice error-state"><div><span className="notice-kicker">Connection issue</span><h2>Couldn&apos;t load the board.</h2><p>Check the Railway API or try the sync again. The dashboard is configured for <code>{API_URL}</code>.</p></div><button onClick={() => void loadDashboard()}>Retry sync</button></section> : null}
-        {loading ? <LoadingState /> : data && !data.picks.length && !data.games.length ? <EmptyState /> : null}
+      <div className="landing-layout">
+        <aside className="sports-rail" aria-label="Sports navigation"><div className="rail-heading">FAVOURITES</div><div className="rail-callout">Log in or join to save your favourite teams.</div><div className="rail-divider" /><div className="rail-heading">TOP SPORTS</div>{["College Football", "Basketball", "Baseball", "Soccer", "Tennis", "Hockey", "Golf"].map((sport, index) => <a className={index === 0 ? "selected" : ""} href="#board" key={sport}><span>{["🏈", "🏀", "⚾", "⚽", "🎾", "🏒", "⛳"][index]}</span>{sport}<b>{index === 0 ? visibleGames.length : "—"}</b></a>)}<div className="rail-divider" /><div className="rail-heading">DGN-PICKS</div><a href="#picks"><span>▾</span>Tracked picks<b>{visiblePicks.length}</b></a><a href="#markets"><span>↗</span>Line movement<b>{visibleMarkets.length}</b></a></aside>
 
-        {!loading && data && (data.picks.length || data.games.length) ? <>
-          <section id="board" className="summary-grid" aria-label="Pick summary">
-            <p className="summary-scope">Performance summary · All users</p>
-            <SummaryCard label="Record" value={`${summary.wins}-${summary.losses}`} detail={`${summary.pushes} push${summary.pushes === 1 ? "" : "es"}`} accent="blue" />
-            <SummaryCard label="Pending" value={summary.pending.toString().padStart(2, "0")} detail={`${summary.total_units_risked.toFixed(1)}u risked`} accent="red" />
-            <SummaryCard label="P/L" value={`${summary.profit_units >= 0 ? "+" : ""}${summary.profit_units.toFixed(2)}u`} detail={summary.roi == null ? "No settled ROI" : `${(summary.roi * 100).toFixed(1)}% ROI`} accent="white" />
-          </section>
+        <div className="landing-main">
+          <section className="landing-hero" id="board"><div><span className="hero-kicker">2026 NCAA · WEEK {activeGames[0]?.week ?? "—"}</span><h1>Every line.<br /><em>Every receipt.</em></h1><p>Track the board, compare movement, and keep your group&apos;s calls in one place.</p><a href="#markets" className="hero-cta">VIEW THE BOARD <span>→</span></a></div><div className="hero-graphic" aria-hidden="true"><span className="hero-ball">◉</span><span className="hero-lines" /></div></section>
 
-          <div className="content-grid">
-            <section id="picks" className="panel picks-panel">
-              <PanelHeading eyebrow="Your card · gato" title="Tracked picks" count={visiblePicks.length + visibleDefinitions.length} />
-              <div className="panel-tools">
-                <label className="search-box"><span className="sr-only">Search picks</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search picks" /></label>
-                <label className="filter-box"><span className="sr-only">Filter result</span><select value={resultFilter} onChange={(event) => setResultFilter(event.target.value as ResultFilter)}><option value="all">All results</option><option value="pending">Pending</option><option value="win">Wins</option><option value="loss">Losses</option><option value="push">Pushes</option><option value="void">Voids</option></select></label>
-              </div>
-              <div className="table-head"><span>Selection</span><span>Line / price</span><span>Risk</span><span>Status</span></div>
-              {visiblePicks.length || visibleDefinitions.length ? <div className="pick-list">{visiblePicks.map((pick) => <PickRow key={pick.id} pick={pick} game={gamesById.get(pick.game_id)} teamsById={teamsById} canManage={DEVELOPMENT_PICK_WRITES || hasAdminToken} onEdit={(value) => { setEditingPick(value); setEditStake(value.stake_units.toString()); setEditNotes(value.notes ?? ""); setPickError(null); }} onDelete={(value) => { if (window.confirm("Delete this pending pick?")) void mutatePick(value, "DELETE"); }} onGrade={(value, result) => void mutatePick(value, "PATCH", { result })} />)}{visibleDefinitions.map((definition) => <SeedDefinitionRow key={definition.number} definition={definition} />)}</div> : <PanelEmpty text={data.picks.length ? "No picks match the current filters." : "No picks have been recorded for this user yet."} />}
-            </section>
-            <aside id="games" className="panel games-panel">
-              <PanelHeading eyebrow="The slate" title="Games" count={visibleGames.length} />
-              <div className="game-controls"><label>Date<input type="date" value={boardDate} onChange={(event) => setBoardDate(event.target.value)} /></label><label>Conference<select value={conferenceFilter} onChange={(event) => setConferenceFilter(event.target.value)}><option value="all">All conferences</option>{conferences.map((conference) => <option key={conference} value={conference}>{conference}</option>)}</select></label><label>Team<select value={teamFilter} onChange={(event) => setTeamFilter(event.target.value)}><option value="all">All teams</option>{(data.teams ?? []).filter((team) => team.active).map((team) => <option key={team.id} value={team.id}>{team.short_name}</option>)}</select></label></div>
-              <div className="game-filter" role="group" aria-label="Filter games"><button type="button" aria-pressed={gameFilter === "all"} className={gameFilter === "all" ? "selected" : ""} onClick={() => setGameFilter("all")}>All</button><button type="button" aria-pressed={gameFilter === "scheduled"} className={gameFilter === "scheduled" ? "selected" : ""} onClick={() => setGameFilter("scheduled")}>Scheduled</button><button type="button" aria-pressed={gameFilter === "live"} className={gameFilter === "live" ? "selected" : ""} onClick={() => setGameFilter("live")}>Live</button><button type="button" aria-pressed={gameFilter === "final"} className={gameFilter === "final" ? "selected" : ""} onClick={() => setGameFilter("final")}>Final</button></div>
-              {visibleGames.length ? <div className="game-list">{visibleGames.slice(0, 6).map((game) => <GameRow key={game.id} game={game} teamsById={teamsById} onSelect={setSelectedGameId} />)}</div> : <PanelEmpty text={data.games.length ? "No games match this filter." : "No games are available for this board."} />}
-              <div className="panel-foot">Source · Railway API <span>UTC timestamps</span></div>
-            </aside>
-          </div>
-          {selectedGame ? <section id="game-detail" className="panel game-detail" aria-labelledby="game-detail-title">
-            <PanelHeading eyebrow="Selected matchup" title="Game detail" count={selectedGameMarkets.length} />
-            <div className="game-detail-grid"><div><h3 id="game-detail-title">{teamLabel(selectedGame.away_team_id, teamsById)} at {teamLabel(selectedGame.home_team_id, teamsById)}</h3><p>{formatKickoff(selectedGame.kickoff_at)} · {selectedGame.venue || "Venue pending"}</p></div><div><span>Status</span><strong>{selectedGame.status}</strong></div><div><span>Markets</span><strong>{selectedGameMarkets.length}</strong></div>{selectedGame.status === "final" ? <div><span>Score</span><strong>{selectedGame.away_score ?? "—"} – {selectedGame.home_score ?? "—"}</strong></div> : null}</div>
-          </section> : null}
-          <section id="markets" className="panel market-panel">
-            <PanelHeading eyebrow="The board" title="Market movement" count={visibleMarkets.length} />
-            <div className="market-tools"><label>Availability<select value={marketStatusFilter} onChange={(event) => setMarketStatusFilter(event.target.value as "all" | Market["status"])}><option value="all">All markets</option><option value="open">Open</option><option value="suspended">Suspended</option><option value="closed">Closed</option></select></label></div>
-            {visibleMarkets.length ? <div className="market-list">{visibleMarkets.slice(0, 12).map((market) => <MarketRow key={market.id} market={market} game={gamesById.get(market.game_id)} teamsById={teamsById} snapshotsBySelection={snapshotsBySelection} canTrack={DEVELOPMENT_PICK_WRITES || hasAdminToken} onTrack={beginPick} />)}</div> : <PanelEmpty text="No market lines are available for the current slate." />}
-            <div className="panel-foot">Opening → current <span>Persisted snapshots · local-fixture</span></div>
-          </section>
-          {pickDraft ? <section className="pick-dialog" role="dialog" aria-modal="true" aria-labelledby="pick-dialog-title">
-            <form onSubmit={submitPick}>
-              <div><span className="eyebrow">Development entry</span><h2 id="pick-dialog-title">Track {pickDraft.description}</h2><p>The API records the current stored line and price; the browser never receives the write key.</p></div>
-              <label>Stake (units)<input name="stake" type="number" min="0.1" step="0.1" value={stakeUnits} onChange={(event) => setStakeUnits(event.target.value)} required /></label>
-              <label>Note (optional)<input name="notes" maxLength={1000} value={pickNotes} onChange={(event) => setPickNotes(event.target.value)} placeholder="Why this play?" /></label>
-              {pickError ? <p className="pick-form-error" role="alert">{pickError}</p> : null}
-              <div className="pick-dialog-actions"><button type="button" onClick={() => setPickDraft(null)} disabled={savingPick}>Cancel</button><button type="submit" disabled={savingPick}>{savingPick ? "Saving…" : "Create pick"}</button></div>
-            </form>
-          </section> : null}
-          {editingPick ? <section className="pick-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-pick-dialog-title">
-            <form onSubmit={submitEdit}>
-              <div><span className="eyebrow">Development edit</span><h2 id="edit-pick-dialog-title">Edit pick</h2><p>The taken line and price remain locked. Only pending stake and notes can change.</p></div>
-              <label>Stake (units)<input name="edit-stake" type="number" min="0.1" step="0.1" value={editStake} onChange={(event) => setEditStake(event.target.value)} required /></label>
-              <label>Note (optional)<input name="edit-notes" maxLength={1000} value={editNotes} onChange={(event) => setEditNotes(event.target.value)} /></label>
-              {pickError ? <p className="pick-form-error" role="alert">{pickError}</p> : null}
-              <div className="pick-dialog-actions"><button type="button" onClick={() => setEditingPick(null)} disabled={savingPick}>Cancel</button><button type="submit" disabled={savingPick}>{savingPick ? "Saving…" : "Save changes"}</button></div>
-            </form>
-          </section> : null}
-        </> : null}
+          {error ? <section className="notice error-state"><div><span className="notice-kicker">Connection issue</span><h2>Couldn&apos;t load the board.</h2><p>Check the Railway API or try the sync again. The dashboard is configured for <code>{API_URL}</code>.</p></div><button onClick={() => void loadDashboard()}>Retry sync</button></section> : null}
+          {loading ? <LoadingState /> : data && !data.picks.length && !data.games.length ? <EmptyState /> : null}
+
+          {!loading && data && (data.picks.length || data.games.length) ? <>
+            <section className="market-strip" aria-label="Board summary"><div><span>RECORD</span><strong>{summary.wins}-{summary.losses}</strong></div><div><span>PENDING</span><strong>{summary.pending.toString().padStart(2, "0")}</strong></div><div><span>RISKED</span><strong>{summary.total_units_risked.toFixed(1)}u</strong></div><div><span>P/L</span><strong className={summary.profit_units >= 0 ? "positive" : "negative"}>{summary.profit_units >= 0 ? "+" : ""}{summary.profit_units.toFixed(2)}u</strong></div></section>
+
+            <section className="board-section" id="markets"><div className="board-section-head"><div><span className="section-kicker">MARKET BOARD</span><h2>Today&apos;s matchups</h2></div><div className="board-actions"><label><span className="sr-only">Board date</span><input type="date" value={boardDate} onChange={(event) => setBoardDate(event.target.value)} /></label><select value={marketStatusFilter} onChange={(event) => setMarketStatusFilter(event.target.value as "all" | Market["status"])} aria-label="Market availability"><option value="all">All lines</option><option value="open">Open</option><option value="suspended">Suspended</option><option value="closed">Closed</option></select></div></div><div className="board-columns"><span>GAME / MARKET</span><span>SELECTIONS</span><span>OPEN → CURRENT</span></div>{visibleMarkets.length ? <div className="market-list">{visibleMarkets.slice(0, 12).map((market) => <MarketRow key={market.id} market={market} game={gamesById.get(market.game_id)} teamsById={teamsById} snapshotsBySelection={snapshotsBySelection} canTrack={DEVELOPMENT_PICK_WRITES || hasAdminToken} onTrack={beginPick} />)}</div> : <PanelEmpty text="No market lines are available for the current slate." />}</section>
+
+            <section className="below-board" id="games"><div className="slate-panel"><div className="board-section-head"><div><span className="section-kicker">THE SLATE</span><h2>Games</h2></div><span className="board-count">{visibleGames.length.toString().padStart(2, "0")}</span></div><div className="game-filter" role="group" aria-label="Filter games"><button type="button" aria-pressed={gameFilter === "all"} className={gameFilter === "all" ? "selected" : ""} onClick={() => setGameFilter("all")}>All</button><button type="button" aria-pressed={gameFilter === "scheduled"} className={gameFilter === "scheduled" ? "selected" : ""} onClick={() => setGameFilter("scheduled")}>Scheduled</button><button type="button" aria-pressed={gameFilter === "live"} className={gameFilter === "live" ? "selected" : ""} onClick={() => setGameFilter("live")}>Live</button><button type="button" aria-pressed={gameFilter === "final"} className={gameFilter === "final" ? "selected" : ""} onClick={() => setGameFilter("final")}>Final</button></div>{visibleGames.length ? <div className="game-list">{visibleGames.slice(0, 6).map((game) => <GameRow key={game.id} game={game} teamsById={teamsById} onSelect={setSelectedGameId} />)}</div> : <PanelEmpty text={data.games.length ? "No games match this filter." : "No games are available for this board."} />}</div><aside className="bet-slip" id="picks"><div className="bet-slip-tabs"><span className="active">BET SLIP</span><span>MY PICKS</span></div><div className="bet-slip-body"><span className="slip-icon">▤</span><h3>{visiblePicks.length ? `${visiblePicks.length} tracked picks` : "Your board is clear"}</h3><p>{visiblePicks.length ? "Your current card is ready to review." : "Track a selection to build your card."}</p><a href="#markets">Browse lines →</a></div><div className="slip-summary"><span>Pending</span><strong>{summary.pending} · {summary.total_units_risked.toFixed(1)}u</strong></div></aside></section>
+
+            <section className="picks-drawer" id="picks-detail"><div className="board-section-head"><div><span className="section-kicker">YOUR CARD · GATO</span><h2>Tracked picks</h2></div><span className="board-count">{(visiblePicks.length + visibleDefinitions.length).toString().padStart(2, "0")}</span></div><div className="pick-tools"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search picks" aria-label="Search picks" /><select value={resultFilter} onChange={(event) => setResultFilter(event.target.value as ResultFilter)} aria-label="Filter pick results"><option value="all">All results</option><option value="pending">Pending</option><option value="win">Wins</option><option value="loss">Losses</option><option value="push">Pushes</option><option value="void">Voids</option></select></div>{visiblePicks.length || visibleDefinitions.length ? <div className="pick-list">{visiblePicks.map((pick) => <PickRow key={pick.id} pick={pick} game={gamesById.get(pick.game_id)} teamsById={teamsById} canManage={DEVELOPMENT_PICK_WRITES || hasAdminToken} onEdit={(value) => { setEditingPick(value); setEditStake(value.stake_units.toString()); setEditNotes(value.notes ?? ""); setPickError(null); }} onDelete={(value) => { if (window.confirm("Delete this pending pick?")) void mutatePick(value, "DELETE"); }} onGrade={(value, result) => void mutatePick(value, "PATCH", { result })} />)}{visibleDefinitions.map((definition) => <SeedDefinitionRow key={definition.number} definition={definition} />)}</div> : <PanelEmpty text={data.picks.length ? "No picks match the current filters." : "No picks have been recorded for this user yet."} />}</section>
+          </>
+          : null}
+        </div>
+
+        {selectedGame ? <section className="game-detail" aria-labelledby="game-detail-title"><div><span className="section-kicker">SELECTED MATCHUP</span><h2 id="game-detail-title">{teamLabel(selectedGame.away_team_id, teamsById)} at {teamLabel(selectedGame.home_team_id, teamsById)}</h2><p>{formatKickoff(selectedGame.kickoff_at)} · {selectedGame.venue || "Venue pending"}</p></div><strong>{selectedGame.status}</strong><span>{selectedGameMarkets.length} markets</span></section> : null}
+      </div>
+      {pickDraft ? <section className="pick-dialog" role="dialog" aria-modal="true" aria-labelledby="pick-dialog-title">
+        <form onSubmit={submitPick}><div><span className="eyebrow">Development entry</span><h2 id="pick-dialog-title">Track {pickDraft.description}</h2><p>The API records the current stored line and price; the browser never receives the write key.</p></div><label>Stake (units)<input name="stake" type="number" min="0.1" step="0.1" value={stakeUnits} onChange={(event) => setStakeUnits(event.target.value)} required /></label><label>Note (optional)<input name="notes" maxLength={1000} value={pickNotes} onChange={(event) => setPickNotes(event.target.value)} placeholder="Why this play?" /></label>{pickError ? <p className="pick-form-error" role="alert">{pickError}</p> : null}<div className="pick-dialog-actions"><button type="button" onClick={() => setPickDraft(null)} disabled={savingPick}>Cancel</button><button type="submit" disabled={savingPick}>{savingPick ? "Saving…" : "Create pick"}</button></div></form>
+      </section> : null}
+      {editingPick ? <section className="pick-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-pick-dialog-title"><form onSubmit={submitEdit}><div><span className="eyebrow">Development edit</span><h2 id="edit-pick-dialog-title">Edit pick</h2><p>The taken line and price remain locked. Only pending stake and notes can change.</p></div><label>Stake (units)<input name="edit-stake" type="number" min="0.1" step="0.1" value={editStake} onChange={(event) => setEditStake(event.target.value)} required /></label><label>Note (optional)<input name="edit-notes" maxLength={1000} value={editNotes} onChange={(event) => setEditNotes(event.target.value)} /></label>{pickError ? <p className="pick-form-error" role="alert">{pickError}</p> : null}<div className="pick-dialog-actions"><button type="button" onClick={() => setEditingPick(null)} disabled={savingPick}>Cancel</button><button type="submit" disabled={savingPick}>{savingPick ? "Saving…" : "Save changes"}</button></div></form></section> : null}
       </div>
       <footer><span>DGN-PICKS / 2026</span><span>Track the call. Keep the receipt.</span></footer>
     </main>
