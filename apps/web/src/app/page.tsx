@@ -61,6 +61,12 @@ export default function Home() {
   const [editingPick, setEditingPick] = useState<Pick | null>(null);
   const [editStake, setEditStake] = useState("1");
   const [editNotes, setEditNotes] = useState("");
+  const [loginUsername, setLoginUsername] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loginBusy, setLoginBusy] = useState(false);
+  const [accountLabel, setAccountLabel] = useState("AC254187");
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
   const loadDashboard = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
@@ -77,6 +83,7 @@ export default function Home() {
 
   useEffect(() => {
     setHasAdminToken(Boolean(window.localStorage.getItem("dgn-admin-token")));
+    setAccountLabel(window.localStorage.getItem("dgn-account-label") || "AC254187");
     const controller = new AbortController();
     fetchDashboardData(ACTIVE_USER, controller.signal)
       .then(setData)
@@ -200,6 +207,30 @@ export default function Home() {
     }
     await mutatePick(editingPick, "PATCH", { stake_units: stake, notes: editNotes.trim() || null });
   }, [editNotes, editStake, editingPick, mutatePick]);
+  const submitLogin = useCallback(async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoginBusy(true);
+    setLoginError(null);
+    try {
+      const response = await fetch("/api/admin/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ username: loginUsername.trim(), password: loginPassword }),
+      });
+      const body = await response.json().catch(() => ({})) as { access_token?: string; username?: string; detail?: string };
+      if (!response.ok || !body.access_token) throw new Error(body.detail || "Login failed.");
+      const signedInAs = body.username || loginUsername.trim() || "AC254187";
+      window.localStorage.setItem("dgn-admin-token", body.access_token);
+      window.localStorage.setItem("dgn-account-label", signedInAs.toUpperCase());
+      setAccountLabel(signedInAs.toUpperCase());
+      setHasAdminToken(true);
+      setLoginPassword("");
+    } catch (loginRequestError) {
+      setLoginError(loginRequestError instanceof Error ? loginRequestError.message : "Login failed.");
+    } finally {
+      setLoginBusy(false);
+    }
+  }, [loginPassword, loginUsername]);
   const selectedGame = selectedGameId == null ? null : gamesById.get(selectedGameId) ?? null;
   const selectedGameMarkets = selectedGame == null ? [] : (data?.markets ?? []).filter((market) => market.game_id === selectedGame.id);
 
@@ -208,7 +239,7 @@ export default function Home() {
       <div className="stripe" aria-hidden="true" />
       <header className="landing-topbar">
         <a className="landing-brand" href="#board" aria-label="DGN-PICKS home"><span>DGN<span>-</span>PICKS</span><small>college football intelligence</small></a>
-        <div className="landing-auth"><span className={`connection ${loading ? "is-loading" : error ? "is-error" : ""}`}><i /> {loading ? "Syncing" : error ? "Offline" : "Live API"}</span><div className="login-fields"><label><span className="sr-only">Email or Client ID</span><input type="text" autoComplete="username" placeholder="Email or Client ID" /></label><label><span className="sr-only">Password</span><input type="password" autoComplete="current-password" placeholder="Password" /></label><a className="login-help" href="#help">Forgot email or password?</a></div><a href="/admin">Admin</a><button type="button" className="landing-login">LOG IN</button><button type="button" className="landing-join">JOIN</button></div>
+        {hasAdminToken ? <div className="landing-account-bar"><span className="account-mail" aria-hidden="true">✉</span><span className="account-balance">USD 0.93</span><button type="button" className="account-deposit">DEPOSIT</button><div className="account-menu-wrap"><button type="button" className="account-trigger" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen((open) => !open)}><span className="account-avatar" aria-hidden="true">●</span><strong>{accountLabel}</strong><span className="account-caret" aria-hidden="true">▲</span></button>{accountMenuOpen ? <div className="account-menu"><a href="/admin">My Account</a><a className="selected" href="#picks">Open picks</a><a href="#preferences">Preferences</a><a href="#deposit">Deposit</a><a href="#withdraw">Withdraw</a><button type="button" onClick={() => { window.localStorage.removeItem("dgn-admin-token"); window.localStorage.removeItem("dgn-account-label"); setHasAdminToken(false); setAccountMenuOpen(false); }}>Log out <span aria-hidden="true">⇥</span></button></div> : null}</div></div> : <form className={`landing-auth ${loginBusy ? "is-authenticating" : ""}`} onSubmit={submitLogin} aria-busy={loginBusy}><span className={`connection ${loading ? "is-loading" : error ? "is-error" : ""}`}><i /> {loading ? "Syncing" : error ? "Offline" : "Live API"}</span><div className="login-fields"><label><span className="sr-only">Email or Client ID</span><input type="text" autoComplete="username" value={loginUsername} onChange={(event) => setLoginUsername(event.target.value)} placeholder="Email or Client ID" required /></label><label><span className="sr-only">Password</span><input type="password" autoComplete="current-password" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} placeholder="Password" required /></label><a className="login-help" href="#help">Forgot email or password?</a>{loginError ? <span className="login-error" role="alert">{loginError}</span> : null}</div><a href="/admin">Admin</a><button type="submit" className="landing-login" disabled={loginBusy}>{loginBusy ? <><span className="login-spinner" aria-hidden="true" /> SIGNING IN</> : "LOG IN"}</button><button type="button" className="landing-join">JOIN</button></form>}
       </header>
 
       <nav className="landing-primary-nav" aria-label="Primary navigation"><a className="active" href="#board">◉ <span>BOARD</span></a><a href="#games">◌ <span>LIVE CENTRE</span></a><a href="#markets">◆ <span>MARKETS</span></a><a href="#picks">▣ <span>MY PICKS</span></a><a href="#insights">◈ <span>INSIGHTS</span></a><span className="nav-clock">2026 / NCAA · {activeGames.length} active</span></nav>
