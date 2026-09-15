@@ -2,7 +2,7 @@ const $ = (id) => document.getElementById(id);
 let graphInstance = null;
 
 function setDeployVisual(status, message) {
-  const labels = { ready:'LISTO', failed:'FALLÓ', deploying:'EN PROGRESO', error:'ERROR', unavailable:'NO DISPONIBLE', timeout:'TIMEOUT', idle:'SIN CONSULTAR' };
+  const labels = { ready:'LISTO', failed:'FALLÓ', deploying:'EN PROGRESO', error:'ERROR', unlinked:'NO VINCULADO', unavailable:'NO DISPONIBLE', timeout:'TIMEOUT', idle:'SIN CONSULTAR' };
   const statusEl = $('deploy-status');
   statusEl.textContent = labels[status] || String(status || 'SIN CONSULTAR').toUpperCase();
   statusEl.className = 'deploy-status ' + (status || '');

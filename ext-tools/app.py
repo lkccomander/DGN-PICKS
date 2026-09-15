@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import locale
 import os
 import shutil
 import subprocess
@@ -26,7 +27,8 @@ state_lock = threading.Lock()
 def run_command(args: list[str], cwd: Path = ROOT, timeout: int = 120) -> tuple[int, str]:
     try:
         completed = subprocess.run(
-            args, cwd=cwd, text=True, stdout=subprocess.PIPE,
+            args, cwd=cwd, text=True, encoding=locale.getpreferredencoding(False), errors="replace",
+            stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT, timeout=timeout, check=False,
         )
         return completed.returncode, completed.stdout.strip()
@@ -34,6 +36,16 @@ def run_command(args: list[str], cwd: Path = ROOT, timeout: int = 120) -> tuple[
         return 127, f"Command not found: {args[0]}"
     except subprocess.TimeoutExpired:
         return 124, f"Timed out after {timeout}s: {' '.join(args)}"
+
+
+def clean_cli_text(value: str) -> str:
+    """Repair common UTF-8/Windows console mojibake without hiding CLI errors."""
+    if "â" in value or "Ã" in value:
+        try:
+            return value.encode("latin1").decode("utf-8")
+        except UnicodeError:
+            pass
+    return value
 
 
 def now() -> str:
@@ -52,7 +64,13 @@ def railway_status() -> dict[str, Any]:
     code, output = run_command(
         [railway, "deployment", "list", "--json", "--limit", "1"], timeout=30
     )
+    output = clean_cli_text(output)
     if code:
+        if "no linked project found" in output.lower() or "railway link" in output.lower():
+            return {
+                "status": "unlinked",
+                "message": "Railway no está vinculado a este repositorio. Ejecuta railway link en PowerShell.",
+            }
         return {"status": "error", "message": output or "Railway no pudo consultar deployments."}
     try:
         payload = json.loads(output)
