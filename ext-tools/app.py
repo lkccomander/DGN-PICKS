@@ -12,10 +12,17 @@ from pathlib import Path
 from typing import Any
 
 from flask import Flask, jsonify, render_template, request
+from configuration import configuration_api, hydrate_runtime_environment
+
+hydrate_runtime_environment()
+
+from users_api import users_api
 
 ROOT = Path(__file__).resolve().parents[1]
 GRAPH_PATH = ROOT / "graphify-out" / "graph.json"
 app = Flask(__name__)
+app.register_blueprint(users_api)
+app.register_blueprint(configuration_api)
 state: dict[str, Any] = {
     "git": {"running": False, "output": "", "error": ""},
     "deploy": {"running": False, "status": "idle", "message": "", "updated_at": None},

@@ -1,0 +1,35 @@
+<section id="configuration-pane" class="tab-pane fade" aria-labelledby="configuration-tab">
+  <div class="card"><div class="card-body p-4">
+    <div class="section-heading mb-4"><span class="icon-tile blue"><i class="bi bi-sliders"></i></span><div><h2 class="h5 mb-1">Configuración</h2><p class="small text-medium-emphasis mb-0">Conexión desktop y variables de la API local.</p></div></div>
+    <p id="configuration-message" class="configuration-notice" role="status" aria-live="polite"></p>
+    <form id="desktop-settings-form" class="configuration-section">
+      <h3 class="h6">Desktop</h3>
+      <div class="configuration-grid">
+        <label class="form-label">URL de API<input id="config-api-url" class="form-control" type="url" inputmode="url" placeholder="https://api.example.com" required></label>
+        <label class="form-label">Puerto de consola<input id="config-ops-port" class="form-control" type="number" min="1024" max="65535" required></label>
+        <label class="form-label">Comando Graphify<input id="config-graphify-command" class="form-control" required></label>
+        <label class="form-check-label config-checkbox"><input id="config-ops-debug" class="form-check-input me-2" type="checkbox">Activar depuración de desktop</label>
+      </div>
+      <div class="d-flex flex-wrap gap-2 mt-3"><button id="configuration-save" class="btn btn-primary" type="submit"><i class="bi bi-save me-2"></i>Guardar configuración</button><button id="configuration-test-connection" class="btn btn-outline-light" type="button"><i class="bi bi-activity me-2"></i>Probar conexión</button></div>
+      <p class="small text-medium-emphasis mt-2 mb-0">Un cambio de puerto requiere reiniciar la app desktop.</p>
+    </form>
+    <form id="api-settings-form" class="configuration-section mt-4">
+      <h3 class="h6">API local</h3>
+      <p class="small text-medium-emphasis">Los secretos guardados no se muestran. Déjalos vacíos para conservarlos.</p>
+      <div class="configuration-grid">
+        <label class="form-label">URL de base de datos<input id="config-database-url" class="form-control" type="password" autocomplete="new-password" placeholder="Configurada o vacía"><small id="config-database-url-state" class="configuration-secret-state"></small></label>
+        <label class="form-label">Secreto de firma<input id="config-auth-secret" class="form-control" type="password" autocomplete="new-password" placeholder="Configurado o vacío"><small id="config-auth-secret-state" class="configuration-secret-state"></small></label>
+        <label class="form-label">Usuario administrador<input id="config-auth-username" class="form-control" autocomplete="username"></label>
+        <label class="form-label">Contraseña de administrador<input id="config-auth-password" class="form-control" type="password" autocomplete="new-password" placeholder="Configurada o vacía"><small id="config-auth-password-state" class="configuration-secret-state"></small></label>
+        <label class="form-label">Rol<select id="config-auth-role" class="form-select"><option value="admin">admin</option><option value="editor">editor</option></select></label>
+        <label class="form-label">Orígenes CORS<input id="config-cors-origins" class="form-control" placeholder="https://app.example.com"></label>
+        <label class="form-label">Modo de escritura<select id="config-write-mode" class="form-select"><option value="disabled">disabled</option><option value="development">development</option></select></label>
+        <label class="form-label">Clave de escritura<input id="config-write-key" class="form-control" type="password" autocomplete="new-password" placeholder="Configurada o vacía"><small id="config-write-key-state" class="configuration-secret-state"></small></label>
+      </div>
+    </form>
+    <div class="configuration-section mt-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2"><div><h3 class="h6 mb-1">API local</h3><p id="local-api-status" class="small text-medium-emphasis mb-0">Sin proceso administrado.</p></div><div class="d-flex gap-2"><button id="local-api-start" class="btn btn-primary" type="button"><i class="bi bi-play-fill me-2"></i>Iniciar API local</button><button id="local-api-stop" class="btn btn-outline-danger" type="button" disabled><i class="bi bi-stop-fill me-2"></i>Detener API local</button></div></div>
+      <pre id="configuration-process-output" class="configuration-process-output mt-3">Sin salida de proceso.</pre>
+    </div>
+  </div></div>
+</section>

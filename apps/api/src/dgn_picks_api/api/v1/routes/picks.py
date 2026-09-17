@@ -5,7 +5,7 @@ from fastapi.params import Query as QueryParam
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from dgn_picks_api.api.v1.dependencies import get_db, require_authenticated_write_access
+from dgn_picks_api.api.v1.dependencies import get_db, require_authenticated_write_access, require_user_or_editor_access
 from dgn_picks_api.api.v1.schemas import PickCreate, PickGrade, PickResponse, PickUpdate
 from dgn_picks_api.domains.picks.models import Pick
 from dgn_picks_api.domains.picks.service import delete_pending_pick, create_pick, grade_pick, update_pending_pick
@@ -36,8 +36,10 @@ def list_picks(
 
 
 @router.post("", response_model=PickResponse, status_code=status.HTTP_201_CREATED,
-            dependencies=[Depends(require_authenticated_write_access)])
-def post_pick(payload: PickCreate, db: Session = Depends(get_db)) -> Pick:
+            dependencies=[Depends(require_user_or_editor_access)])
+def post_pick(payload: PickCreate, db: Session = Depends(get_db), identity: dict[str, str] = Depends(require_user_or_editor_access)) -> Pick:
+    if identity["role"] == "user" and identity["username"] != payload.user:
+        raise HTTPException(status_code=403, detail="Users may only create their own picks")
     try:
         return create_pick(db, payload)
     except ValueError as exc:
@@ -53,8 +55,10 @@ def get_pick(pick_id: int, db: Session = Depends(get_db)) -> Pick:
 
 
 @router.patch("/{pick_id}", response_model=PickResponse,
-             dependencies=[Depends(require_authenticated_write_access)])
-def patch_pick(pick_id: int, payload: PickUpdate, db: Session = Depends(get_db)) -> Pick:
+             dependencies=[Depends(require_user_or_editor_access)])
+def patch_pick(pick_id: int, payload: PickUpdate, db: Session = Depends(get_db), identity: dict[str, str] = Depends(require_user_or_editor_access)) -> Pick:
+    if identity["role"] == "user" and identity["username"] != payload.user:
+        raise HTTPException(status_code=403, detail="Users may only edit their own picks")
     try:
         return update_pending_pick(db, pick_id, payload)
     except ValueError as exc:
@@ -64,8 +68,10 @@ def patch_pick(pick_id: int, payload: PickUpdate, db: Session = Depends(get_db))
 
 
 @router.delete("/{pick_id}", status_code=status.HTTP_204_NO_CONTENT,
-              dependencies=[Depends(require_authenticated_write_access)])
-def remove_pick(pick_id: int, user: str = Query(..., min_length=1, max_length=32), db: Session = Depends(get_db)) -> None:
+              dependencies=[Depends(require_user_or_editor_access)])
+def remove_pick(pick_id: int, user: str = Query(..., min_length=1, max_length=32), db: Session = Depends(get_db), identity: dict[str, str] = Depends(require_user_or_editor_access)) -> None:
+    if identity["role"] == "user" and identity["username"] != user:
+        raise HTTPException(status_code=403, detail="Users may only delete their own picks")
     try:
         delete_pending_pick(db, pick_id, user)
     except ValueError as exc:

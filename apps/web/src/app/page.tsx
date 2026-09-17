@@ -14,7 +14,6 @@ import {
   type Team,
 } from "@/lib/dashboard-api";
 
-const ACTIVE_USER = "gato";
 const DEVELOPMENT_PICK_WRITES = process.env.NEXT_PUBLIC_ENABLE_DEV_PICK_WRITES === "true";
 
 function browserAuthHeaders(): Record<string, string> {
@@ -41,6 +40,7 @@ function lineLabel(pick: Pick) {
 }
 
 export default function Home() {
+  const [activeUser, setActiveUser] = useState("gato");
   const [data, setData] = useState<DashboardData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,20 +72,21 @@ export default function Home() {
     setLoading(true);
     setError(null);
     try {
-      setData(await fetchDashboardData(ACTIVE_USER, signal));
+      setData(await fetchDashboardData(activeUser, signal));
     } catch (requestError) {
       if (requestError instanceof DOMException && requestError.name === "AbortError") return;
       setError(requestError instanceof Error ? requestError.message : "Unable to reach the picks API.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [activeUser]);
 
   useEffect(() => {
     setHasAdminToken(Boolean(window.localStorage.getItem("dgn-admin-token")));
     setAccountLabel(window.localStorage.getItem("dgn-account-label") || "AC254187");
+    setActiveUser(window.localStorage.getItem("dgn-active-user") || "gato");
     const controller = new AbortController();
-    fetchDashboardData(ACTIVE_USER, controller.signal)
+    fetchDashboardData(activeUser, controller.signal)
       .then(setData)
       .catch((requestError: unknown) => {
         if (requestError instanceof DOMException && requestError.name === "AbortError") return;
@@ -93,7 +94,7 @@ export default function Home() {
       })
       .finally(() => setLoading(false));
     return () => controller.abort();
-  }, []);
+  }, [activeUser]);
 
   const gamesById = useMemo(() => new Map((data?.games ?? []).map((game) => [game.id, game])), [data?.games]);
   const teamsById = useMemo(() => new Map((data?.teams ?? []).map((team) => [team.id, team])), [data?.teams]);
@@ -155,7 +156,7 @@ export default function Home() {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json", ...browserAuthHeaders() },
         body: JSON.stringify({
-          user: ACTIVE_USER,
+          user: activeUser,
           game_id: pickDraft.gameId,
           market_id: pickDraft.marketId,
           selection_id: pickDraft.selectionId,
@@ -175,15 +176,15 @@ export default function Home() {
     } finally {
       setSavingPick(false);
     }
-  }, [loadDashboard, pickDraft, pickNotes, stakeUnits]);
+  }, [activeUser, loadDashboard, pickDraft, pickNotes, stakeUnits]);
   const mutatePick = useCallback(async (pick: Pick, method: "PATCH" | "DELETE", body?: Record<string, unknown>) => {
     setPickError(null);
     setSavingPick(true);
     try {
-      const response = await fetch(`/api/development/picks/${pick.id}${method === "DELETE" ? `?user=${ACTIVE_USER}` : ""}`, {
+      const response = await fetch(`/api/development/picks/${pick.id}${method === "DELETE" ? `?user=${activeUser}` : ""}`, {
         method,
         headers: { "Content-Type": "application/json", Accept: "application/json", ...browserAuthHeaders() },
-        ...(body ? { body: JSON.stringify({ user: ACTIVE_USER, ...body }) } : {}),
+        ...(body ? { body: JSON.stringify({ user: activeUser, ...body }) } : {}),
       });
       if (!response.ok) {
         const failure = await response.json().catch(() => null) as { detail?: string } | null;
@@ -196,7 +197,7 @@ export default function Home() {
     } finally {
       setSavingPick(false);
     }
-  }, [loadDashboard]);
+  }, [activeUser, loadDashboard]);
   const submitEdit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!editingPick) return;
@@ -222,6 +223,8 @@ export default function Home() {
       const signedInAs = body.username || loginUsername.trim() || "AC254187";
       window.localStorage.setItem("dgn-admin-token", body.access_token);
       window.localStorage.setItem("dgn-account-label", signedInAs.toUpperCase());
+      window.localStorage.setItem("dgn-active-user", signedInAs);
+      setActiveUser(signedInAs);
       setAccountLabel(signedInAs.toUpperCase());
       setHasAdminToken(true);
       setLoginPassword("");
@@ -239,7 +242,7 @@ export default function Home() {
       <div className="stripe" aria-hidden="true" />
       <header className="landing-topbar">
         <a className="landing-brand" href="#board" aria-label="DGN-PICKS home"><span>DGN<span>-</span>PICKS</span><small>college football intelligence</small></a>
-        {hasAdminToken ? <div className="landing-account-bar"><span className="account-mail" aria-hidden="true">✉</span><span className="account-balance">USD 0.93</span><button type="button" className="account-deposit">DEPOSIT</button><div className="account-menu-wrap"><button type="button" className="account-trigger" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen((open) => !open)}><span className="account-avatar" aria-hidden="true">●</span><strong>{accountLabel}</strong><span className="account-caret" aria-hidden="true">▲</span></button>{accountMenuOpen ? <div className="account-menu"><a href="/account">My Account</a><a className="selected" href="#picks">Open picks</a><a href="#preferences">Preferences</a><a href="#deposit">Deposit</a><a href="#withdraw">Withdraw</a><button type="button" onClick={() => { window.localStorage.removeItem("dgn-admin-token"); window.localStorage.removeItem("dgn-account-label"); setHasAdminToken(false); setAccountMenuOpen(false); }}>Log out <span aria-hidden="true">⇥</span></button></div> : null}</div></div> : <form className={`landing-auth ${loginBusy ? "is-authenticating" : ""}`} onSubmit={submitLogin} aria-busy={loginBusy}><span className={`connection ${loading ? "is-loading" : error ? "is-error" : ""}`}><i /> {loading ? "Syncing" : error ? "Offline" : "Live API"}</span><div className="login-fields"><label><span className="sr-only">Email or Client ID</span><input type="text" autoComplete="username" value={loginUsername} onChange={(event) => setLoginUsername(event.target.value)} placeholder="Email or Client ID" required /></label><label><span className="sr-only">Password</span><input type="password" autoComplete="current-password" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} placeholder="Password" required /></label><a className="login-help" href="#help">Forgot email or password?</a>{loginError ? <span className="login-error" role="alert">{loginError}</span> : null}</div><a href="/admin">Admin</a><button type="submit" className="landing-login" disabled={loginBusy}>{loginBusy ? <><span className="login-spinner" aria-hidden="true" /> SIGNING IN</> : "LOG IN"}</button><a className="landing-join" href="/join">JOIN</a></form>}
+        {hasAdminToken ? <div className="landing-account-bar"><span className="account-mail" aria-hidden="true">✉</span><span className="account-balance">USD 0.93</span><button type="button" className="account-deposit">DEPOSIT</button><div className="account-menu-wrap"><button type="button" className="account-trigger" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen((open) => !open)}><span className="account-avatar" aria-hidden="true">●</span><strong>{accountLabel}</strong><span className="account-caret" aria-hidden="true">▲</span></button>{accountMenuOpen ? <div className="account-menu"><a href="/account">My Account</a><a className="selected" href="#picks">Open picks</a><a href="#preferences">Preferences</a><a href="#deposit">Deposit</a><a href="#withdraw">Withdraw</a><button type="button" onClick={() => { window.localStorage.removeItem("dgn-admin-token"); window.localStorage.removeItem("dgn-account-label"); window.localStorage.removeItem("dgn-active-user"); setHasAdminToken(false); setActiveUser("gato"); setAccountMenuOpen(false); }}>Log out <span aria-hidden="true">⇥</span></button></div> : null}</div></div> : <form className={`landing-auth ${loginBusy ? "is-authenticating" : ""}`} onSubmit={submitLogin} aria-busy={loginBusy}><span className={`connection ${loading ? "is-loading" : error ? "is-error" : ""}`}><i /> {loading ? "Syncing" : error ? "Offline" : "Live API"}</span><div className="login-fields"><label><span className="sr-only">Email or Client ID</span><input type="text" autoComplete="username" value={loginUsername} onChange={(event) => setLoginUsername(event.target.value)} placeholder="Email or Client ID" required /></label><label><span className="sr-only">Password</span><input type="password" autoComplete="current-password" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} placeholder="Password" required /></label><a className="login-help" href="#help">Forgot email or password?</a>{loginError ? <span className="login-error" role="alert">{loginError}</span> : null}</div><a href="/admin">Admin</a><button type="submit" className="landing-login" disabled={loginBusy}>{loginBusy ? <><span className="login-spinner" aria-hidden="true" /> SIGNING IN</> : "LOG IN"}</button><a className="landing-join" href="/join">JOIN</a></form>}
       </header>
 
       <nav className="landing-primary-nav" aria-label="Primary navigation"><a className="active" href="#board">◉ <span>BOARD</span></a><a href="#games">◌ <span>LIVE CENTRE</span></a><a href="#markets">◆ <span>MARKETS</span></a><a href="#picks">▣ <span>MY PICKS</span></a><a href="#insights">◈ <span>INSIGHTS</span></a><span className="nav-clock">2026 / NCAA · {activeGames.length} active</span></nav>
@@ -262,7 +265,7 @@ export default function Home() {
 
             <section className="below-board" id="games"><div className="slate-panel"><div className="board-section-head"><div><span className="section-kicker">THE SLATE</span><h2>Games</h2></div><span className="board-count">{visibleGames.length.toString().padStart(2, "0")}</span></div><div className="game-filter" role="group" aria-label="Filter games"><button type="button" aria-pressed={gameFilter === "all"} className={gameFilter === "all" ? "selected" : ""} onClick={() => setGameFilter("all")}>All</button><button type="button" aria-pressed={gameFilter === "scheduled"} className={gameFilter === "scheduled" ? "selected" : ""} onClick={() => setGameFilter("scheduled")}>Scheduled</button><button type="button" aria-pressed={gameFilter === "live"} className={gameFilter === "live" ? "selected" : ""} onClick={() => setGameFilter("live")}>Live</button><button type="button" aria-pressed={gameFilter === "final"} className={gameFilter === "final" ? "selected" : ""} onClick={() => setGameFilter("final")}>Final</button></div>{visibleGames.length ? <div className="game-list">{visibleGames.slice(0, 6).map((game) => <GameRow key={game.id} game={game} teamsById={teamsById} onSelect={setSelectedGameId} />)}</div> : <PanelEmpty text={data.games.length ? "No games match this filter." : "No games are available for this board."} />}</div><aside className="bet-slip" id="picks"><div className="bet-slip-tabs"><span className="active">BET SLIP</span><span>MY PICKS</span></div><div className="bet-slip-body"><span className="slip-icon">▤</span><h3>{visiblePicks.length ? `${visiblePicks.length} tracked picks` : "Your board is clear"}</h3><p>{visiblePicks.length ? "Your current card is ready to review." : "Track a selection to build your card."}</p><a href="#markets">Browse lines →</a></div><div className="slip-summary"><span>Pending</span><strong>{summary.pending} · {summary.total_units_risked.toFixed(1)}u</strong></div></aside></section>
 
-            <section className="picks-drawer" id="picks-detail"><div className="board-section-head"><div><span className="section-kicker">YOUR CARD · GATO</span><h2>Tracked picks</h2></div><span className="board-count">{(visiblePicks.length + visibleDefinitions.length).toString().padStart(2, "0")}</span></div><div className="pick-tools"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search picks" aria-label="Search picks" /><select value={resultFilter} onChange={(event) => setResultFilter(event.target.value as ResultFilter)} aria-label="Filter pick results"><option value="all">All results</option><option value="pending">Pending</option><option value="win">Wins</option><option value="loss">Losses</option><option value="push">Pushes</option><option value="void">Voids</option></select></div>{visiblePicks.length || visibleDefinitions.length ? <div className="pick-list">{visiblePicks.map((pick) => <PickRow key={pick.id} pick={pick} game={gamesById.get(pick.game_id)} teamsById={teamsById} canManage={DEVELOPMENT_PICK_WRITES || hasAdminToken} onEdit={(value) => { setEditingPick(value); setEditStake(value.stake_units.toString()); setEditNotes(value.notes ?? ""); setPickError(null); }} onDelete={(value) => { if (window.confirm("Delete this pending pick?")) void mutatePick(value, "DELETE"); }} onGrade={(value, result) => void mutatePick(value, "PATCH", { result })} />)}{visibleDefinitions.map((definition) => <SeedDefinitionRow key={definition.number} definition={definition} />)}</div> : <PanelEmpty text={data.picks.length ? "No picks match the current filters." : "No picks have been recorded for this user yet."} />}</section>
+            <section className="picks-drawer" id="picks-detail"><div className="board-section-head"><div><span className="section-kicker">YOUR CARD · {activeUser.toUpperCase()}</span><h2>Tracked picks</h2></div><span className="board-count">{(visiblePicks.length + visibleDefinitions.length).toString().padStart(2, "0")}</span></div><div className="pick-tools"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search picks" aria-label="Search picks" /><select value={resultFilter} onChange={(event) => setResultFilter(event.target.value as ResultFilter)} aria-label="Filter pick results"><option value="all">All results</option><option value="pending">Pending</option><option value="win">Wins</option><option value="loss">Losses</option><option value="push">Pushes</option><option value="void">Voids</option></select></div>{visiblePicks.length || visibleDefinitions.length ? <div className="pick-list">{visiblePicks.map((pick) => <PickRow key={pick.id} pick={pick} game={gamesById.get(pick.game_id)} teamsById={teamsById} canManage={DEVELOPMENT_PICK_WRITES || hasAdminToken} onEdit={(value) => { setEditingPick(value); setEditStake(value.stake_units.toString()); setEditNotes(value.notes ?? ""); setPickError(null); }} onDelete={(value) => { if (window.confirm("Delete this pending pick?")) void mutatePick(value, "DELETE"); }} onGrade={(value, result) => void mutatePick(value, "PATCH", { result })} />)}{visibleDefinitions.map((definition) => <SeedDefinitionRow key={definition.number} definition={definition} />)}</div> : <PanelEmpty text={data.picks.length ? "No picks match the current filters." : "No picks have been recorded for this user yet."} />}</section>
           </>
           : null}
         </div>

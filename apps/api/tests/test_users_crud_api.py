@@ -87,3 +87,33 @@ def test_development_write_boundary_requires_matching_key(monkeypatch):
         require_development_write_access("wrong")
     assert wrong.value.status_code == 403
     require_development_write_access("local-secret")
+
+def test_update_duplicate_email_rolls_back(session):
+    first = create_user(UserCreate(username="first", display_name="First", email="first@example.com"), session)
+    second = create_user(UserCreate(username="second", display_name="Second", email="second@example.com"), session)
+    with pytest.raises(HTTPException) as duplicate:
+        update_user(second.id, UserUpdate(email=first.email.upper()), session)
+    assert duplicate.value.status_code == 409
+    assert get_user(second.id, session).email == "second@example.com"
+    assert update_user(second.id, UserUpdate(display_name="Still usable"), session).display_name == "Still usable"
+
+
+def test_profile_clear_preserves_password_and_password_can_change(session):
+    from dgn_picks_api.domains.users.passwords import verify_password
+    user = create_user(UserCreate(username="profile", display_name="Profile", email="p@example.com", country="GT", password="password-one"), session)
+    original_hash = user.password_hash
+    updated = update_user(user.id, UserUpdate(email=None, country=None), session)
+    assert updated.email is None and updated.country is None
+    assert updated.password_hash == original_hash
+    updated = update_user(user.id, UserUpdate(password="password-two", active=False), session)
+    assert verify_password("password-two", updated.password_hash)
+    assert updated.active is False
+
+
+@pytest.mark.parametrize("field", ["display_name", "active"])
+def test_update_rejects_null_required_fields(session, field):
+    user = create_user(UserCreate(username="required", display_name="Required"), session)
+    with pytest.raises(HTTPException) as invalid:
+        update_user(user.id, UserUpdate(**{field: None}), session)
+    assert invalid.value.status_code == 422
+    assert get_user(user.id, session).display_name == "Required"

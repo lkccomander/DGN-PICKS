@@ -1,6 +1,6 @@
 # DGN-PICKS — session handoff
 
-Updated: 2026-09-13 UTC — authenticated admin catalog deployed; API/web smoke checks pass; Playwright remains environment-blocked.
+Updated: 2026-09-16 UTC — account registration/login and authenticated user administration implemented; deployment validation remains pending.
 Global project checklist and session handoff.
 
 ## Workflow and deployments
@@ -71,12 +71,15 @@ Global project checklist and session handoff.
 - [x] Protect catalog and pick mutations with authenticated editor/admin access when auth is configured.
 - [x] Add authenticated `/admin` console for teams, players, games, markets, and selections.
 - [x] Add selection listing endpoint and regenerate the API client.
-- [ ] Configure production auth variables in Railway; the auth route is deployed, but live mutations currently return `403 Development write access is disabled` because the variables are absent.
+- [x] Add persisted user credentials, public registration/login, and user-role sessions.
+- [x] Add a Users tab to `/admin` and connect `/join` to production registration.
+- [x] Restrict registered users to their own pending pick mutations.
+- [ ] Verify production auth variables are present on the Railway API service and effective after redeploy.
 - [ ] Verify an authenticated live mutation with a supplied operator credential.
 
 ## Current status
 
-- `main` is deployed successfully through commit `cc00864` to both Railway services; the prior pick-management commit was `02da872`.
+- The last previously verified deployment was commit `cc00864`; the account-authentication changes in this worktree still require commit/deploy verification.
 - API health is live at `/api/health`; production serves 13 Gato definitions,
   six materialized picks, and Malakai Toney as `unresolved` (without inventing
   an Over/Under side).
@@ -85,11 +88,11 @@ Global project checklist and session handoff.
   dashboard responds HTTP 200.
 - The API test suite passes locally (`65 passed`); the Next.js production build
   passes; the Alembic chain produces PostgreSQL SQL through revision
-  `0007_remove_malakai_seed_pick`.
+  `0008_user_account_credentials`.
 - Production mutation routes accept signed bearer sessions for `admin` and
-  `editor` roles when the Railway auth variables are configured; until then,
-  the safe development fallback remains disabled in production and the browser
-  does not receive the API write key.
+  `editor` roles when the Railway auth variables are configured; the browser
+  never receives the API write key.
+- User passwords are stored as scrypt hashes and are never returned by the API.
 
 ## Active task: compact sportsbook-style frontend
 
@@ -112,8 +115,8 @@ Completed:
 ## Next steps
 
 1. Run Playwright through a working Windows Node/WSL2 environment with the documented local API/PostgreSQL stack.
-2. Verify one authenticated live catalog mutation with the operator credential, without recording the secret.
-3. Run real desktop/mobile viewport checks against the deployed frontend, including `/admin`.
+2. Deploy migration `0008_user_account_credentials` and verify public registration plus one authenticated live catalog mutation with the operator credential, without recording the secret.
+3. Run real desktop/mobile viewport checks against the deployed frontend, including `/join` and the Users tab in `/admin`.
 
 ## Known follow-up work
 

@@ -7,6 +7,7 @@ from dgn_picks_api.api.v1.dependencies import get_db, require_authenticated_writ
 from dgn_picks_api.api.v1.schemas import UserCreate, UserResponse, UserUpdate
 from dgn_picks_api.domains.picks.models import Pick
 from dgn_picks_api.domains.users.models import User
+from dgn_picks_api.domains.users.passwords import hash_password
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -35,13 +36,16 @@ def get_user(user_id: int, db: Session = Depends(get_db)) -> User:
     dependencies=[Depends(require_authenticated_write_access)],
 )
 def create_user(payload: UserCreate, db: Session = Depends(get_db)) -> User:
-    user = User(**payload.model_dump())
+    values = payload.model_dump(exclude={"password"})
+    if values.get("email"):
+        values["email"] = values["email"].lower()
+    user = User(**values, password_hash=hash_password(payload.password) if payload.password else None)
     db.add(user)
     try:
         db.commit()
     except IntegrityError as exc:
         db.rollback()
-        raise HTTPException(status_code=409, detail="Username already exists") from exc
+        raise HTTPException(status_code=409, detail="Username or email already exists") from exc
     db.refresh(user)
     return user
 
@@ -55,9 +59,21 @@ def update_user(user_id: int, payload: UserUpdate, db: Session = Depends(get_db)
     user = db.get(User, user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    for field, value in payload.model_dump(exclude_unset=True).items():
+    changes = payload.model_dump(exclude_unset=True)
+    if any(changes.get(field) is None for field in ("display_name", "active") if field in changes):
+        raise HTTPException(status_code=422, detail="Display name and active cannot be null")
+    for field, value in changes.items():
+        if field == "password":
+            user.password_hash = hash_password(value) if value else None
+            continue
+        if field == "email" and value:
+            value = value.lower()
         setattr(user, field, value)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="Username or email already exists") from exc
     db.refresh(user)
     return user
 

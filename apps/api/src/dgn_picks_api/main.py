@@ -29,7 +29,7 @@ app.add_middleware(
     allow_origins=cors_origins,
     allow_credentials=False,
     allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Accept", "Content-Type", "X-DGN-Write-Key"],
+    allow_headers=["Accept", "Authorization", "Content-Type", "X-DGN-Write-Key"],
 )
 
 app.include_router(health_router, prefix="/api")

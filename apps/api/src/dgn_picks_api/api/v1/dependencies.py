@@ -47,3 +47,14 @@ def require_authenticated_write_access(
     identity = current_identity(authorization)
     if identity["role"] not in {"admin", "editor"}:
         raise HTTPException(status_code=403, detail="Editor role required")
+
+
+def require_user_or_editor_access(
+    authorization: str | None = Header(default=None),
+) -> dict[str, str]:
+    if not auth_configured():
+        raise HTTPException(status_code=503, detail="Authentication is not configured")
+    identity = current_identity(authorization)
+    if identity["role"] not in {"user", "admin", "editor"}:
+        raise HTTPException(status_code=403, detail="Authenticated user required")
+    return identity

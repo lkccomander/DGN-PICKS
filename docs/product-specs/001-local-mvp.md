@@ -33,7 +33,7 @@ It is **not** a sportsbook and does not accept real-money wagers, deposits, with
 ## 4. Non-goals
 - No real-money wagering.
 - No monetary value, cash-out, transfer, or redemption for virtual tokens.
-- No production auth in phase 1.
+- Production account authentication is included in the current account/admin milestone; email verification and password reset remain out of scope.
 - No deployment in phase 1.
 - No ML picks engine.
 - No live provider required initially.
@@ -276,6 +276,8 @@ Version under `/api/v1`.
 ```text
 GET    /api/v1/users
 GET    /api/v1/users/{user_id}
+POST   /api/v1/auth/register
+POST   /api/v1/auth/login
 GET    /api/v1/games
 GET    /api/v1/games/{game_id}
 GET    /api/v1/games/{game_id}/markets
@@ -460,6 +462,8 @@ Clean bootstrap, automated tests, E2E, docs sync.
 - Lint/tests/E2E pass.
 
 ## 21. Decision Log
+- 2026-09-17: Ops Console configuration persists only user-scoped desktop and local API environment variables; secrets are replace-only and never returned to the UI. Local API lifecycle controls manage only processes spawned by the console.
+- 2026-09-17: desktop Ops Console and web admin share the user CRUD API and admin/editor authorization. Usernames remain immutable after creation; users with picks must be deactivated instead of deleted.
 - 2026-09-07: modular monorepo; avoid microservices.
 - 2026-09-07: FixtureProvider first; live vendor deferred.
 - 2026-09-07: append-oriented odds history.

@@ -80,9 +80,11 @@ Available route shapes:
 
 The development seed endpoint is idempotent and reports unresolved input. The Malakai Toney 72.5 receiving-yards definition remains unresolved because its Over/Under side was not supplied; it must not be guessed.
 
-## Authentication and admin catalog
+## Authentication, accounts, and admin catalog
 
-Set `DGN_AUTH_SECRET`, `DGN_AUTH_USERNAME`, and `DGN_AUTH_PASSWORD` in the API environment to enable signed bearer sessions. `DGN_AUTH_ROLE` may be `admin`, `editor`, or `viewer`; admin/editor roles can mutate catalog and pick resources, while viewer is read-only. The web admin console is available at `/admin` and manages teams, players, games, markets, and selections through the authenticated API proxy.
+Set `DGN_AUTH_SECRET`, `DGN_AUTH_USERNAME`, and `DGN_AUTH_PASSWORD` in the API environment to enable signed bearer sessions. `DGN_AUTH_ROLE` may be `admin`, `editor`, or `viewer`; admin/editor roles can mutate catalog and user resources, while viewer is read-only. Public account registration is available at `/join`; registered users can log in with their client ID or email and manage only their own pending picks. The web admin console is available at `/admin` and includes a Users tab plus teams, players, games, markets, and selections through the authenticated API proxy.
+
+User passwords are stored as scrypt hashes and are never returned by the API. The registration endpoint is `POST /api/v1/auth/register`; account login uses `POST /api/v1/auth/login`. Email verification and password reset delivery are not yet included.
 
 ## Validation and handoff
 

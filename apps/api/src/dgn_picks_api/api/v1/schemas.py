@@ -13,25 +13,47 @@ class ORMModel(BaseModel):
 class UserResponse(ORMModel):
     id: int
     username: str
+    email: str | None = None
     display_name: str
+    country: str | None = None
     active: bool
     created_at: datetime
 
 
 class UserCreate(BaseModel):
     username: str = Field(min_length=1, max_length=32)
+    email: str | None = Field(default=None, max_length=320)
     display_name: str = Field(min_length=1, max_length=80)
+    country: str | None = Field(default=None, max_length=64)
+    password: str | None = Field(default=None, min_length=8, max_length=256)
     active: bool = True
 
 
 class UserUpdate(BaseModel):
+    email: str | None = Field(default=None, max_length=320)
     display_name: str | None = Field(default=None, min_length=1, max_length=80)
+    country: str | None = Field(default=None, max_length=64)
+    password: str | None = Field(default=None, min_length=8, max_length=256)
     active: bool | None = None
 
 
 class LoginRequest(BaseModel):
     username: str = Field(min_length=1, max_length=64)
     password: str = Field(min_length=1, max_length=256)
+
+
+class RegistrationRequest(BaseModel):
+    username: str = Field(min_length=1, max_length=32)
+    email: str = Field(min_length=3, max_length=320)
+    display_name: str = Field(min_length=1, max_length=80)
+    country: str | None = Field(default=None, max_length=64)
+    password: str = Field(min_length=8, max_length=256)
+
+
+class RegistrationResponse(BaseModel):
+    user: "UserResponse"
+    access_token: str
+    token_type: str = "bearer"
 
 
 class AuthResponse(BaseModel):
