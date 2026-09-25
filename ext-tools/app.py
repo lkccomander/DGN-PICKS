@@ -21,6 +21,8 @@ from users_api import users_api
 ROOT = Path(__file__).resolve().parents[1]
 GRAPH_PATH = ROOT / "graphify-out" / "graph.json"
 app = Flask(__name__)
+from security import install_desktop_boundary
+install_desktop_boundary(app)
 app.register_blueprint(users_api)
 app.register_blueprint(configuration_api)
 state: dict[str, Any] = {

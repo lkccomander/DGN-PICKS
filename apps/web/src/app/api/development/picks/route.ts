@@ -10,7 +10,7 @@ type PickRequest = {
 };
 
 function writesEnabled(request: Request) {
-  return Boolean(request.headers.get("authorization")) || (process.env.DGN_WEB_WRITE_MODE === "development" && Boolean(process.env.DGN_API_WRITE_KEY));
+  return Boolean(request.headers.get("authorization")?.startsWith("Bearer "));
 }
 
 function validPickRequest(value: PickRequest) {
@@ -28,7 +28,7 @@ function validPickRequest(value: PickRequest) {
 
 export async function POST(request: Request) {
   if (!writesEnabled(request)) {
-    return NextResponse.json({ detail: "Development pick writes are disabled" }, { status: 404 });
+    return NextResponse.json({ detail: "Sign in to manage picks" }, { status: 401 });
   }
 
   let payload: PickRequest;
@@ -48,10 +48,12 @@ export async function POST(request: Request) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      ...(authorization ? { Authorization: authorization } : { "X-DGN-Write-Key": process.env.DGN_API_WRITE_KEY as string }),
+      Authorization: authorization!,
     },
     body: JSON.stringify(payload),
     cache: "no-store",
+    signal: AbortSignal.timeout(15000),
+    redirect: "error",
   });
   const body = await response.text();
   return new NextResponse(body, {

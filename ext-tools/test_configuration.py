@@ -11,6 +11,7 @@ from app import app
 class ConfigurationTests(unittest.TestCase):
     def setUp(self):
         self.client = app.test_client()
+        self.client.environ_base["HTTP_X_DGN_CSRF"] = app.config["DESKTOP_CSRF_TOKEN"]
         self.values = {
             "DGN_OPS_API_URL": "https://api.example.test",
             "DGN_OPS_PORT": "5178",
@@ -69,17 +70,17 @@ class ConfigurationTests(unittest.TestCase):
         process.poll.return_value = None
         process.stdout = io.StringIO("")
         popen.return_value = process
-        started = self.client.post("/api/configuration/local-api/start")
+        started = self.client.post("/api/configuration/local-api/start", json={})
         self.assertEqual(started.status_code, 202)
         self.assertEqual(popen.call_args.args[0][:4], [configuration.api_python(), "-m", "uvicorn", "dgn_picks_api.main:app"])
         self.assertFalse(popen.call_args.kwargs["shell"])
-        stopped = self.client.post("/api/configuration/local-api/stop")
+        stopped = self.client.post("/api/configuration/local-api/stop", json={})
         self.assertEqual(stopped.status_code, 200)
         process.terminate.assert_called_once()
 
     def test_stop_rejects_unowned_process(self):
         configuration._local_api_process = None
-        response = self.client.post("/api/configuration/local-api/stop")
+        response = self.client.post("/api/configuration/local-api/stop", json={})
         self.assertEqual(response.status_code, 409)
 
 

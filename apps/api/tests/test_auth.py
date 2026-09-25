@@ -62,7 +62,7 @@ def test_public_registration_and_database_login(monkeypatch):
         signed_in = login(LoginRequest(username="new@example.com", password="correct horse battery staple"), db)
         assert signed_in.username == "new-user"
         assert signed_in.role == "user"
-        assert current_identity(f"Bearer {signed_in.access_token}") == {"username": "new-user", "role": "user", "user_id": str(response.user.id)}
+        assert current_identity(f"Bearer {signed_in.access_token}", db) == {"username": "new-user", "role": "user", "user_id": str(response.user.id)}
 
 
 def test_public_registration_rejects_duplicate_email(monkeypatch):

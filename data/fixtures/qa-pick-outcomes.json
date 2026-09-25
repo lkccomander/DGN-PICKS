@@ -1,0 +1,7 @@
+[
+  {"result":"win","stake":"2","odds":"1.91","profit":"1.82"},
+  {"result":"loss","stake":"2","odds":"1.91","profit":"-2"},
+  {"result":"push","stake":"2","odds":"1.91","profit":"0"},
+  {"result":"void","stake":"2","odds":"1.91","profit":"0"},
+  {"result":"pending","stake":"2","odds":"1.91","profit":null}
+]

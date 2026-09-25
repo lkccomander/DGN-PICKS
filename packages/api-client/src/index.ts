@@ -6,7 +6,8 @@
 
 export type Components = {
   schemas: {
-      "AnalyticsSummary": { "wins" : number; "losses" : number; "pushes" : number; "pending" : number; "void" : number; "total_units_risked" : string; "profit_units" : string; "roi" : string | null };
+      "AccountResponse": { "username" : string; "role" : string; "display_name" : string; "email"?: string | null; "country"?: string | null };
+      "AnalyticsSummary": { "wins" : number; "losses" : number; "pushes" : number; "pending" : number; "void" : number; "total_units_risked" : string; "profit_units" : string | null; "roi" : string | null; "pending_units"?: string; "unpriced_settled_count"?: number };
       "AuthResponse": { "access_token" : string; "token_type"?: string; "username" : string; "role" : string };
       "GameCreate": { "external_ids"?: Record<string, unknown>; "season" : number; "week" : number; "kickoff_at" : string; "home_team_id" : number; "away_team_id" : number; "venue"?: string | null; "status"?: Components["schemas"]["GameStatus"]; "home_score"?: number | null; "away_score"?: number | null };
       "GameResponse": { "id" : number; "external_ids"?: Record<string, unknown>; "season" : number; "week" : number; "kickoff_at" : string; "home_team_id" : number; "away_team_id" : number; "venue"?: string | null; "status" : Components["schemas"]["GameStatus"]; "home_score"?: number | null; "away_score"?: number | null };
@@ -29,6 +30,9 @@ export type Components = {
       "PlayerCreate": { "external_ids"?: Record<string, unknown>; "team_id" : number; "name" : string; "position" : string; "active"?: boolean };
       "PlayerResponse": { "id" : number; "external_ids"?: Record<string, unknown>; "team_id" : number; "name" : string; "position" : string; "active" : boolean };
       "PlayerUpdate": { "external_ids"?: Record<string, unknown> | null; "team_id"?: number | null; "name"?: string | null; "position"?: string | null; "active"?: boolean | null };
+      "PublicUserResponse": { "id" : number; "username" : string; "display_name" : string; "active" : boolean; "created_at" : string };
+      "RegistrationRequest": { "username" : string; "email" : string; "display_name" : string; "country"?: string | null; "password" : string };
+      "RegistrationResponse": { "user" : Components["schemas"]["UserResponse"]; "access_token" : string; "token_type"?: string };
       "SeedPickDefinitionResponse": { "number" : number; "description" : string; "market_type" : string; "line_value" : string; "side"?: string | null; "team_or_player" : string; "state" : string };
       "SeedReportResponse": { "users_inserted" : number; "users_existing" : number; "games_inserted" : number; "markets_inserted" : number; "snapshots_inserted" : number; "picks_inserted" : number; "duplicate_snapshots" : number; "unresolved_definitions" : Array<string>; "unresolved_count" : number };
       "SelectionCreate": { "market_id" : number; "selection_key" : string; "team_id"?: number | null; "player_id"?: number | null; "side"?: string | null };
@@ -37,18 +41,22 @@ export type Components = {
       "TeamCreate": { "external_ids"?: Record<string, unknown>; "name" : string; "short_name" : string; "abbreviation" : string; "conference" : string; "logo_url"?: string | null; "active"?: boolean };
       "TeamResponse": { "id" : number; "external_ids"?: Record<string, unknown>; "name" : string; "short_name" : string; "abbreviation" : string; "conference" : string; "logo_url"?: string | null; "active" : boolean };
       "TeamUpdate": { "external_ids"?: Record<string, unknown> | null; "name"?: string | null; "short_name"?: string | null; "abbreviation"?: string | null; "conference"?: string | null; "logo_url"?: string | null; "active"?: boolean | null };
-      "UserCreate": { "username" : string; "display_name" : string; "active"?: boolean };
-      "UserResponse": { "id" : number; "username" : string; "display_name" : string; "active" : boolean; "created_at" : string };
-      "UserUpdate": { "display_name"?: string | null; "active"?: boolean | null };
+      "UserCreate": { "username" : string; "email"?: string | null; "display_name" : string; "country"?: string | null; "password"?: string | null; "active"?: boolean };
+      "UserResponse": { "id" : number; "username" : string; "email"?: string | null; "display_name" : string; "country"?: string | null; "active" : boolean; "created_at" : string };
+      "UserUpdate": { "email"?: string | null; "display_name"?: string | null; "country"?: string | null; "password"?: string | null; "active"?: boolean | null };
       "ValidationError": { "loc" : Array<string | number>; "msg" : string; "type" : string };
   };
 };
 
 export type ApiPath =
   | `/api/health`
+  | `/api/v1/admin/users`
+  | `/api/v1/admin/users/${number}`
   | `/api/v1/analytics/summary`
+  | `/api/v1/auth/account`
   | `/api/v1/auth/login`
   | `/api/v1/auth/me`
+  | `/api/v1/auth/register`
   | `/api/v1/dev/seed`
   | `/api/v1/games`
   | `/api/v1/games/${number}`

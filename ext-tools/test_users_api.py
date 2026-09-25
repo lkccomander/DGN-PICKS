@@ -10,6 +10,7 @@ from app import app
 class UsersBridgeTests(unittest.TestCase):
     def setUp(self):
         self.client = app.test_client()
+        self.client.environ_base["HTTP_X_DGN_CSRF"] = app.config["DESKTOP_CSRF_TOKEN"]
         self.headers = {"Authorization": "Bearer test-operator"}
         self.env = patch.dict("os.environ", {"DGN_OPS_API_URL": "http://127.0.0.1:8000"})
         self.env.start()
@@ -33,11 +34,11 @@ class UsersBridgeTests(unittest.TestCase):
         ]:
             with self.subTest(method=method):
                 opener.return_value.open.return_value = self.upstream(status, result)
-                response = self.client.open(path, method=method, json=body, headers=self.headers)
+                response = self.client.open(path, method=method, json=body if body is not None else {}, headers=self.headers)
                 self.assertEqual(response.status_code, status)
                 sent = opener.return_value.open.call_args.args[0]
                 self.assertEqual(sent.method, method)
-                self.assertEqual(sent.full_url, "http://127.0.0.1:8000/api/v1/" + path.removeprefix("/api/"))
+                self.assertEqual(sent.full_url, "http://127.0.0.1:8000/api/v1/" + ("admin/" if method == "GET" else "") + path.removeprefix("/api/"))
                 self.assertEqual(sent.get_header("Authorization"), "Bearer test-operator")
                 self.assertEqual(opener.return_value.open.call_args.kwargs["timeout"], 15)
                 if body is not None:

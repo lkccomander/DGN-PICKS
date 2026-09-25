@@ -18,7 +18,7 @@
     el('configuration-pane').querySelectorAll('button, input, select').forEach((node) => { node.disabled = value; });
   }
   async function requestConfig(path = '', method = 'GET', body) {
-    const response = await fetch(`/api/configuration${path}`, { method, cache: 'no-store', signal: AbortSignal.timeout(20000), headers: body ? { 'Content-Type': 'application/json' } : {}, ...(body ? { body: JSON.stringify(body) } : {}) });
+    const response = await desktopFetch(`/api/configuration${path}`, { method, cache: 'no-store', signal: AbortSignal.timeout(20000), headers: body ? { 'Content-Type': 'application/json' } : {}, ...(body ? { body: JSON.stringify(body) } : {}) });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'No se pudo completar la operación.');
     return data;

@@ -7,16 +7,21 @@ function upstreamUrl(path: string[], request: NextRequest) {
   return `${base}/api/v1/auth/${path.join("/")}${request.nextUrl.search}`;
 }
 
-export async function POST(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
+async function forward(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   const { path } = await context.params;
   const response = await fetch(upstreamUrl(path, request), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: await request.arrayBuffer(),
+    method: request.method,
+    headers: { "Content-Type": "application/json", ...(request.headers.get("authorization") ? { Authorization: request.headers.get("authorization")! } : {}) },
+    body: request.method === "GET" ? undefined : await request.arrayBuffer(),
     cache: "no-store",
+    signal: AbortSignal.timeout(15000),
+    redirect: "error",
   });
   return new NextResponse(response.body, {
     status: response.status,
     headers: { "Content-Type": response.headers.get("Content-Type") ?? "application/json" },
   });
 }
+
+export const GET = forward;
+export const POST = forward;

@@ -1,0 +1,62 @@
+name: Validate MVP
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: dgn_test
+          POSTGRES_PASSWORD: local_ci_only
+          POSTGRES_DB: dgn_test
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U dgn_test" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PYTHONPATH: apps/api/src
+      DATABASE_URL: postgresql+psycopg://dgn_test:local_ci_only@127.0.0.1:5432/dgn_test
+      DGN_AUTH_SECRET: isolated-ci-signing-secret
+      DGN_AUTH_USERNAME: ci-operator
+      DGN_AUTH_PASSWORD: isolated-ci-password
+      DGN_AUTH_ROLE: admin
+      DGN_API_INTERNAL_URL: http://127.0.0.1:8000
+      NEXT_PUBLIC_API_URL: http://127.0.0.1:8000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: pip install -r apps/api/requirements.txt pytest httpx Flask
+      - run: npm ci --prefix apps/web
+      - run: python -m pytest apps/api/tests -q
+        env:
+          DGN_AUTH_USERNAME: ""
+          DGN_AUTH_PASSWORD: ""
+          DGN_AUTH_SECRET: ""
+      - run: python -m unittest discover -s ext-tools -p 'test_*.py'
+      - run: python scripts/generate_api_client.py --check
+      - run: python -m alembic -c apps/api/alembic.ini upgrade head
+      - run: python scripts/verify_seed.py
+      - run: npm run lint:web
+      - run: cd apps/web && npx tsc --noEmit --incremental false
+      - run: npm run build:web
+      - run: npm --prefix apps/web audit --omit=dev
+      - run: cd apps/web && npx playwright install --with-deps chromium
+      - name: Run local browser acceptance
+        env:
+          E2E_API_URL: http://127.0.0.1:8000
+          E2E_WEB_URL: http://127.0.0.1:3000
+          E2E_OPERATOR_USERNAME: ci-operator
+          E2E_OPERATOR_PASSWORD: isolated-ci-password
+        run: |
+          python -m uvicorn dgn_picks_api.main:app --host 127.0.0.1 --port 8000 &
+          npm --prefix apps/web run start -- --hostname 127.0.0.1 --port 3000 &
+          python scripts/wait_for_http.py http://127.0.0.1:8000/api/health http://127.0.0.1:3000
+          npm run test:e2e

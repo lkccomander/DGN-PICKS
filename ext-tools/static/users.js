@@ -18,7 +18,7 @@
     el('user-username').disabled = value || editingId !== null;
   }
   async function api(path, method = 'GET', body) {
-    const response = await fetch('/api/users' + path, {
+    const response = await desktopFetch('/api/users' + path, {
       method, cache: 'no-store', signal: AbortSignal.timeout(20000),
       headers: { ...(token ? { Authorization: 'Bearer ' + token } : {}), ...(body ? { 'Content-Type': 'application/json' } : {}) },
       ...(body ? { body: JSON.stringify(body) } : {}),

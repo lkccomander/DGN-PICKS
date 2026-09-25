@@ -6,7 +6,7 @@ from dgn_picks_api.domains.providers.contracts import NormalizedGame, Normalized
 
 
 def _snapshot(hour: int, line: str, odds: int = -110) -> NormalizedSnapshot:
-    decimal = Decimal("1.90909") if odds == -110 else Decimal("2.5")
+    decimal = Decimal(1) + (Decimal(odds) / 100 if odds > 0 else Decimal(100) / abs(odds))
     return NormalizedSnapshot(datetime(2026, 9, 1, hour, tzinfo=UTC), Decimal(line) if line else None, odds, decimal, f"fixture-{hour}-{line}")
 
 
@@ -21,6 +21,8 @@ class FixtureProvider:
         self._markets = {
             "fixture-stanford-duke": [
                 NormalizedMarket("m-stanford-spread", "game_spread", "stanford", "+", "Stanford", None, (_snapshot(10, "+25.5"), _snapshot(14, "+24.5"))),
+                NormalizedMarket("m-duke-moneyline", "game_moneyline", "duke", "home", "Duke", None, (_snapshot(9, "", -160), _snapshot(13, "", -145))),
+                NormalizedMarket("m-qa-rush", "player_rushing_yards", "over", "over", None, "Fixture Runner", (_snapshot(9, "60.5"), _snapshot(13, "62.5"))),
                 NormalizedMarket("m-duke-total", "game_total", "over", "over", "Duke", None, (_snapshot(10, "51.5"), _snapshot(14, "52.5"))),
                 NormalizedMarket("m-hoover-pass", "player_passing_yards", "over", "over", None, "Josh Hoover", (_snapshot(10, "246.5"),)),
             ],

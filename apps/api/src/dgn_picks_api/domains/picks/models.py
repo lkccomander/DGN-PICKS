@@ -27,6 +27,8 @@ class Pick(Base):
     stake_units: Mapped[Decimal] = mapped_column(Numeric(10, 3), default=Decimal("1.0"))
     result: Mapped[PickResult] = mapped_column(String(16), default=PickResult.PENDING, index=True)
     profit_units: Mapped[Decimal | None] = mapped_column(Numeric(10, 5))
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    archive_reason: Mapped[str | None] = mapped_column(String(160))
     notes: Mapped[str | None] = mapped_column(String(1000))
     user: Mapped["User"] = relationship(back_populates="picks")
     legs: Mapped[list["PickLeg"]] = relationship(back_populates="pick", cascade="all, delete-orphan")

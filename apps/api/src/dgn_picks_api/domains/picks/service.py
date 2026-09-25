@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from dgn_picks_api.api.v1.schemas import PickCreate, PickUpdate
 from dgn_picks_api.domains.markets.models import Market, Selection
+from dgn_picks_api.domains.games.models import Game
 from dgn_picks_api.domains.odds.models import OddsSnapshot
 from dgn_picks_api.domains.picks.models import Pick
 from dgn_picks_api.domains.picks.calculations import profit_units
@@ -17,12 +18,18 @@ def create_pick(session: Session, payload: PickCreate) -> Pick:
     user = session.scalars(select(User).where(User.username == payload.user)).one_or_none()
     if user is None:
         raise ValueError("Unknown user")
+    if not user.active:
+        raise ValueError("User is inactive")
 
     market = session.scalars(select(Market).where(Market.id == payload.market_id)).one_or_none()
     if market is None:
         raise ValueError("Unknown market")
     if market.game_id != payload.game_id:
         raise ValueError("Market does not belong to game")
+
+    game = session.get(Game, payload.game_id)
+    if market.status != "open" or game is None or game.status not in {"scheduled", "live"}:
+        raise ValueError("New predictions require an open market on a scheduled or live game")
 
     if payload.selection_id is None:
         raise ValueError("A resolved selection is required")
@@ -62,7 +69,7 @@ def create_pick(session: Session, payload: PickCreate) -> Pick:
 
 def grade_pick(session: Session, pick_id: int, result: PickResult) -> Pick:
     pick = session.get(Pick, pick_id)
-    if pick is None:
+    if pick is None or pick.archived_at is not None:
         raise ValueError("Unknown pick")
     current_result = PickResult(pick.result)
     if current_result is not PickResult.PENDING:
@@ -76,7 +83,7 @@ def grade_pick(session: Session, pick_id: int, result: PickResult) -> Pick:
 
 def update_pending_pick(session: Session, pick_id: int, payload: PickUpdate) -> Pick:
     pick = session.get(Pick, pick_id)
-    if pick is None:
+    if pick is None or pick.archived_at is not None:
         raise ValueError("Unknown pick")
     if pick.user.username != payload.user:
         raise ValueError("Pick does not belong to user")
@@ -93,7 +100,7 @@ def update_pending_pick(session: Session, pick_id: int, payload: PickUpdate) -> 
 
 def delete_pending_pick(session: Session, pick_id: int, username: str) -> None:
     pick = session.get(Pick, pick_id)
-    if pick is None:
+    if pick is None or pick.archived_at is not None:
         raise ValueError("Unknown pick")
     if pick.user.username != username:
         raise ValueError("Pick does not belong to user")

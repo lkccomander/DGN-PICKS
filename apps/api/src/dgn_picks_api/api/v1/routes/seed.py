@@ -12,11 +12,9 @@ router = APIRouter(prefix="/seed", tags=["seed"])
 
 
 def definition_state(definition: PickDefinition, materialized_descriptions: set[str]) -> str:
-    if definition.side is None:
-        return "unresolved"
-    if definition.description in materialized_descriptions:
-        return "tracked"
-    return "unmatched"
+    # Every original definition lacks authoritative event/date/price metadata.
+    # Matching a note to a fixture pick never establishes that provenance.
+    return "unresolved"
 
 
 def gato_pick_definitions(materialized_descriptions: set[str]) -> list[SeedPickDefinitionResponse]:
@@ -42,12 +40,4 @@ def list_pick_definitions(
     """Expose the supplied seed input without turning unmatched entries into picks."""
     if user != "gato":
         return []
-    gato = db.scalars(select(User).where(User.username == "gato")).one_or_none()
-    if gato is None:
-        return gato_pick_definitions(set())
-    materialized = set(
-        db.scalars(
-            select(Pick.notes).where(Pick.user_id == gato.id, Pick.notes.is_not(None))
-        ).all()
-    )
-    return gato_pick_definitions(materialized)
+    return gato_pick_definitions(set())

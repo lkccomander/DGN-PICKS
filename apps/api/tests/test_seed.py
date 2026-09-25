@@ -26,17 +26,10 @@ def test_seed_is_idempotent_and_keeps_picks_with_gato(seed_session):
     second_picks = seed_session.scalars(select(Pick)).all()
 
     assert {user.username for user in seed_session.scalars(select(User)).all()} == {"gato", "daran", "noch"}
-    assert first.picks_inserted == len(first_picks) == 6
+    assert first.picks_inserted == len(first_picks) == 0
     assert second.picks_inserted == 0
     assert len(second_picks) == len(first_picks)
     assert second.duplicate_snapshots == first.snapshots_inserted
-    assert {pick.user.username for pick in second_picks} == {"gato"}
-    assert set(first.unresolved_definitions) == {
-        "Malakai Toney 72.5 rec yards",
-        "Over 58.5 Auburn",
-        "Over 54.5 UCLA",
-        "Notre Dame -20.5",
-        "Ole Miss -6.5",
-        "Over 52.5 Houston",
-        "Over 53.5 SMU",
-    }
+    assert not second_picks
+    from dgn_picks_api.seed.data import GATO_PICK_DEFINITIONS
+    assert first.unresolved_definitions == [item.description for item in GATO_PICK_DEFINITIONS]

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from decimal import Decimal
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -9,7 +8,6 @@ from sqlalchemy.orm import Session
 from dgn_picks_api.domains.games.models import Game
 from dgn_picks_api.domains.markets.models import Market, Selection
 from dgn_picks_api.domains.odds.models import OddsSnapshot, SportsbookSource
-from dgn_picks_api.domains.picks.models import Pick
 from dgn_picks_api.domains.providers.fixture import FixtureProvider
 from dgn_picks_api.domains.teams.models import Player, Team
 from dgn_picks_api.domains.users.models import User
@@ -28,7 +26,6 @@ def _find_player(session: Session, name: str) -> Player | None:
 def seed_local_data(session: Session) -> SeedReport:
     """Insert the deterministic fixture dataset without replacing history."""
     report = SeedReport()
-    users: dict[str, User] = {}
     for definition in SEEDED_USERS:
         user = session.scalars(select(User).where(User.username == definition.username)).one_or_none()
         if user is None:
@@ -37,7 +34,6 @@ def seed_local_data(session: Session) -> SeedReport:
             report.users_inserted += 1
         else:
             report.users_existing += 1
-        users[definition.username] = user
     session.flush()
 
     source = session.scalars(
@@ -49,8 +45,6 @@ def seed_local_data(session: Session) -> SeedReport:
         session.flush()
 
     provider = FixtureProvider()
-    games_by_external_id: dict[str, Game] = {}
-    markets_by_key: dict[tuple[str, str], tuple[Market, Selection, OddsSnapshot | None]] = {}
     for normalized_game in provider.list_games(
         (datetime(2026, 1, 1, tzinfo=UTC), datetime(2027, 1, 1, tzinfo=UTC))
     ):
@@ -99,7 +93,6 @@ def seed_local_data(session: Session) -> SeedReport:
             session.add(game)
             report.games_inserted += 1
             session.flush()
-        games_by_external_id[normalized_game.external_id] = game
 
         for normalized_market in provider.list_markets(normalized_game.external_id) + provider.list_props(normalized_game.external_id):
             player = None
@@ -171,51 +164,10 @@ def seed_local_data(session: Session) -> SeedReport:
                     report.snapshots_inserted += 1
                 else:
                     report.duplicate_snapshots += 1
-            markets_by_key[(normalized_game.external_id, normalized_market.market_type)] = (market, selection, latest)
 
     session.flush()
-    gato = users["gato"]
-    for definition in GATO_PICK_DEFINITIONS:
-        if definition.side is None:
-            report.unresolved_definitions.append(definition.description)
-            continue
-        match = next(
-            (
-                (game, market, selection, snapshot)
-                for external_id, game in games_by_external_id.items()
-                for (game_key, market_type), (market, selection, snapshot) in markets_by_key.items()
-                if game_key == external_id
-                and market_type == definition.market_type
-                and (
-                    definition.team_or_player.lower() == selection.selection_key.lower()
-                    or definition.team_or_player.lower() == (selection.side or "").lower()
-                    or definition.team_or_player.lower() == (session.get(Team, market.team_id).name.lower() if market.team_id else "")
-                    or definition.team_or_player.lower() == (session.get(Player, market.player_id).name.lower() if market.player_id else "")
-                )
-            ),
-            None,
-        )
-        if match is None:
-            report.unresolved_definitions.append(definition.description)
-            continue
-        game, market, selection, snapshot = match
-        existing = session.scalars(
-            select(Pick).where(Pick.user_id == gato.id, Pick.game_id == game.id, Pick.market_id == market.id)
-        ).first()
-        if existing is None:
-            session.add(
-                Pick(
-                    user_id=gato.id,
-                    game_id=game.id,
-                    market_id=market.id,
-                    selection_id=selection.id,
-                    line_value=Decimal(definition.line_value),
-                    american_odds=snapshot.american_odds if snapshot else None,
-                    decimal_odds=snapshot.decimal_odds if snapshot else None,
-                    stake_units=Decimal("1"),
-                    notes=definition.description,
-                )
-            )
-            report.picks_inserted += 1
+    # Names alone cannot resolve the event, date, or taken odds of an imported pick.
+    # Product definitions are exposed independently; fixture matches are QA data only.
+    report.unresolved_definitions.extend(item.description for item in GATO_PICK_DEFINITIONS)
     session.commit()
     return report

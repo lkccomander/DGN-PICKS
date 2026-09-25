@@ -4,7 +4,8 @@ const DEFAULT_API_URL = "https://dgn-picks-production.up.railway.app";
 
 function upstreamUrl(path: string[], request: NextRequest) {
   const base = (process.env.DGN_API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API_URL).replace(/\/$/, "");
-  return `${base}/api/v1/${path.join("/")}${request.nextUrl.search}`;
+  const resource = request.method === "GET" && path[0] === "users" ? ["admin", ...path] : path;
+  return `${base}/api/v1/${resource.join("/")}${request.nextUrl.search}`;
 }
 
 export async function ALL(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
@@ -17,6 +18,8 @@ export async function ALL(request: NextRequest, context: { params: Promise<{ pat
     headers,
     body: request.method === "GET" || request.method === "HEAD" ? undefined : await request.arrayBuffer(),
     cache: "no-store",
+    signal: AbortSignal.timeout(15000),
+    redirect: "error",
   });
   return new NextResponse(response.body, { status: response.status, headers: { "Content-Type": response.headers.get("Content-Type") ?? "application/json" } });
 }

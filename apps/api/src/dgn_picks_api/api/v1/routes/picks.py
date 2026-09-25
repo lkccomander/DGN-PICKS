@@ -25,7 +25,7 @@ def list_picks(
         user = None
     if isinstance(pick_date, QueryParam):
         pick_date = None
-    statement = select(Pick)
+    statement = select(Pick).where(Pick.archived_at.is_(None))
     if user is not None:
         statement = statement.join(User, Pick.user_id == User.id).where(User.username == user)
     if pick_date is not None:
@@ -49,7 +49,7 @@ def post_pick(payload: PickCreate, db: Session = Depends(get_db), identity: dict
 @router.get("/{pick_id}", response_model=PickResponse)
 def get_pick(pick_id: int, db: Session = Depends(get_db)) -> Pick:
     pick = db.get(Pick, pick_id)
-    if pick is None:
+    if pick is None or pick.archived_at is not None:
         raise HTTPException(status_code=404, detail="Pick not found")
     return pick
 

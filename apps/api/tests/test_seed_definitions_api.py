@@ -5,7 +5,7 @@ def test_gato_seed_definitions_expose_all_inputs_without_guessing() -> None:
     definitions = gato_pick_definitions({"Stanford +24.5"})
 
     assert len(definitions) == 13
-    assert definitions[0].state == "tracked"
+    assert definitions[0].state == "unresolved"
     malakai = next(item for item in definitions if "Malakai Toney" in item.description)
     assert malakai.side is None
     assert malakai.state == "unresolved"
@@ -33,5 +33,5 @@ def test_seed_definition_route_only_returns_gato_input_and_marks_materialized_en
     definitions = list_pick_definitions(user="gato", db=Session())
 
     assert len(definitions) == 13
-    assert definitions[0].state == "tracked"
+    assert definitions[0].state == "unresolved"
     assert list_pick_definitions(user="daran", db=Session()) == []

@@ -131,6 +131,7 @@ export class DgnPicksApiClient {{
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate the TypeScript client from DGN-PICKS OpenAPI.")
     parser.add_argument("--input", type=Path, help="Existing OpenAPI JSON file (avoids importing the local API).")
+    parser.add_argument("--check", action="store_true", help="Fail if checked-in outputs differ; do not rewrite files")
     arguments = parser.parse_args()
     if arguments.input:
         document = json.loads(arguments.input.read_text(encoding="utf-8"))
@@ -139,6 +140,13 @@ def main() -> None:
 
         document = app.openapi()
     client = render_client(document)
+    expected_schema = json.dumps(document, indent=2, sort_keys=True) + "\n"
+    if arguments.check:
+        stale = [str(path.relative_to(ROOT)) for path, expected in ((SCHEMA_PATH, expected_schema), (CLIENT_PATH, client), (WEB_CLIENT_PATH, client)) if not path.exists() or path.read_text(encoding="utf-8") != expected]
+        if stale:
+            raise SystemExit("Generated API artifacts are stale: " + ", ".join(stale))
+        print("OpenAPI schema and both TypeScript clients are current")
+        return
     CLIENT_PATH.parent.mkdir(parents=True, exist_ok=True)
     WEB_CLIENT_PATH.parent.mkdir(parents=True, exist_ok=True)
     SCHEMA_PATH.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8")

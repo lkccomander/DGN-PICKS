@@ -34,32 +34,57 @@ def _encode(payload: dict[str, object]) -> str:
     return f"{raw}.{base64.urlsafe_b64encode(signature).decode().rstrip('=')}"
 
 
-def issue_token(username: str, role: str, user_id: int | None = None) -> str:
+def _operator_version() -> str:
+    credentials = json.dumps([os.getenv(name, "") for name in
+                             ("DGN_AUTH_USERNAME", "DGN_AUTH_PASSWORD", "DGN_AUTH_ROLE")])
+    return hmac.new(os.environ["DGN_AUTH_SECRET"].encode(), credentials.encode(), hashlib.sha256).hexdigest()
+
+
+def issue_token(username: str, role: str, user_id: int | None = None,
+                session_version: int | None = None) -> str:
     if role not in AUTH_ROLES:
         raise ValueError("Unknown role")
     payload: dict[str, object] = {"sub": username, "role": role, "exp": int(time.time()) + 8 * 60 * 60}
-    if user_id is not None:
-        payload["user_id"] = user_id
+    if role == "user":
+        if user_id is None or session_version is None:
+            raise ValueError("User sessions require an account ID and session version")
+        payload.update(user_id=user_id, session_version=session_version)
+    else:
+        payload["operator_version"] = _operator_version()
     return _encode(payload)
 
 
-def current_identity(authorization: str | None) -> dict[str, str]:
+def current_identity(authorization: str | None, db: Session | None = None) -> dict[str, str]:
     if not signing_configured():
         raise HTTPException(status_code=503, detail="Authentication is not configured")
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Bearer token required", headers={"WWW-Authenticate": "Bearer"})
+    invalid = HTTPException(status_code=401, detail="Invalid or expired bearer token")
     try:
         raw, encoded_signature = authorization[7:].split(".", 1)
         expected = hmac.new(os.environ["DGN_AUTH_SECRET"].encode(), raw.encode(), hashlib.sha256).digest()
         supplied = base64.urlsafe_b64decode(encoded_signature + "=" * (-len(encoded_signature) % 4))
+        if not hmac.compare_digest(expected, supplied):
+            raise invalid
         payload = json.loads(base64.urlsafe_b64decode(raw + "=" * (-len(raw) % 4)))
-    except (ValueError, TypeError, json.JSONDecodeError, binascii.Error):
-        raise HTTPException(status_code=401, detail="Invalid bearer token") from None
-    if not hmac.compare_digest(expected, supplied) or payload.get("exp", 0) < time.time() or payload.get("role") not in AUTH_ROLES:
-        raise HTTPException(status_code=401, detail="Invalid or expired bearer token")
-    identity = {"username": str(payload["sub"]), "role": str(payload["role"])}
-    if payload.get("user_id") is not None:
-        identity["user_id"] = str(payload["user_id"])
+        if not isinstance(payload, dict) or type(payload.get("exp")) is not int:
+            raise invalid
+        if payload["exp"] <= time.time() or payload.get("role") not in AUTH_ROLES or not isinstance(payload.get("sub"), str):
+            raise invalid
+    except (ValueError, TypeError, UnicodeError, binascii.Error):
+        raise invalid from None
+    identity = {"username": payload["sub"], "role": payload["role"]}
+    if payload["role"] == "user":
+        if db is None or type(payload.get("user_id")) is not int:
+            raise invalid
+        user = db.get(User, payload["user_id"])
+        if user is None or not user.active or user.username != payload["sub"] or user.session_version != payload.get("session_version"):
+            raise invalid
+        identity["user_id"] = str(user.id)
+    elif (not auth_configured() or payload["sub"] != os.getenv("DGN_AUTH_USERNAME")
+          or payload["role"] != os.getenv("DGN_AUTH_ROLE", "admin")
+          or payload.get("operator_version") != _operator_version()):
+        raise invalid
     return identity
 
 
@@ -70,7 +95,7 @@ def authenticate(username: str, password: str) -> str:
 
 
 def authenticate_user(db: Session, login: str, password: str) -> User:
-    user = db.scalar(select(User).where(or_(User.username == login, User.email == login)))
+    user = db.scalar(select(User).where(or_(User.username == login, User.email == login.lower())))
     if user is None or not user.active or not verify_password(password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     return user

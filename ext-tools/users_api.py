@@ -33,6 +33,8 @@ def forward(path: str, *, login: bool = False):
             return jsonify(detail="Se requiere un objeto JSON válido."), 400
         data = json.dumps(payload).encode("utf-8")
         headers["Content-Type"] = "application/json"
+    if request.method == "GET" and path.startswith("users"):
+        path = "admin/" + path
     upstream = Request(f"{base}/api/v1/{path}", data=data, headers=headers, method=request.method)
     try:
         with build_opener(NoRedirect()).open(upstream, timeout=15) as response:

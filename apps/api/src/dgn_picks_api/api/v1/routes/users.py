@@ -3,16 +3,18 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from dgn_picks_api.api.v1.dependencies import get_db, require_authenticated_write_access
-from dgn_picks_api.api.v1.schemas import UserCreate, UserResponse, UserUpdate
+from dgn_picks_api.api.v1.dependencies import get_db, require_authenticated_write_access, require_editor_identity
+from dgn_picks_api.api.v1.schemas import UserCreate, UserResponse, UserUpdate, PublicUserResponse
 from dgn_picks_api.domains.picks.models import Pick
 from dgn_picks_api.domains.users.models import User
 from dgn_picks_api.domains.users.passwords import hash_password
 
 router = APIRouter(prefix="/users", tags=["users"])
+admin_router = APIRouter(prefix="/admin/users", tags=["admin"], dependencies=[Depends(require_editor_identity)])
 
 
-@router.get("", response_model=list[UserResponse])
+@admin_router.get("", response_model=list[UserResponse])
+@router.get("", response_model=list[PublicUserResponse])
 def list_users(user: str | None = Query(default=None), db: Session = Depends(get_db)) -> list[User]:
     statement = select(User)
     if user is not None:
@@ -21,7 +23,8 @@ def list_users(user: str | None = Query(default=None), db: Session = Depends(get
     return list(db.scalars(statement).all())
 
 
-@router.get("/{user_id}", response_model=UserResponse)
+@admin_router.get("/{user_id}", response_model=UserResponse)
+@router.get("/{user_id}", response_model=PublicUserResponse)
 def get_user(user_id: int, db: Session = Depends(get_db)) -> User:
     user = db.get(User, user_id)
     if user is None:
@@ -62,9 +65,13 @@ def update_user(user_id: int, payload: UserUpdate, db: Session = Depends(get_db)
     changes = payload.model_dump(exclude_unset=True)
     if any(changes.get(field) is None for field in ("display_name", "active") if field in changes):
         raise HTTPException(status_code=422, detail="Display name and active cannot be null")
+    revoke = ("active" in changes and changes["active"] != user.active) or bool(changes.get("password"))
+    if revoke:
+        user.session_version += 1
     for field, value in changes.items():
         if field == "password":
-            user.password_hash = hash_password(value) if value else None
+            if value:
+                user.password_hash = hash_password(value)
             continue
         if field == "email" and value:
             value = value.lower()

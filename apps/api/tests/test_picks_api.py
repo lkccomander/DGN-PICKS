@@ -138,7 +138,7 @@ def test_list_picks_filters_user_and_utc_date(session, market_fixture):
 
 def test_post_pick_converts_domain_errors_to_422(session, market_fixture):
     with pytest.raises(Exception) as raised:
-        post_pick(payload(market_fixture).model_copy(update={"user": "missing"}), session)
+        post_pick(payload(market_fixture).model_copy(update={"user": "missing"}), session, {"role": "admin", "username": "admin"})
     assert getattr(raised.value, "status_code", None) == 422
 
 
@@ -161,7 +161,7 @@ def test_grade_unknown_pick_returns_not_found(session):
 
 def test_pending_pick_can_update_stake_and_notes_but_not_taken_price(session, market_fixture):
     pick = create_pick(session, payload(market_fixture))
-    updated = patch_pick(pick.id, PickUpdate(user="gato", stake_units=Decimal("2.5"), notes="updated"), session)
+    updated = patch_pick(pick.id, PickUpdate(user="gato", stake_units=Decimal("2.5"), notes="updated"), session, {"role": "admin", "username": "admin"})
     assert updated.stake_units == Decimal("2.5")
     assert updated.notes == "updated"
     assert updated.line_value == Decimal("52.500")
@@ -170,18 +170,18 @@ def test_pending_pick_can_update_stake_and_notes_but_not_taken_price(session, ma
 def test_pick_update_requires_owner_and_pending_result(session, market_fixture):
     pick = create_pick(session, payload(market_fixture))
     with pytest.raises(Exception) as wrong_user:
-        patch_pick(pick.id, PickUpdate(user="daran", notes="nope"), session)
+        patch_pick(pick.id, PickUpdate(user="daran", notes="nope"), session, {"role": "admin", "username": "admin"})
     assert getattr(wrong_user.value, "status_code", None) == 409
     patch_grade(pick.id, PickGrade(result=PickResult.WIN), session)
     with pytest.raises(Exception) as graded:
-        patch_pick(pick.id, PickUpdate(user="gato", notes="nope"), session)
+        patch_pick(pick.id, PickUpdate(user="gato", notes="nope"), session, {"role": "admin", "username": "admin"})
     assert getattr(graded.value, "status_code", None) == 409
 
 
 def test_pending_pick_can_be_deleted_only_by_owner(session, market_fixture):
     pick = create_pick(session, payload(market_fixture))
     with pytest.raises(Exception) as wrong_user:
-        remove_pick(pick.id, "daran", session)
+        remove_pick(pick.id, "daran", session, {"role": "admin", "username": "admin"})
     assert getattr(wrong_user.value, "status_code", None) == 409
-    remove_pick(pick.id, "gato", session)
+    remove_pick(pick.id, "gato", session, {"role": "admin", "username": "admin"})
     assert session.get(Pick, pick.id) is None

@@ -12,7 +12,7 @@ function setDeployVisual(status, message) {
 }
 
 async function refreshState() {
-  const response = await fetch('/api/state');
+  const response = await desktopFetch('/api/state');
   const data = await response.json();
   const git = data.git || {};
   $('git-output').textContent = git.output || git.error || 'Esperando una operación…';
@@ -22,7 +22,7 @@ async function refreshState() {
 
 async function gitStatus() {
   $('git-output').textContent = 'Consultando git…';
-  const response = await fetch('/api/git/status');
+  const response = await desktopFetch('/api/git/status');
   const data = await response.json();
   $('git-output').textContent = data.output || data.message || 'Sin cambios.';
 }
@@ -31,7 +31,7 @@ async function pushChanges() {
   const button = $('git-push');
   button.disabled = true;
   $('git-output').textContent = 'Iniciando commit y push…';
-  const response = await fetch('/api/git/push', {
+  const response = await desktopFetch('/api/git/push', {
     method: 'POST', headers: {'Content-Type':'application/json'},
     body: JSON.stringify({branch:$('branch').value, message:$('commit-message').value})
   });
@@ -41,7 +41,7 @@ async function pushChanges() {
 }
 
 async function refreshDeploy() {
-  const response = await fetch('/api/deploy/refresh', {method:'POST'});
+  const response = await desktopFetch('/api/deploy/refresh', {method:'POST'});
   const data = await response.json();
   setDeployVisual(data.status, data.message);
 }
@@ -70,7 +70,7 @@ function drawGraph(payload) {
 }
 
 async function loadGraph() {
-  const response = await fetch('/api/graph');
+  const response = await desktopFetch('/api/graph');
   const data = await response.json();
   drawGraph(data);
   if ($('menu-graph-status')) $('menu-graph-status').textContent = (data.nodes || []).length + ' nodos';
@@ -79,7 +79,7 @@ async function loadGraph() {
 async function refreshGraph() {
   const button = $('graph-refresh');
   button.disabled = true;
-  await fetch('/api/graph/refresh', {method:'POST'});
+  await desktopFetch('/api/graph/refresh', {method:'POST'});
   setTimeout(async () => { await loadGraph(); button.disabled = false; }, 1200);
 }
 

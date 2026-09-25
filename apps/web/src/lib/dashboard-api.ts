@@ -25,9 +25,10 @@ export type Pick = Omit<ApiPick, "line_value" | "american_odds" | "decimal_odds"
   stake_units: number;
   profit_units?: number | null;
 };
-export type Summary = Omit<ApiSummary, "total_units_risked" | "profit_units" | "roi"> & {
+export type Summary = Omit<ApiSummary, "total_units_risked" | "profit_units" | "roi" | "pending_units"> & {
   total_units_risked: number;
-  profit_units: number;
+  profit_units: number | null;
+  pending_units: number;
   roi: number | null;
 };
 export type SeedPickDefinition = Omit<ApiSeedPickDefinition, "state"> & {
@@ -48,7 +49,8 @@ function normalizeSummary(summary: ApiSummary): Summary {
   return {
     ...summary,
     total_units_risked: Number(summary.total_units_risked),
-    profit_units: Number(summary.profit_units),
+    profit_units: summary.profit_units == null ? null : Number(summary.profit_units),
+    pending_units: Number(summary.pending_units ?? 0),
     roi: summary.roi == null ? null : Number(summary.roi),
   };
 }

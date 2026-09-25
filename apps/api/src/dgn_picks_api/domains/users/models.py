@@ -14,6 +14,7 @@ class User(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    session_version: Mapped[int] = mapped_column(default=1, server_default="1")
     username: Mapped[str] = mapped_column(String(32), unique=True, index=True)
     email: Mapped[str | None] = mapped_column(String(320), unique=True, index=True, nullable=True)
     display_name: Mapped[str] = mapped_column(String(80))

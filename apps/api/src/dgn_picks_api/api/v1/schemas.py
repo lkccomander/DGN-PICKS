@@ -10,6 +10,22 @@ class ORMModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class PublicUserResponse(ORMModel):
+    id: int
+    username: str
+    display_name: str
+    active: bool
+    created_at: datetime
+
+
+class AccountResponse(BaseModel):
+    username: str
+    role: str
+    display_name: str
+    email: str | None = None
+    country: str | None = None
+
+
 class UserResponse(ORMModel):
     id: int
     username: str
@@ -21,7 +37,7 @@ class UserResponse(ORMModel):
 
 
 class UserCreate(BaseModel):
-    username: str = Field(min_length=1, max_length=32)
+    username: str = Field(min_length=1, max_length=32, pattern=r"^[a-zA-Z0-9_-]+$")
     email: str | None = Field(default=None, max_length=320)
     display_name: str = Field(min_length=1, max_length=80)
     country: str | None = Field(default=None, max_length=64)
@@ -43,7 +59,7 @@ class LoginRequest(BaseModel):
 
 
 class RegistrationRequest(BaseModel):
-    username: str = Field(min_length=1, max_length=32)
+    username: str = Field(min_length=1, max_length=32, pattern=r"^[a-zA-Z0-9_-]+$")
     email: str = Field(min_length=3, max_length=320)
     display_name: str = Field(min_length=1, max_length=80)
     country: str | None = Field(default=None, max_length=64)
@@ -277,8 +293,10 @@ class AnalyticsSummary(BaseModel):
     pending: int
     void: int
     total_units_risked: Decimal
-    profit_units: Decimal
+    profit_units: Decimal | None
     roi: Decimal | None
+    pending_units: Decimal = Decimal("0")
+    unpriced_settled_count: int = 0
 
 
 class SeedReportResponse(BaseModel):

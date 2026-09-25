@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 type PickRequest = { user?: unknown; stake_units?: unknown; notes?: unknown; result?: unknown };
 
 function writesEnabled(request: Request) {
-  return Boolean(request.headers.get("authorization")) || (process.env.DGN_WEB_WRITE_MODE === "development" && Boolean(process.env.DGN_API_WRITE_KEY));
+  return Boolean(request.headers.get("authorization")?.startsWith("Bearer "));
 }
 
 function apiUrl() {
@@ -12,7 +12,7 @@ function apiUrl() {
 
 async function forward(request: Request, pickId: string, method: "PATCH" | "DELETE") {
   if (!writesEnabled(request)) {
-    return NextResponse.json({ detail: "Development pick writes are disabled" }, { status: 404 });
+    return NextResponse.json({ detail: "Sign in to manage picks" }, { status: 401 });
   }
   const url = new URL(request.url);
   let body: PickRequest = {};
@@ -38,10 +38,12 @@ async function forward(request: Request, pickId: string, method: "PATCH" | "DELE
     headers: {
       Accept: "application/json",
       ...(method === "PATCH" ? { "Content-Type": "application/json" } : {}),
-      ...(authorization ? { Authorization: authorization } : { "X-DGN-Write-Key": process.env.DGN_API_WRITE_KEY as string }),
+      Authorization: authorization!,
     },
     ...(method === "PATCH" ? { body: JSON.stringify(isGrade ? { result: body.result } : body) } : {}),
     cache: "no-store",
+    signal: AbortSignal.timeout(15000),
+    redirect: "error",
   });
   const responseBody = await response.text();
   return new NextResponse(responseBody, {

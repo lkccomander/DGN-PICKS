@@ -2,11 +2,11 @@ from collections.abc import Generator
 import os
 import secrets
 
-from fastapi import Header, HTTPException
+from fastapi import Depends, Header, HTTPException
 from sqlalchemy.orm import Session
 
 from dgn_picks_api.db.session import SessionLocal
-from dgn_picks_api.api.v1.auth import auth_configured, current_identity
+from dgn_picks_api.api.v1.auth import auth_configured, current_identity, signing_configured
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -37,24 +37,36 @@ def require_development_write_access(
 def require_authenticated_write_access(
     authorization: str | None = Header(default=None),
     x_dgn_write_key: str | None = Header(default=None),
+    db: Session = Depends(get_db),
 ) -> None:
     """Require an authenticated editor/admin once production auth is configured.
 
     The development key fallback is retained only for local migration and tests.
     """
-    if not auth_configured():
+    if not signing_configured():
         return require_development_write_access(x_dgn_write_key)
-    identity = current_identity(authorization)
+    identity = current_identity(authorization, db)
     if identity["role"] not in {"admin", "editor"}:
         raise HTTPException(status_code=403, detail="Editor role required")
 
 
 def require_user_or_editor_access(
     authorization: str | None = Header(default=None),
+    db: Session = Depends(get_db),
 ) -> dict[str, str]:
-    if not auth_configured():
+    if not signing_configured():
         raise HTTPException(status_code=503, detail="Authentication is not configured")
-    identity = current_identity(authorization)
+    identity = current_identity(authorization, db)
     if identity["role"] not in {"user", "admin", "editor"}:
         raise HTTPException(status_code=403, detail="Authenticated user required")
+    return identity
+
+
+def require_identity(authorization: str | None = Header(default=None), db: Session = Depends(get_db)) -> dict[str, str]:
+    return current_identity(authorization, db)
+
+
+def require_editor_identity(identity: dict[str, str] = Depends(require_identity)) -> dict[str, str]:
+    if identity["role"] not in {"admin", "editor"}:
+        raise HTTPException(status_code=403, detail="Editor role required")
     return identity

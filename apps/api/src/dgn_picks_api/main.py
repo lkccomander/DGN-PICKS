@@ -12,7 +12,7 @@ from dgn_picks_api.api.v1.routes.markets import router as markets_router, select
 from dgn_picks_api.api.v1.routes.picks import router as picks_router
 from dgn_picks_api.api.v1.routes.seed import router as seed_router
 from dgn_picks_api.api.v1.routes.teams import players_router, router as teams_router
-from dgn_picks_api.api.v1.routes.users import router as users_router
+from dgn_picks_api.api.v1.routes.users import router as users_router, admin_router as admin_users_router
 
 app = FastAPI(title="DGN-PICKS API", version="0.1.0")
 
@@ -36,6 +36,7 @@ app.include_router(health_router, prefix="/api")
 
 for router in (
     users_router,
+    admin_users_router,
     auth_router,
     teams_router,
     players_router,
