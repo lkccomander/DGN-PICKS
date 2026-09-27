@@ -21,8 +21,8 @@ See the [publication checkpoint](docs/checkpoints/2026-09-26-gato-publication.md
 - [ ] Obtain the date/jornada or opponent of the original 13 picks, plus Over/Under for Malakai Toney 72.5 receiving yards; then verify official results and grade each. All were reviewed; none can yet be graded from the supplied facts.
 - [ ] Verify final statistics and participation for the new card before grading; missing taken odds must stay unknown.
 - [ ] Run the wider isolated browser journeys (registration, protected account, pick creation/editing, stored-price history, desktop console) and close the [remediation plan](docs/exec-plans/active/2026-09-24-audit-remediation.md).
-- [ ] Sync local `main` to GitHub using authentication permitted to update workflow files. The existing OAuth token rejected the push because it lacks `workflow` scope; local commits and the tested Railway deployment are intact.
-- [ ] Run and verify GitHub CI after synchronization. Remote CI has not run for these commits.
+- [x] GitHub synchronization through `cb58207` confirmed after the user refreshed authentication and pushed `main`.
+- [ ] Inspect GitHub CI for the synchronized commits; its remote outcome has not yet been verified.
 - [ ] Later milestones: virtual-token ledger; live provider and CLV. No live odds provider is connected.
 
 ## Deployment context
@@ -30,5 +30,5 @@ See the [publication checkpoint](docs/checkpoints/2026-09-26-gato-publication.md
 Frontend: https://dgnweb-production.up.railway.app/
 API: https://dgn-picks-production.up.railway.app
 
-The usual workflow is GitHub → Railway. This release used a clean Git archive uploaded directly to Railway because the GitHub push was rejected. Reconcile GitHub before the next Git-triggered release.
+User-required workflow: commit and push to GitHub, then deploy the same committed application code directly to Railway and verify the services. Record the commit and deployment IDs. The initial publication preceded GitHub synchronization because of the former token scope issue; synchronization through `cb58207` is now confirmed.
 Preserve unrelated `.claude/skills` worktree changes and the original untracked `picks09262026.md`.

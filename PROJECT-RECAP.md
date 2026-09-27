@@ -10,7 +10,8 @@
 - [x] Review all 13 original definitions and document missing event/date/side evidence.
 - [ ] Grade the original definitions after those facts are supplied and official results are verified.
 - [ ] Complete broader isolated authenticated/account/desktop browser acceptance and remediation closeout.
-- [ ] Sync GitHub with an appropriately scoped token and verify remote CI. Railway currently runs the direct upload of `53c75c5`.
+- [x] Synchronize GitHub through `cb58207` after the authentication update.
+- [ ] Verify remote CI. Use GitHub source plus direct Railway deployment for releases, as required by the user.
 - [ ] Future product work: virtual-token ledger, live-provider integration, and CLV.
 
 # DGN-PICKS — Project audit, current state, and next steps

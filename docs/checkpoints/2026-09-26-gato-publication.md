@@ -25,6 +25,12 @@ Both services built successfully from a clean archive of tracked files and serve
 
 GitHub rejected `git push origin main`: the OAuth token lacks `workflow` scope for `.github/workflows/validate.yml`. The tested release was uploaded directly to Railway. GitHub synchronization and remote CI remain outstanding; do not treat GitHub's old revision as this deployed release.
 
+## Follow-up after user authentication update
+
+- [x] The user completed the GitHub push; a subsequent fetch confirmed local `cb58207` equals `origin/main`.
+- [x] Permanent release preference recorded in `AGENTS.md`: commit/push to GitHub, then deploy the same committed application code directly to Railway and verify it.
+- [ ] Remote CI outcome still needs verification. The initial publication limitations above describe the earlier state.
+
 ## Data evidence
 
 - Owner: `gato`, production user ID **7**.

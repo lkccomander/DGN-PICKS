@@ -6,7 +6,7 @@ NCAA College Football picks, lines, props, and line movement tracker. DGN-PICKS 
 
 The [current checklist](STATUS.md) and [publication checkpoint](docs/checkpoints/2026-09-26-gato-publication.md) record the deployed release: ten requested picks for Gato are public, six synthetic legacy records are archived, and all 13 original definitions remain preserved for review. Current validation includes 105 API tests, web lint/types/build, generated-client consistency, migration SQL through `0011_restore_pick_leg_snapshot` on disposable PostgreSQL 18, and a passing anonymous desktop/mobile browser test against production. The desktop suite previously passed 18 tests.
 
-Commit `53c75c5` was deployed directly to Railway on 2026-09-27 UTC (September 26 locally). GitHub synchronization is pending because the existing OAuth token lacks permission to update workflow files. Wider authenticated browser acceptance and grading of the original card remain open; see the [source/evaluation review](docs/data-reviews/2026-09-26-gato-picks.md).
+Commit `53c75c5` was deployed directly to Railway on 2026-09-27 UTC (September 26 locally). GitHub synchronization through `cb58207` is confirmed after the authentication update. The required release workflow is to commit/push to GitHub, deploy the same committed application code directly to Railway, and verify the deployed services. Wider authenticated browser acceptance and grading of the original card remain open; see the [source/evaluation review](docs/data-reviews/2026-09-26-gato-picks.md).
 
 | Service | Railway URL |
 |---|---|
