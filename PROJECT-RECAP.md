@@ -1,8 +1,17 @@
-> **Remediation update — 2026-09-26:** Implementation through phases 1–3 is recorded in checkpoint commit `32104bb`. See [the current checklist and validation evidence](docs/checkpoints/2026-09-24-remediation.md) and [STATUS.md](STATUS.md). The audit findings below are the original pre-remediation snapshot; final browser acceptance and deployment remain pending.
+> **Current update — 2026-09-26:** Remediation phases 1–3 and the Gato import are implemented in `32104bb` / `53c75c5`; API and web are deployed on Railway. See [STATUS.md](STATUS.md) and the [publication checkpoint](docs/checkpoints/2026-09-26-gato-publication.md). The original audit below remains historical.
 
-## Remediation progress as of 2026-09-26
+## Current phase checklist
 
-The original audit snapshot below describes the state before remediation. Phases 1–2 are implemented; phase 3 implementation is in place. API and desktop tests, web checks, and disposable PostgreSQL SQL execution are recorded as having passed on 2026-09-24, before a small later registration-form edit. Browser acceptance has not run. The docs-only continuation on 2026-09-26 did not run tests. Re-run current checks before release. No production deployment, migration, or legacy-pick quarantine has happened.
+- [x] Phase 1: API privacy, revocable sessions, ownership, and eligibility fixes.
+- [x] Phase 2: seed integrity, accurate analytics, and reversible quarantine; six synthetic production records archived.
+- [x] Phase 3 implementation: web/account and desktop boundaries, dependencies, clients, and CI definition.
+- [x] Current validation: 105 API tests, web lint/types/build, generated-client check, and PostgreSQL migration SQL through `0011`. Prior desktop suite: 18 passed.
+- [x] Gato publication: ten owned picks imported; anonymous desktop/mobile browser acceptance passed against production.
+- [x] Review all 13 original definitions and document missing event/date/side evidence.
+- [ ] Grade the original definitions after those facts are supplied and official results are verified.
+- [ ] Complete broader isolated authenticated/account/desktop browser acceptance and remediation closeout.
+- [ ] Sync GitHub with an appropriately scoped token and verify remote CI. Railway currently runs the direct upload of `53c75c5`.
+- [ ] Future product work: virtual-token ledger, live-provider integration, and CLV.
 
 # DGN-PICKS — Project audit, current state, and next steps
 

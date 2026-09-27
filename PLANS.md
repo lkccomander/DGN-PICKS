@@ -1,6 +1,6 @@
 # PLANS.md — DGN-PICKS
 
-Read [STATUS.md](STATUS.md) for the latest session handoff, verified progress, and next steps. Current work: [Gato import and prior-card review](docs/exec-plans/active/2026-09-26-gato-picks-import.md). Audit remediation is implemented locally; the [checkpoint](docs/checkpoints/2026-09-24-remediation.md) records remaining acceptance and deployment evidence.
+Read [STATUS.md](STATUS.md) for the latest session handoff, verified progress, and next steps. Current work: [Gato import and prior-card review](docs/exec-plans/active/2026-09-26-gato-picks-import.md). The Gato import and remediation code are deployed; the [publication checkpoint](docs/checkpoints/2026-09-26-gato-publication.md) records verified public behavior and the remaining grading, broader acceptance, and GitHub synchronization work.
 
 For work spanning multiple files, migrations, or UI/API integration, create an ExecPlan in `docs/exec-plans/active/`.
 

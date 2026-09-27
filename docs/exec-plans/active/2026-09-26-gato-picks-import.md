@@ -10,9 +10,10 @@ Import verified event/player associations with user-supplied lines and unknown o
 - [x] Read source file and source-of-truth docs; inspect public API state.
 - [x] Resolve ten player identities and eight events against official team sources.
 - [x] Add idempotent manual-import service, provenance, and forward migration.
-- [ ] Restore reliable deployment migrations and public pick reads.
-- [ ] Import new picks for gato and verify public dashboard display.
-- [ ] Evaluate all prior picks; request event/date/side facts where absent.
+- [x] Restore deployment migrations and public pick reads.
+- [x] Import ten picks for gato and verify the public dashboard on desktop/mobile.
+- [x] Review all 13 prior definitions, request missing facts, and archive six strict synthetic legacy matches.
+- [ ] Grade the prior card once event/date/side facts and official final statistics are available.
 
 ## Implementation plan
 1. Version the normalized manifest beside the original source; preserve original spelling.
@@ -22,7 +23,7 @@ Import verified event/player associations with user-supplied lines and unknown o
 5. Record what was imported/graded and why any earlier pick cannot yet be graded.
 
 ## Validation
-105 API tests passed. Actual ten-entry manifest rehearsal produced ten Gato picks across eight games with null odds and no new snapshots; repeat created zero. Full upgrade SQL executed on disposable PostgreSQL 18 through 0011. Frontend lint/types/build passed. Public API and browser acceptance pending publication.
+105 API tests passed. Actual ten-entry manifest rehearsal produced ten Gato picks across eight games with null odds and no new snapshots; repeat created zero. Full upgrade SQL executed on disposable PostgreSQL 18 through 0011. Frontend lint/types/build passed. Production API verification and anonymous desktop/mobile browser acceptance passed (one read-only Playwright test). Repeat production preview found zero new records.
 
 ## Surprises & Discoveries
 Public /picks?user=gato returned HTTP500 while health and games worked. Existing deployed events are synthetic fixtures and cannot establish real prior pick outcomes. The previous migration wrapper drops a historical column on repeated deployments and needs a forward repair.
@@ -34,4 +35,4 @@ Public /picks?user=gato returned HTTP500 while health and games worked. Existing
 - Earlier original definitions have no authoritative event date/opponent. Await these facts instead of grading against QA fixture scores.
 
 ## Outcomes & Retrospective
-In progress.
+Published commit `53c75c5` directly to Railway after GitHub rejected the push for missing workflow scope. Gato owns ten imported picks (IDs 8–17); six synthetic records are reversibly archived and all 13 prior definitions remain. Public summary is ten pending picks / 10u. New-card publication is complete; prior-card grading awaits missing user facts. See the [publication checkpoint](../../checkpoints/2026-09-26-gato-publication.md) for exact evidence and remaining acceptance/synchronization tasks.

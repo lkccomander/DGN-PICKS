@@ -15,7 +15,8 @@ Token accounting, live providers, CLV, and email verification remain future scop
 - [x] Phase 1: account privacy, sessions, authenticated picks, domain regression tests.
 - [x] Phase 2: seed/QA separation, reversible legacy quarantine, fixture coverage, analytics.
 - [x] Phase 3 implementation: desktop boundary, truthful account UI, lint fixes, dependencies, contract/CI.
-- [ ] Phase 3 acceptance: isolated browser suite and final post-edit lint/type/build/client checks.
+- [x] Final post-edit API, lint/type/build, and generated-client checks passed during Gato publication.
+- [ ] Phase 3 acceptance: wider isolated authenticated/account/desktop browser suite.
 - [ ] Phase 4: final validation, closeout, and deployment checklist.
 - [x] Reconcile README, environment example, product Decision Log, architecture notes, and recap.
 
@@ -51,4 +52,4 @@ approved escalation path. Existing .claude/skills changes are unrelated.
 - Settled priced stake is the ROI denominator; pending exposure is separate.
 
 ## Outcomes & Retrospective
-Work resumed 2026-09-26. Phases 1–3 implementation is present; browser acceptance and post-registration-edit checks remain. README, environment example, product Decision Log, architecture notes, and recap were reconciled. No tests were run during the docs-only continuation. See [checkpoint](../../checkpoints/2026-09-24-remediation.md) for exact results and next steps. Deployment acceptance remains separate.
+The later authorized Gato publication deployed the implementation to Railway, applied the strict legacy quarantine, and passed public desktop/mobile browser acceptance. Current API (105), frontend, generated-client, and migration checks passed. See the [publication checkpoint](../../checkpoints/2026-09-26-gato-publication.md). Wider isolated authenticated/account/desktop browser acceptance and remote CI remain open; production publication does not close those checks.

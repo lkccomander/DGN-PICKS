@@ -1,5 +1,7 @@
 # Checkpoint — audit remediation
 
+> Historical checkpoint. The later [2026-09-26 publication checkpoint](2026-09-26-gato-publication.md) supersedes deployment status and validation counts below. API/web are now deployed and the strict legacy quarantine was applied; broader browser acceptance remains open.
+
 Created 2026-09-24; resumed 2026-09-26. Implementation remains in progress.
 
 ## Scope and repository state
