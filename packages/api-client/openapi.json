@@ -480,6 +480,249 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "ImportGame": {
+        "additionalProperties": false,
+        "properties": {
+          "away_team": {
+            "$ref": "#/components/schemas/ImportTeam"
+          },
+          "home_team": {
+            "$ref": "#/components/schemas/ImportTeam"
+          },
+          "key": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Key",
+            "type": "string"
+          },
+          "kickoff_at": {
+            "format": "date-time",
+            "title": "Kickoff At",
+            "type": "string"
+          },
+          "season": {
+            "maximum": 2200.0,
+            "minimum": 1900.0,
+            "title": "Season",
+            "type": "integer"
+          },
+          "source_urls": {
+            "items": {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Source Urls",
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/GameStatus"
+          },
+          "week": {
+            "maximum": 30.0,
+            "minimum": 0.0,
+            "title": "Week",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "kickoff_at",
+          "season",
+          "week",
+          "status",
+          "home_team",
+          "away_team",
+          "source_urls"
+        ],
+        "title": "ImportGame",
+        "type": "object"
+      },
+      "ImportPick": {
+        "additionalProperties": false,
+        "properties": {
+          "american_odds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "American Odds"
+          },
+          "decimal_odds": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 1.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,5}|(?=[\\d.]{1,11}0*$)\\d{0,5}\\.\\d{0,5}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decimal Odds"
+          },
+          "description": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "game_key": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Game Key",
+            "type": "string"
+          },
+          "key": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Key",
+            "type": "string"
+          },
+          "line_value": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,7}|(?=[\\d.]{1,11}0*$)\\d{0,7}\\.\\d{0,3}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Line Value"
+          },
+          "market_type": {
+            "enum": [
+              "player_rushing_yards",
+              "player_passing_yards",
+              "player_receiving_yards"
+            ],
+            "title": "Market Type",
+            "type": "string"
+          },
+          "original_text": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Original Text",
+            "type": "string"
+          },
+          "player_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Player Name",
+            "type": "string"
+          },
+          "player_position": {
+            "maxLength": 16,
+            "minLength": 1,
+            "title": "Player Position",
+            "type": "string"
+          },
+          "player_team": {
+            "enum": [
+              "home",
+              "away"
+            ],
+            "title": "Player Team",
+            "type": "string"
+          },
+          "side": {
+            "enum": [
+              "over",
+              "under"
+            ],
+            "title": "Side",
+            "type": "string"
+          },
+          "source_urls": {
+            "items": {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Source Urls",
+            "type": "array"
+          },
+          "stake_units": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,7}|(?=[\\d.]{1,11}0*$)\\d{0,7}\\.\\d{0,3}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "1",
+            "title": "Stake Units"
+          }
+        },
+        "required": [
+          "key",
+          "game_key",
+          "player_name",
+          "player_team",
+          "player_position",
+          "original_text",
+          "description",
+          "market_type",
+          "side",
+          "line_value",
+          "source_urls"
+        ],
+        "title": "ImportPick",
+        "type": "object"
+      },
+      "ImportTeam": {
+        "additionalProperties": false,
+        "properties": {
+          "abbreviation": {
+            "maxLength": 8,
+            "minLength": 1,
+            "title": "Abbreviation",
+            "type": "string"
+          },
+          "conference": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Conference",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "short_name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Short Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "short_name",
+          "abbreviation",
+          "conference"
+        ],
+        "title": "ImportTeam",
+        "type": "object"
+      },
       "LoginRequest": {
         "properties": {
           "password": {
@@ -953,6 +1196,61 @@
         "title": "PickGrade",
         "type": "object"
       },
+      "PickImportManifest": {
+        "additionalProperties": false,
+        "properties": {
+          "batch_key": {
+            "maxLength": 63,
+            "minLength": 1,
+            "title": "Batch Key",
+            "type": "string"
+          },
+          "games": {
+            "items": {
+              "$ref": "#/components/schemas/ImportGame"
+            },
+            "minItems": 1,
+            "title": "Games",
+            "type": "array"
+          },
+          "pick_date": {
+            "format": "date",
+            "title": "Pick Date",
+            "type": "string"
+          },
+          "picks": {
+            "items": {
+              "$ref": "#/components/schemas/ImportPick"
+            },
+            "minItems": 1,
+            "title": "Picks",
+            "type": "array"
+          },
+          "source_file": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Source File",
+            "type": "string"
+          },
+          "user": {
+            "maxLength": 32,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "title": "User",
+            "type": "string"
+          }
+        },
+        "required": [
+          "batch_key",
+          "user",
+          "source_file",
+          "pick_date",
+          "games",
+          "picks"
+        ],
+        "title": "PickImportManifest",
+        "type": "object"
+      },
       "PickResponse": {
         "properties": {
           "american_odds": {
@@ -985,6 +1283,18 @@
           "id": {
             "title": "Id",
             "type": "integer"
+          },
+          "import_metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Import Metadata"
           },
           "line_value": {
             "anyOf": [
@@ -2097,6 +2407,145 @@
         ]
       }
     },
+    "/api/v1/admin/pick-imports": {
+      "post": {
+        "description": "Plan by default. Explicit apply commits the complete manifest atomically.",
+        "operationId": "post_pick_import_api_v1_admin_pick_imports_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "apply",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Apply",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PickImportManifest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Post Pick Import Api V1 Admin Pick Imports Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Post Pick Import",
+        "tags": [
+          "pick imports"
+        ]
+      }
+    },
+    "/api/v1/admin/pick-imports/legacy-seed-quarantine": {
+      "post": {
+        "description": "Review the fixed legacy fixture manifest; explicit apply archives strict matches.",
+        "operationId": "post_legacy_seed_quarantine_api_v1_admin_pick_imports_legacy_seed_quarantine_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "apply",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Apply",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "items": {
+                      "type": "integer"
+                    },
+                    "type": "array"
+                  },
+                  "title": "Response Post Legacy Seed Quarantine Api V1 Admin Pick Imports Legacy Seed Quarantine Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Post Legacy Seed Quarantine",
+        "tags": [
+          "pick imports"
+        ]
+      }
+    },
     "/api/v1/admin/users": {
       "get": {
         "operationId": "list_users_api_v1_admin_users_get",
@@ -2227,6 +2676,24 @@
     "/api/v1/analytics/summary": {
       "get": {
         "operationId": "get_summary_api_v1_analytics_summary_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "user",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "User"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -2237,6 +2704,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
           }
         },
         "summary": "Get Summary",

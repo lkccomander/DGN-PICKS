@@ -15,6 +15,9 @@ export type Components = {
       "GameUpdate": { "external_ids"?: Record<string, unknown> | null; "season"?: number | null; "week"?: number | null; "kickoff_at"?: string | null; "home_team_id"?: number | null; "away_team_id"?: number | null; "venue"?: string | null; "status"?: Components["schemas"]["GameStatus"] | null; "home_score"?: number | null; "away_score"?: number | null };
       "HTTPValidationError": { "detail"?: Array<Components["schemas"]["ValidationError"]> };
       "HealthResponse": { "status" : string; "service" : string };
+      "ImportGame": { "key" : string; "kickoff_at" : string; "season" : number; "week" : number; "status" : Components["schemas"]["GameStatus"]; "home_team" : Components["schemas"]["ImportTeam"]; "away_team" : Components["schemas"]["ImportTeam"]; "source_urls" : Array<string> };
+      "ImportPick": { "key" : string; "game_key" : string; "player_name" : string; "player_team" : "home" | "away"; "player_position" : string; "original_text" : string; "description" : string; "market_type" : "player_rushing_yards" | "player_passing_yards" | "player_receiving_yards"; "side" : "over" | "under"; "line_value" : number | string; "american_odds"?: number | null; "decimal_odds"?: number | string | null; "stake_units"?: number | string; "source_urls" : Array<string> };
+      "ImportTeam": { "name" : string; "short_name" : string; "abbreviation" : string; "conference" : string };
       "LoginRequest": { "username" : string; "password" : string };
       "MarketCreate": { "game_id" : number; "market_type" : string; "period"?: string; "player_id"?: number | null; "team_id"?: number | null; "status"?: Components["schemas"]["MarketStatus"] };
       "MarketResponse": { "id" : number; "game_id" : number; "market_type" : string; "period" : string; "player_id"?: number | null; "team_id"?: number | null; "status" : Components["schemas"]["MarketStatus"]; "selections"?: Array<Components["schemas"]["SelectionResponse"]> };
@@ -24,7 +27,8 @@ export type Components = {
       "OddsSnapshotResponse": { "id" : number; "selection_id" : number; "sportsbook_id" : number; "observed_at" : string; "line_value"?: string | null; "american_odds"?: number | null; "decimal_odds" : string; "implied_probability"?: string | null; "source_event_id"?: string | null; "created_at" : string };
       "PickCreate": { "user" : string; "game_id" : number; "market_id" : number; "selection_id"?: number | null; "stake_units" : number | string; "notes"?: string | null };
       "PickGrade": { "result" : Components["schemas"]["PickResult"] };
-      "PickResponse": { "id" : number; "user_id" : number; "game_id" : number; "market_id" : number; "selection_id"?: number | null; "picked_at" : string; "line_value"?: string | null; "american_odds"?: number | null; "decimal_odds"?: string | null; "stake_units" : string; "result" : Components["schemas"]["PickResult"]; "profit_units"?: string | null; "notes"?: string | null };
+      "PickImportManifest": { "batch_key" : string; "user" : string; "source_file" : string; "pick_date" : string; "games" : Array<Components["schemas"]["ImportGame"]>; "picks" : Array<Components["schemas"]["ImportPick"]> };
+      "PickResponse": { "import_metadata"?: Record<string, unknown> | null; "id" : number; "user_id" : number; "game_id" : number; "market_id" : number; "selection_id"?: number | null; "picked_at" : string; "line_value"?: string | null; "american_odds"?: number | null; "decimal_odds"?: string | null; "stake_units" : string; "result" : Components["schemas"]["PickResult"]; "profit_units"?: string | null; "notes"?: string | null };
       "PickResult": "pending" | "win" | "loss" | "push" | "void";
       "PickUpdate": { "user" : string; "stake_units"?: number | string | null; "notes"?: string | null };
       "PlayerCreate": { "external_ids"?: Record<string, unknown>; "team_id" : number; "name" : string; "position" : string; "active"?: boolean };
@@ -50,6 +54,8 @@ export type Components = {
 
 export type ApiPath =
   | `/api/health`
+  | `/api/v1/admin/pick-imports`
+  | `/api/v1/admin/pick-imports/legacy-seed-quarantine`
   | `/api/v1/admin/users`
   | `/api/v1/admin/users/${number}`
   | `/api/v1/analytics/summary`

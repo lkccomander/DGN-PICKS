@@ -1,8 +1,8 @@
 # DGN-PICKS — session handoff
 
-Updated: 2026-09-24. **Paused at the user’s request; remediation is in progress.**
+Updated: 2026-09-26. **Publishing the requested Gato card; import code and migration validation passed.**
 
-Read the [checkpoint](docs/checkpoints/2026-09-24-remediation.md) first when resuming.
+Use the [checkpoint](docs/checkpoints/2026-09-24-remediation.md) for recorded evidence and remaining acceptance steps.
 The [project recap](PROJECT-RECAP.md) preserves the original audit; its baseline failures should not be mistaken for current remediation results.
 
 ## Completed locally
@@ -11,16 +11,19 @@ The [project recap](PROJECT-RECAP.md) preserves the original audit; its baseline
 - [x] Accurate unresolved seed definitions, reversible quarantine tooling, and settled analytics.
 - [x] Desktop request boundary and protected account UI.
 - [x] Dependency updates, regenerated clients, and CI implementation.
-- [x] API: 84 passing tests; desktop: 18 passing tests.
-- [x] Web lint, TypeScript, and production build passed before the last small registration edit.
-- [x] Migration SQL through `0009_audit_integrity` executed on disposable PostgreSQL 18; server stopped.
+- [x] API: 105 passing tests; desktop: 18 passing tests from the remediation checkpoint.
+- [x] Current web lint, TypeScript, and production build passed.
+- [x] Migration SQL through `0011_restore_pick_leg_snapshot` executed on disposable PostgreSQL 18; server stopped.
+- [x] Ten-entry Gato manifest rehearsed with owner/line/unknown-price preservation and repeatability.
 
 ## Next session
 
 - [ ] Recheck final edits and run updated browser acceptance on an isolated database.
-- [ ] Finish documentation/environment reconciliation and product Decision Log.
+- [x] Reconcile documentation, environment examples, architecture, and product Decision Log.
 - [ ] Complete the [active remediation plan](docs/exec-plans/active/2026-09-24-audit-remediation.md).
 - [ ] Prepare and verify deployment separately; no remediation deployment or production quarantine has occurred.
+
+The earlier documentation-only continuation ran no tests. The subsequent Gato import work ran the checks recorded above.
 
 ## Deployment context
 

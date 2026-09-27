@@ -13,6 +13,7 @@ async function getJson<T>(path: string): Promise<T> {
   const response = await fetch(`${apiUrl()}${path}`, {
     cache: "no-store",
     headers: { Accept: "application/json" },
+    signal: AbortSignal.timeout(15000),
   });
   if (!response.ok) {
     const error = new Error(`Upstream API returned ${response.status}`) as UpstreamError;
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
     const [games, picks, summary, teams, definitions] = await Promise.all([
       getJson<Array<{ id: number }>>("/api/v1/games"),
       getJson<unknown[]>(`/api/v1/picks?user=${encodeURIComponent(user)}`),
-      getJson<unknown>("/api/v1/analytics/summary"),
+      getJson<unknown>(`/api/v1/analytics/summary?user=${encodeURIComponent(user)}`),
       getJson<unknown[]>("/api/v1/teams"),
       getJson<unknown[]>(`/api/v1/seed/pick-definitions?user=${encodeURIComponent(user)}`),
     ]);

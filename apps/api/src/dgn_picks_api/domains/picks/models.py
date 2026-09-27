@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, ForeignKey, Numeric, String, func
+from sqlalchemy import DateTime, ForeignKey, Numeric, String, JSON, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from dgn_picks_api.db.base import Base
@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 class Pick(Base):
     __tablename__ = "picks"
+    __table_args__ = (UniqueConstraint("user_id", "import_key", name="uq_picks_user_import_key"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
@@ -29,6 +30,8 @@ class Pick(Base):
     profit_units: Mapped[Decimal | None] = mapped_column(Numeric(10, 5))
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     archive_reason: Mapped[str | None] = mapped_column(String(160))
+    import_key: Mapped[str | None] = mapped_column(String(128))
+    import_metadata: Mapped[dict | None] = mapped_column(JSON)
     notes: Mapped[str | None] = mapped_column(String(1000))
     user: Mapped["User"] = relationship(back_populates="picks")
     legs: Mapped[list["PickLeg"]] = relationship(back_populates="pick", cascade="all, delete-orphan")

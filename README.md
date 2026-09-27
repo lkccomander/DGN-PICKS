@@ -1,112 +1,73 @@
 # DGN-PICKS
 
-NCAA College Football picks, lines, props, and line-movement tracker.
+NCAA College Football picks, lines, props, and line movement tracker. DGN-PICKS is an analytics and prediction tracking product; picks use units and the app does not take or pay money.
 
-## Deployment
+## Current project state
 
-The active workflow is **GitHub → Railway**. Railway is the deployment environment; a local runtime is not required for normal project use.
+The audit and remediation checklist is in [PROJECT-RECAP.md](PROJECT-RECAP.md) and [the continuation checkpoint](docs/checkpoints/2026-09-24-remediation.md). Local code changes for API privacy and sessions, seed accuracy, archived legacy demo data, analytics, desktop request protections, the account UI, and generated API clients have been recorded in the current branch. The most recent recorded results are 84 API tests, 18 desktop tests, frontend lint/type/build, and execution of generated migration SQL through revision `0009_audit_integrity` on disposable PostgreSQL 18. The later browser acceptance and final documentation verification are pending. This does not establish deployed behavior.
+
+The last deployment snapshot in the repository was verified on 2026-09-10. Recheck the live services before treating their status as current.
 
 | Service | Railway URL |
 |---|---|
 | Frontend | https://dgnweb-production.up.railway.app/ |
 | API | https://dgn-picks-production.up.railway.app |
 
-Verified on 2026-09-10: both services deployed successfully from `main`; the API
-healthcheck and dashboard returned HTTP 200.
+## Stack and structure
 
-## Baseline stack
-- Next.js + TypeScript
-- FastAPI + Python
-- PostgreSQL
-- SQLAlchemy + Alembic
-- pytest
-- Playwright
-- deterministic fixture/seed data
+- Next.js + TypeScript: `apps/web`
+- FastAPI + SQLAlchemy + Alembic: `apps/api`
+- Generated OpenAPI client: `packages/api-client`
+- Deterministic provider fixtures: `data/fixtures`
+- Desktop operations console: `ext-tools`
 
-## Codex reading order
-1. `AGENTS.md`
-2. `docs/product-specs/001-local-mvp.md`
-3. `ARCHITECTURE.md`
-4. `PLANS.md`
-5. `docs/design-docs/branding.md`
+The API is a modular monolith. The deterministic local fixture provider remains the MVP data source; no live odds provider is connected.
 
-## Current milestone status
+## Local configuration
 
-- **M1 foundation:** complete — web shell, FastAPI health endpoint, PostgreSQL migration foundation, developer commands, and deterministic fixture direction. API tests pass; Docker-backed migration verification still requires Docker Desktop WSL integration.
-- **M2 domain/seed:** implementation is present — domain models, migrations, calculations, fixture provider, seed definitions/service, and seed report. Seed coverage audit remains active.
-- **API v1:** route modules and schemas are mounted under `/api/v1`; 59 API tests and Railway smoke/migration validation pass.
-- **Frontend dashboard:** connected dashboard implementation is deployed; its production build and HTTP smoke check pass.
-- **Live odds provider:** intentionally not connected. Deterministic local fixtures remain the source for MVP data.
+Copy `.env.example` to the ignored root `.env`, replace the placeholders, and export those values into your shell before starting the services. The Python API does not automatically load that file. In Bash, use `set -a; . ./.env; set +a`. Never use the example credentials outside a disposable local environment. The API reads `DATABASE_URL` and `DGN_AUTH_*`; the Next.js server uses `DGN_API_INTERNAL_URL` to reach the API, and that value stays server-side.
 
-## API v1 usage
+Install API dependencies with `python -m pip install -e apps/api` and web dependencies with `npm ci --prefix apps/web`. Start PostgreSQL, then run the following from the repository root against a fresh disposable local database:
 
-Use the Railway API base URL:
-
-```text
-https://dgn-picks-production.up.railway.app/api/v1
+```sh
+npm run db:migrate
+python scripts/verify_seed.py
 ```
 
-Available route shapes:
+The seed verification inserts deterministic local users and fixtures and is intended for that disposable database. In separate terminals, run `npm run api` and `npm run dev:web` from the repository root.
 
-- `GET /users?user=gato`
-- `GET /users/{id}`
-- `POST /users` (development write boundary)
-- `PATCH /users/{id}` (development write boundary)
-- `DELETE /users/{id}` (development write boundary; users with picks cannot be deleted)
-- `GET /teams?conference=SEC&active=true`
-- `POST /teams`, `PATCH /teams/{id}`, `DELETE /teams/{id}` (development write boundary)
-- `GET /players?team_id={id}&active=true`
-- `POST /players`, `PATCH /players/{id}`, `DELETE /players/{id}` (development write boundary)
-- `POST /games`, `PATCH /games/{id}`, `DELETE /games/{id}` (development write boundary)
-- `GET /markets?game_id={id}`
-- `POST /markets`, `PATCH /markets/{id}`, `DELETE /markets/{id}` (development write boundary)
-- `GET /markets/{id}/history`
-- `POST /markets/{id}/history` (development write boundary; append-only)
-- `POST /markets/{id}/selections` (development write boundary)
-- `GET /selections/{id}`
-- `PATCH /selections/{id}`, `DELETE /selections/{id}` (development write boundary)
-- `GET /picks/{id}`
-- `PATCH /picks/{id}` (development write boundary; pending stake/notes only)
-- `DELETE /picks/{id}?user=<username>` (development write boundary; pending picks only)
-- `PATCH /picks/{id}/grade` (development write boundary)
-- `GET /games?date=YYYY-MM-DD&conference=SEC`
-- `GET /games/{game_id}`
-- `GET /games/{game_id}/markets`
-- `GET /markets/{market_id}/history`
-- `GET /picks?user=gato&date=YYYY-MM-DD`
-- `POST /picks`
-- `GET /analytics/summary`
-- `POST /dev/seed`
+The optional `DGN_API_WRITE_MODE=development` plus `DGN_API_WRITE_KEY` boundary is for catalog setup only when API authentication is not configured. It is disabled by default. Pick creation, edits, grading, and deletion use signed bearer sessions. The web app does not have a development-key pick-write switch.
 
-The development seed endpoint is idempotent and reports unresolved input. The Malakai Toney 72.5 receiving-yards definition remains unresolved because its Over/Under side was not supplied; it must not be guessed.
+## Accounts and API access
 
-## Authentication, accounts, and admin catalog
+- `GET /api/v1/users` and `GET /api/v1/users/{id}` are public projections; they omit email and country.
+- `GET /api/v1/admin/users` and `/api/v1/admin/users/{id}` include private fields and require an `admin` or `editor` bearer session.
+- `GET /api/v1/auth/account` returns the authenticated account's own profile.
+- Registration and login are `POST /api/v1/auth/register` and `POST /api/v1/auth/login`. User sessions are checked against the current account and are invalidated when an account is deactivated/reactivated or its password changes.
+- Authenticated users create and manage their own pending picks. Editors/admins can manage catalog resources. A new prediction is accepted only for an open market on a scheduled or live game.
+- API write authorization must be configured with `DGN_AUTH_SECRET`, `DGN_AUTH_USERNAME`, and `DGN_AUTH_PASSWORD`; operator access can use role `admin` or `editor`. A `viewer` session is read-only.
 
-Set `DGN_AUTH_SECRET`, `DGN_AUTH_USERNAME`, and `DGN_AUTH_PASSWORD` in the API environment to enable signed bearer sessions. `DGN_AUTH_ROLE` may be `admin`, `editor`, or `viewer`; admin/editor roles can mutate catalog and user resources, while viewer is read-only. Public account registration is available at `/join`; registered users can log in with their client ID or email and manage only their own pending picks. The web admin console is available at `/admin` and includes a Users tab plus teams, players, games, markets, and selections through the authenticated API proxy.
+The `/admin` web console uses the protected admin API proxy. Public user listings never expose contact fields.
 
-User passwords are stored as scrypt hashes and are never returned by the API. The registration endpoint is `POST /api/v1/auth/register`; account login uses `POST /api/v1/auth/login`. Email verification and password reset delivery are not yet included.
+## Picks, seeds, and analytics
 
-## Validation and handoff
+Seed users are `gato`, `daran`, and `noch`. The 13 original Gato definitions remain visible as unresolved product input until authoritative event, side, and taken-price details are available. QA outcome examples are separate fixtures and do not create product picks. Existing strict matches to the old invented demo picks can be reported by the quarantine script; it is dry-run by default and requires an explicit `--apply` to archive records.
 
-Push documentation and implementation changes to GitHub; Railway then deploys from the configured repository. Consult `STATUS.md` for the latest verification evidence and optional browser/E2E follow-up.
+Odds snapshots are append-oriented and a pick retains its taken line and price. Analytics reports pending exposure separately. Settled ROI uses priced, settled stake; if settled price data is incomplete, profit and ROI are unavailable rather than guessed.
 
-For a read-only deployed API smoke check, run `python scripts/smoke_api.py` or provide another origin with `python scripts/smoke_api.py --base-url https://example.invalid`.
+DGN-PICKS currently tracks picks in units. It does not keep or promise a token balance/ledger, real-money balance, deposits, withdrawals, or redemption. Virtual token accounting, email verification, password reset delivery, a live odds provider, and CLV remain future work.
 
-## Local E2E validation
+## Local browser acceptance
 
-The Playwright test uses a local development API and Next server. It never
-sends the API write key to the browser: Next's local-only proxy keeps that key
-server-side. With PostgreSQL migrated and the API seeded, set the local values
-from `.env.example`, start the API and web server, then run:
+The Playwright pick flow writes test data. Run it only against a disposable database and loopback API/web origins. Provide the isolated operator credentials as `E2E_OPERATOR_USERNAME` and `E2E_OPERATOR_PASSWORD`, plus `E2E_API_URL` and `E2E_WEB_URL`, then run `npm run test:e2e` from `apps/web`. It registers a unique test account and adds fixture history; reset the disposable database after the run.
 
-```powershell
-$env:E2E_API_URL = "http://127.0.0.1:8000"
-$env:E2E_WEB_URL = "http://127.0.0.1:3000"
-$env:DGN_API_WRITE_KEY = "replace-with-a-local-secret"
-npm --prefix apps/web exec playwright install chromium
-npm run test:e2e
-```
+Other checks are described in `.github/workflows/validate.yml`. Use [STATUS.md](STATUS.md) and the [checkpoint](docs/checkpoints/2026-09-24-remediation.md) for current evidence and next steps.
 
-The test selects a game, opens its detail, tracks an open selection, appends a
-later odds snapshot through the local development boundary, and verifies the
-pick still displays its stored taken line and price.
+## Project rules
+
+Read [AGENTS.md](AGENTS.md), the [product specification](docs/product-specs/001-local-mvp.md), [architecture](ARCHITECTURE.md), [brand guide](docs/design-docs/branding.md), and [plan index](PLANS.md) before substantial changes. Record changes to product semantics in the spec's Decision Log.
+
+
+## Importing supplied picks
+
+Editors/admins can preview a verified manifest using `POST /api/v1/admin/pick-imports` and apply it with `?apply=true`. The CLI equivalent is `python scripts/import_pick_manifest.py --manifest data/imports/gato-2026-09-26.json` (add `--apply` to commit). An owner/batch/item key prevents duplicate imports. The operation preserves supplied lines and source evidence, leaves missing odds unknown, records actual ingestion time separately from the stated date, and never manufactures odds history. Imported markets stay closed because a supplied historical pick is not a current offered price. See [Gato's source review](docs/data-reviews/2026-09-26-gato-picks.md).

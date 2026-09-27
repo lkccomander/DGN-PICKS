@@ -1,4 +1,8 @@
-> **Remediation checkpoint — 2026-09-24:** Implementation has started and is paused at the user's request. See [current checklist and validation evidence](docs/checkpoints/2026-09-24-remediation.md) and [STATUS.md](STATUS.md). The audit below is the original pre-remediation snapshot; deployment and final browser acceptance remain pending.
+> **Remediation update — 2026-09-26:** Implementation through phases 1–3 is recorded in checkpoint commit `32104bb`. See [the current checklist and validation evidence](docs/checkpoints/2026-09-24-remediation.md) and [STATUS.md](STATUS.md). The audit findings below are the original pre-remediation snapshot; final browser acceptance and deployment remain pending.
+
+## Remediation progress as of 2026-09-26
+
+The original audit snapshot below describes the state before remediation. Phases 1–2 are implemented; phase 3 implementation is in place. API and desktop tests, web checks, and disposable PostgreSQL SQL execution are recorded as having passed on 2026-09-24, before a small later registration-form edit. Browser acceptance has not run. The docs-only continuation on 2026-09-26 did not run tests. Re-run current checks before release. No production deployment, migration, or legacy-pick quarantine has happened.
 
 # DGN-PICKS — Project audit, current state, and next steps
 

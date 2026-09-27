@@ -14,8 +14,10 @@ Token accounting, live providers, CLV, and email verification remain future scop
 - [x] Read the audit and source-of-truth documents; reproduce baseline failures.
 - [x] Phase 1: account privacy, sessions, authenticated picks, domain regression tests.
 - [x] Phase 2: seed/QA separation, reversible legacy quarantine, fixture coverage, analytics.
-- [ ] Phase 3: desktop boundary, truthful account UI, lint, dependencies, contract/CI.
-- [ ] Phase 4: validation, documentation, remaining deployment checklist.
+- [x] Phase 3 implementation: desktop boundary, truthful account UI, lint fixes, dependencies, contract/CI.
+- [ ] Phase 3 acceptance: isolated browser suite and final post-edit lint/type/build/client checks.
+- [ ] Phase 4: final validation, closeout, and deployment checklist.
+- [x] Reconcile README, environment example, product Decision Log, architecture notes, and recap.
 
 ## Implementation plan
 1. Separate public user projections from protected admin/account reads.
@@ -49,4 +51,4 @@ approved escalation path. Existing .claude/skills changes are unrelated.
 - Settled priced stake is the ROI denominator; pending exposure is separate.
 
 ## Outcomes & Retrospective
-Paused at the user’s request on 2026-09-24. Phases 1–2 are implemented and covered by API tests. Phase 3 implementation is present; final browser acceptance and the last small edits need verification. See [checkpoint](../../checkpoints/2026-09-24-remediation.md) for exact results and ordered next steps. Deployment acceptance remains separate.
+Work resumed 2026-09-26. Phases 1–3 implementation is present; browser acceptance and post-registration-edit checks remain. README, environment example, product Decision Log, architecture notes, and recap were reconciled. No tests were run during the docs-only continuation. See [checkpoint](../../checkpoints/2026-09-24-remediation.md) for exact results and next steps. Deployment acceptance remains separate.

@@ -1,13 +1,14 @@
 # Checkpoint — audit remediation
 
-Date: 2026-09-24. Paused at the user's request; resume next session.
+Created 2026-09-24; resumed 2026-09-26. Implementation remains in progress.
 
 ## Scope and repository state
 
 - [x] Audit recorded in [PROJECT-RECAP.md](../../PROJECT-RECAP.md), findings A1–A15.
 - [x] User authorized implementation of the findings.
 - [x] Local checkpoint preserves the remediation work in progress.
-- [ ] Final acceptance, documentation reconciliation, and deployment are unfinished.
+- [x] README, `.env.example`, product decisions, architecture notes, and recap were reconciled on 2026-09-26.
+- [ ] Final acceptance and deployment are unfinished.
 - Production has not been modified by this remediation. No push or deployment was performed.
 - Preserve unrelated `.claude/skills/setup-matt-pocock-skills` deletions/symlink; excluded from the checkpoint commit.
 
@@ -49,7 +50,7 @@ Date: 2026-09-24. Paused at the user's request; resume next session.
 - Desktop suite: **18 passed**.
 - Web lint: **0 errors, 0 warnings**; standalone TypeScript check passed.
 - Next.js 16.3.6 production build passed.
-- The last web checks preceded the final `/join` network-error handling and username-input changes; rerun them after resume.
+- The last web checks preceded the final `/join` network-error handling and username-input changes; rerun them before release. The 2026-09-26 continuation updated documentation only and ran no tests.
 - OpenAPI/client regeneration completed; run `--check` during final verification.
 - All Alembic-generated upgrade SQL executed successfully on a disposable PostgreSQL 18 database; its head was `0009_audit_integrity`.
 - This confirms SQL execution, not a completed online Alembic upgrade/downgrade cycle or verification of an existing production database.
@@ -58,15 +59,14 @@ Date: 2026-09-24. Paused at the user's request; resume next session.
 
 ## Resume here — ordered checklist
 
-1. [ ] Read this checkpoint, the active remediation plan, and the source-of-truth documents listed in AGENTS.md.
-2. [ ] Review the final `/join` edit; rerun API pytest, web lint/types/build, and `scripts/generate_api_client.py --check`.
-3. [ ] Run Playwright against a disposable seeded API/database and built web server. Set `E2E_API_URL`, `E2E_WEB_URL`, `E2E_OPERATOR_USERNAME`, and `E2E_OPERATOR_PASSWORD` to isolated test values. The pick test rejects non-loopback origins.
-4. [ ] On this Windows machine, use `E2E_BROWSER_CHANNEL=chromium`: full Chromium revision 1243 is installed, while matching headless-shell was absent. Set `E2E_DESKTOP_URL` to a temporary desktop Flask server to include its browser test.
-5. [ ] Cover `/join`, protected `/account`, invalid-session behavior, and desktop/mobile viewports; fix any failures.
-6. [ ] Review CI end to end: API pytest clears operator auth environment for legacy development-key tests; PostgreSQL migration/seed and browser checks use isolated configured auth. Desktop browser coverage needs its server/environment added if desired in CI.
-7. [ ] Reconcile README, `.env.example`, product Decision Log, architecture/phase names, and PROJECT-RECAP. Remove obsolete web development-write flags and describe bearer-only pick writes. Historical audit sections currently remain intentionally unchanged.
-8. [ ] Update active plan with final evidence; move to completed only when local acceptance is finished.
-9. [ ] Prepare deployment checklist: database backup, migration 0009, old-session re-login, quarantine dry run/review before explicit apply, auth/private-user smoke tests, browser checks. Deployment/data changes remain separate unfinished work.
+1. [ ] Review the final `/join` edit; run current API/desktop, web lint/type/build, and generated-client checks before release.
+2. [ ] Run Playwright against a disposable seeded API/database and built web server. Set `E2E_API_URL`, `E2E_WEB_URL`, `E2E_OPERATOR_USERNAME`, and `E2E_OPERATOR_PASSWORD` to isolated test values. The pick test rejects non-loopback origins.
+3. [ ] On this Windows machine, use `E2E_BROWSER_CHANNEL=chromium`: full Chromium revision 1243 is installed, while matching headless-shell was absent. Set `E2E_DESKTOP_URL` to a temporary desktop Flask server to include its browser test.
+4. [ ] Cover `/join, protected `/account`, invalid-session behavior, and desktop/mobile viewports; fix any failures.
+5. [ ] Review CI end to end: API pytest clears operator auth environment for legacy development-key tests; PostgreSQL migration/seed and browser checks use isolated configured auth. Desktop browser coverage needs its server/environment added if desired in CI.
+7. [x] Reconcile README, `.env.example`, product Decision Log, architecture notes, and PROJECT-RECAP. The original audit remains as a historical snapshot.
+6. [ ] Update active plan with final evidence; move to completed only when local acceptance is finished.
+7. [ ] Prepare deployment checklist: database backup, migration 0009, old-session re-login, quarantine dry run/review before explicit apply, auth/private-user smoke tests, browser checks. Deployment/data changes remain separate unfinished work.
 
 ## Environment notes
 

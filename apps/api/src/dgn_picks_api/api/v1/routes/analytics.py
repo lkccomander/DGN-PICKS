@@ -7,13 +7,17 @@ from dgn_picks_api.api.v1.schemas import AnalyticsSummary
 from dgn_picks_api.domains.common.enums import PickResult
 from dgn_picks_api.domains.picks.calculations import profit_units, roi
 from dgn_picks_api.domains.picks.models import Pick
+from dgn_picks_api.domains.users.models import User
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 
 
 @router.get("/summary", response_model=AnalyticsSummary)
-def get_summary(db: Session = Depends(get_db)) -> AnalyticsSummary:
-    picks = db.scalars(select(Pick).where(Pick.archived_at.is_(None)).order_by(Pick.id)).all()
+def get_summary(db: Session = Depends(get_db), user: str | None = None) -> AnalyticsSummary:
+    statement = select(Pick).where(Pick.archived_at.is_(None))
+    if user is not None:
+        statement = statement.join(User, Pick.user_id == User.id).where(User.username == user)
+    picks = db.scalars(statement.order_by(Pick.id)).all()
     counts = {result: 0 for result in PickResult}
     settled_stake = Decimal(0)
     pending_stake = Decimal(0)

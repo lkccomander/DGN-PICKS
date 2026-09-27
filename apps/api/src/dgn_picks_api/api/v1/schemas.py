@@ -261,6 +261,7 @@ class PickCreate(BaseModel):
 
 
 class PickResponse(ORMModel):
+    import_metadata: dict | None = None
     id: int
     user_id: int
     game_id: int

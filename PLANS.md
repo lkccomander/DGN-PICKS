@@ -1,6 +1,6 @@
 # PLANS.md — DGN-PICKS
 
-Read [STATUS.md](STATUS.md) for the latest session handoff, verified progress, and next steps. Audit remediation is in progress and paused at the user’s request. Resume from [the checkpoint](docs/checkpoints/2026-09-24-remediation.md); final browser acceptance and documentation reconciliation remain.
+Read [STATUS.md](STATUS.md) for the latest session handoff, verified progress, and next steps. Current work: [Gato import and prior-card review](docs/exec-plans/active/2026-09-26-gato-picks-import.md). Audit remediation is implemented locally; the [checkpoint](docs/checkpoints/2026-09-24-remediation.md) records remaining acceptance and deployment evidence.
 
 For work spanning multiple files, migrations, or UI/API integration, create an ExecPlan in `docs/exec-plans/active/`.
 

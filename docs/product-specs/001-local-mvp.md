@@ -275,7 +275,10 @@ Version under `/api/v1`.
 
 ```text
 GET    /api/v1/users
-GET    /api/v1/users/{user_id}
+GET    /api/v1/users/{user_id}  (public fields only)
+GET    /api/v1/admin/users  (editor/admin bearer; includes private fields)
+GET    /api/v1/admin/users/{user_id}  (editor/admin bearer)
+GET    /api/v1/auth/account  (own authenticated profile)
 POST   /api/v1/auth/register
 POST   /api/v1/auth/login
 GET    /api/v1/games
@@ -479,6 +482,16 @@ Clean bootstrap, automated tests, E2E, docs sync.
   for prediction stakes. Tokens have no monetary value and cannot be deposited,
   withdrawn, transferred, or redeemed. Before implementation, define the
   starting balance, stake debit, and pending/win/loss/push/void settlement rules.
+
+- 2026-09-26: Public user list/detail responses expose only public profile fields. Email/country are available through authenticated `/admin/users` for editors/admins and `/auth/account` for the signed-in account itself.
+- 2026-09-26: User bearer sessions carry account ID and session version and are checked against current active account state. Deactivation/reactivation and password changes revoke existing sessions; operator credential/role changes invalidate operator sessions.
+- 2026-09-26: Pick mutations require signed bearer identity. Users can manage only their own pending picks; new picks require an open market and a scheduled/live game. The legacy development write key remains only for local catalog setup when API auth is not configured.
+- 2026-09-26: Keep all 13 initial Gato definitions unresolved until authoritative event, side, and taken-price information exists. QA result examples are separate fixtures. Strict legacy demo-pick matches may be archived with explicit operator action; archive only changes archival metadata and normal endpoints/analytics omit archived records.
+- 2026-09-26: MVP dashboard stakes are units. Virtual token balances and a token ledger are future scope until starting balance and settlement accounting are designed and accepted.
+- 2026-09-26: Pending stake exposure is reported separately. Settled ROI denominator includes only settled stake with valid taken prices; profit and ROI are null where no eligible settled stake exists or any settled pick lacks required odds.
+
+- 2026-09-26: Verified user-supplied picks can be imported through an editor/admin operation with a unique owner/batch/key, original text and source evidence. Import stores the supplied line directly, keeps unknown odds null, uses the documented 1u default when stake is absent, and creates no odds observations. Imported markets remain closed until current availability is independently established. Regular prediction eligibility is unchanged.
+- 2026-09-26: Dashboard summary queries are scoped to the selected user, including the public default Gato card. Historical records without event/date facts remain explicitly unresolved until they can be graded from real results.
 
 ## 22. Progress
 - [x] Product concept

@@ -83,3 +83,18 @@ def test_pending_and_unpriced_results_do_not_fabricate_roi(session):
     assert result.profit_units is None and result.roi is None
     assert result.unpriced_settled_count == 1
     assert result.total_units_risked == Decimal("2")
+
+
+def test_summary_filters_by_owner_and_excludes_archived(session):
+    from datetime import UTC, datetime
+    from dgn_picks_api.domains.users.models import User
+    session.add_all([User(id=1, username="gato", display_name="Gato"), User(id=2, username="daran", display_name="Daran")])
+    add_pick(session, PickResult.PENDING, "1", None)
+    session.add(Pick(user_id=2, game_id=1, market_id=1, stake_units=Decimal("5"), decimal_odds=Decimal("2"), result=PickResult.WIN))
+    session.add(Pick(user_id=1, game_id=1, market_id=1, stake_units=Decimal("9"), result=PickResult.PENDING, archived_at=datetime.now(UTC)))
+    session.commit()
+    gato = get_summary(session, user="gato")
+    assert gato.pending == 1 and gato.pending_units == Decimal("1")
+    assert gato.wins == 0 and gato.profit_units is None
+    assert get_summary(session, user="daran").profit_units == Decimal("5")
+    assert get_summary(session, user="missing").pending == 0
