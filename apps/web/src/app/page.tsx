@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useStoredValue } from "@/lib/use-stored-value";
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent, type PointerEvent } from "react";
 import {
   API_URL,
   fetchDashboardData,
@@ -72,6 +72,7 @@ export default function Home() {
   const [loginBusy, setLoginBusy] = useState(false);
   const [accountLabel, setAccountLabel] = useStoredValue("dgn-account-label");
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [depositLoading, setDepositLoading] = useState(false);
 
   const loadDashboard = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
@@ -260,7 +261,7 @@ export default function Home() {
       <div className="stripe" aria-hidden="true" />
       <header className="landing-topbar">
         <Link className="landing-brand" href="#board" aria-label="DGN-PICKS home"><span>DGN<span>-</span>PICKS</span><small>college football intelligence</small></Link>
-        {hasAdminToken ? <div className="landing-account-bar"><span className="account-mail" aria-hidden="true">✉</span><span className="account-balance">USD 0.52</span><button type="button" className="account-deposit">DEPOSIT</button><div className="account-menu-wrap"><button type="button" className="account-trigger" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen((open) => !open)}><span className="account-avatar" aria-hidden="true">●</span><strong>{accountLabel || "AC254187"}</strong><span className="account-caret" aria-hidden="true">▲</span></button>{accountMenuOpen ? <div className="account-menu"><Link href="/account">My Account</Link><Link className="selected" href="#picks">Open picks</Link><button type="button" onClick={() => { window.localStorage.removeItem("dgn-admin-token"); window.localStorage.removeItem("dgn-account-label"); window.localStorage.removeItem("dgn-active-user"); setToken(""); setSession(null); setActiveUser("gato"); setAccountMenuOpen(false); }}>Log out <span aria-hidden="true">⇥</span></button></div> : null}</div></div> : <form className={`landing-auth ${loginBusy ? "is-authenticating" : ""}`} onSubmit={submitLogin} aria-busy={loginBusy}><span className={`connection ${loading ? "is-loading" : error ? "is-error" : ""}`}><i /> {loading ? "Syncing" : error ? "Offline" : "Live API"}</span><div className="login-fields"><label><span className="sr-only">Email or Client ID</span><input type="text" autoComplete="username" value={loginUsername} onChange={(event) => setLoginUsername(event.target.value)} placeholder="Email or Client ID" required /></label><label><span className="sr-only">Password</span><input type="password" autoComplete="current-password" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} placeholder="Password" required /></label><Link className="login-help" href="#help">Forgot email or password?</Link>{loginError ? <span className="login-error" role="alert">{loginError}</span> : null}</div><Link href="/admin">Admin</Link><button type="submit" className="landing-login" disabled={loginBusy}>{loginBusy ? <><span className="login-spinner" aria-hidden="true" /> SIGNING IN</> : "LOG IN"}</button><Link className="landing-join" href="/join">JOIN</Link></form>}
+        {hasAdminToken ? <div className="landing-account-bar"><span className="account-mail" aria-hidden="true">✉</span><span className="account-balance">USD 0.52</span><button type="button" className="account-deposit" onClick={() => { setDepositLoading(true); window.setTimeout(() => setDepositLoading(false), 1800); }}>DEPOSIT</button><div className="account-menu-wrap"><button type="button" className="account-trigger" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen((open) => !open)}><span className="account-avatar" aria-hidden="true">●</span><strong>{accountLabel || "AC254187"}</strong><span className="account-caret" aria-hidden="true">▲</span></button>{accountMenuOpen ? <div className="account-menu"><Link href="/account">My Account</Link><Link className="selected" href="#picks">Open picks</Link><button type="button" onClick={() => { window.localStorage.removeItem("dgn-admin-token"); window.localStorage.removeItem("dgn-account-label"); window.localStorage.removeItem("dgn-active-user"); setToken(""); setSession(null); setActiveUser("gato"); setAccountMenuOpen(false); }}>Log out <span aria-hidden="true">⇥</span></button></div> : null}</div></div> : <form className={`landing-auth ${loginBusy ? "is-authenticating" : ""}`} onSubmit={submitLogin} aria-busy={loginBusy}><span className={`connection ${loading ? "is-loading" : error ? "is-error" : ""}`}><i /> {loading ? "Syncing" : error ? "Offline" : "Live API"}</span><div className="login-fields"><label><span className="sr-only">Email or Client ID</span><input type="text" autoComplete="username" value={loginUsername} onChange={(event) => setLoginUsername(event.target.value)} placeholder="Email or Client ID" required /></label><label><span className="sr-only">Password</span><input type="password" autoComplete="current-password" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} placeholder="Password" required /></label><Link className="login-help" href="#help">Forgot email or password?</Link>{loginError ? <span className="login-error" role="alert">{loginError}</span> : null}</div><Link href="/admin">Admin</Link><button type="submit" className="landing-login" disabled={loginBusy}>{loginBusy ? <><span className="login-spinner" aria-hidden="true" /> SIGNING IN</> : "LOG IN"}</button><Link className="landing-join" href="/join">JOIN</Link></form>}
       </header>
 
       <nav className="landing-primary-nav" aria-label="Primary navigation"><Link className="active" href="#board">⚾ <span>SPORTS BOARD</span></Link><Link href="#games">◷ <span>LIVE CENTRE</span></Link><Link href="#markets">◆ <span>MARKETS</span></Link><Link href="#picks">▣ <span>MY PICKS</span></Link><Link href="#insights">▤ <span>RESOURCES</span></Link><span className="nav-clock">MLB · {activeGames.length} active</span></nav>
@@ -295,6 +296,7 @@ export default function Home() {
       </section> : null}
       {editingPick ? <section className="pick-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-pick-dialog-title"><form onSubmit={submitEdit}><div><span className="eyebrow">Edit pending pick</span><h2 id="edit-pick-dialog-title">Edit pick</h2><p>The taken line and price remain locked. Only pending stake and notes can change.</p></div><label>Stake (units)<input name="edit-stake" type="number" min="0.1" step="0.1" value={editStake} onChange={(event) => setEditStake(event.target.value)} required /></label><label>Note (optional)<input name="edit-notes" maxLength={1000} value={editNotes} onChange={(event) => setEditNotes(event.target.value)} /></label>{pickError ? <p className="pick-form-error" role="alert">{pickError}</p> : null}<div className="pick-dialog-actions"><button type="button" onClick={() => setEditingPick(null)} disabled={savingPick}>Cancel</button><button type="submit" disabled={savingPick}>{savingPick ? "Saving…" : "Save changes"}</button></div></form></section> : null}
       <footer><span>DGN-PICKS / 2026</span><span>Track the call. Keep the receipt.</span></footer>
+      {depositLoading ? <section className="deposit-loading" role="status" aria-live="polite"><div className="deposit-loading-card"><CursorWave /><span className="sr-only">Loading deposit</span></div></section> : null}
     </main>
   );
 }
@@ -347,3 +349,31 @@ function PanelEmpty({ text }: { text: string }) { return <div className="panel-e
 function LoadingState() { return <section className="loading-board" aria-label="Loading dashboard"><div className="loader-line" /><div className="loader-line short" /><p>Reading the board…</p></section>; }
 
 function EmptyState() { return <section className="empty-state"><span className="eyebrow">Clear board</span><h2>No fixtures in the feed yet.</h2><p>When the Railway API has games or picks, they&apos;ll show up here automatically.</p></section>; }
+
+const cursorWaveShapes = Array.from({ length: 77 }, (_, index) => ({
+  x: index % 11,
+  y: Math.floor(index / 11),
+}));
+
+function CursorWave() {
+  const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
+  const [clicking, setClicking] = useState(false);
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    setPoint({ x: ((event.clientX - bounds.left) / bounds.width) * 100, y: ((event.clientY - bounds.top) / bounds.height) * 100 });
+  };
+  const handlePointerDown = () => {
+    setClicking(true);
+    window.setTimeout(() => setClicking(false), 520);
+  };
+  return <div className={`cursor-wave${clicking ? " is-clicking" : ""}`} onPointerMove={handlePointerMove} onPointerLeave={() => setPoint(null)} onPointerDown={handlePointerDown} aria-hidden="true">
+    {cursorWaveShapes.map(({ x, y }) => {
+      const centerX = ((x + 0.5) / 11) * 100;
+      const centerY = ((y + 0.5) / 7) * 100;
+      const dx = point ? point.x - centerX : 999;
+      const dy = point ? point.y - centerY : 999;
+      const influence = Math.max(0, 1 - Math.hypot(dx, dy) / 95);
+      return <span key={`${x}-${y}`} className="cursor-wave-shape" style={{ transform: `scale(${1 + influence * 0.85}) rotate(${influence * 18}deg)`, opacity: 0.2 + influence * 0.75 }} />;
+    })}
+  </div>;
+}
