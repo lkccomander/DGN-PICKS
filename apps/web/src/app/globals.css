@@ -60,12 +60,12 @@
 
 /* Market-board baseline: centered shell, compact Arial UI and restrained blue palette. */
 .app-shell{font-family:Arial,Helvetica,sans-serif;background:#06182b;color:#eef5fb;font-size:14px;min-height:100vh}
-.landing-topbar{max-width:1280px;min-height:72px;margin:0 auto;background:#071c31;border-left:1px solid #173a57;border-right:1px solid #173a57;padding-left:14px;padding-right:14px}
+.landing-topbar{max-width:1260px;min-height:72px;margin:0 auto;background:#071c31;border-left:1px solid #173a57;border-right:1px solid #173a57;padding-left:8px;padding-right:8px}
 .landing-brand>span{font-size:1.52rem;letter-spacing:-.07em}.landing-brand small{font-size:.52rem}
-.landing-primary-nav{max-width:1280px;min-height:49px;height:49px;margin:0 auto;padding-left:14px;padding-right:14px;background:#092744;border-left:1px solid #173a57;border-right:1px solid #173a57;gap:28px}
+.landing-primary-nav{max-width:1260px;min-height:49px;height:49px;margin:0 auto;padding-left:8px;padding-right:8px;background:#092744;border-left:1px solid #173a57;border-right:1px solid #173a57;gap:28px}
 .landing-primary-nav a{height:49px;font-size:.73rem}.landing-primary-nav a.active{border-bottom-color:#ff5a19}.nav-clock{font-size:.65rem}
-.landing-toolbar{max-width:1280px;min-height:43px;height:43px;margin:0 auto;padding:5px 14px;background:#071d32;border:1px solid #173a57;border-top:0}
-.landing-layout{width:100%;max-width:1280px;grid-template-columns:218px minmax(0,1fr);margin:0 auto;border-left:1px solid #173a57;border-right:1px solid #173a57;min-height:calc(100vh - 164px);background:#06182b}
+.landing-toolbar{max-width:1260px;min-height:43px;height:43px;margin:0 auto;padding:5px 8px;background:#071d32;border:1px solid #173a57;border-top:0}
+.landing-layout{width:100%;max-width:1260px;grid-template-columns:194px minmax(0,1fr);margin:0 auto;border-left:1px solid #173a57;border-right:1px solid #173a57;min-height:calc(100vh - 164px);background:#06182b}
 .sports-rail{margin:0;padding:21px 14px 48px;background:#06182b}.sports-rail a{font-size:.77rem;padding:9px 10px}.rail-heading{font-size:.68rem}.rail-callout{font-size:.72rem}
 .landing-main{padding:18px 14px 50px;background:#071d32}.landing-hero{display:block;min-height:148px;padding:20px 18px;background:linear-gradient(110deg,#103965,#0a2948 62%,#0d4165);border-color:#1a5278}
 .landing-hero h1{font-size:1.7rem;line-height:1;margin:12px 0 8px;letter-spacing:-.055em}.landing-hero p{font-size:.73rem;margin:0;max-width:410px}.hero-kicker{font-size:.65rem}.hero-graphic{position:absolute;right:2%;top:2px;width:31%;height:145px;min-width:180px}.hero-ball{font-size:3.8rem;border-width:9px;height:108px;width:108px}.hero-lines{height:200px;top:-24px}.hero-lines:after{height:200px}.hero-tabs{position:absolute;bottom:0;left:0;right:0;display:flex;gap:30px;padding:0 18px;border-top:1px solid rgba(181,207,228,.18)}.hero-tabs a{color:#9fb6c7;font-size:.68rem;font-weight:900;padding:12px 0;text-decoration:none}.hero-tabs a.active{border-bottom:3px solid #ff5a19;color:#fff}
