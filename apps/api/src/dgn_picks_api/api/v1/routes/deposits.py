@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from dgn_picks_api.api.v1.dependencies import get_db, require_editor_identity, require_identity
 from dgn_picks_api.api.v1.schemas import DepositCreate, DepositDecision, DepositResponse
 from dgn_picks_api.domains.deposits.models import Deposit
+from dgn_picks_api.domains.balances.models import BalanceTransaction
 from dgn_picks_api.domains.users.models import User
 
 router = APIRouter(prefix="/deposits", tags=["deposits"])
@@ -78,6 +79,9 @@ def decide_deposit(deposit_id: int, payload: DepositDecision, identity: dict[str
     deposit.status = payload.status
     deposit.reviewed_at = datetime.now(UTC)
     deposit.reviewer_id = int(identity["user_id"]) if "user_id" in identity else None
+    if payload.status == "approved":
+        db.add(BalanceTransaction(user_id=deposit.user_id, amount=deposit.amount, kind="deposit",
+                                  reason=f"Approved deposit #{deposit.id}", created_by=deposit.reviewer_id))
     db.commit()
     db.refresh(deposit)
     username = db.scalar(select(User.username).where(User.id == deposit.user_id))

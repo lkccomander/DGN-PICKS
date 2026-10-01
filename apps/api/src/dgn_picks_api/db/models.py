@@ -5,5 +5,6 @@ from dgn_picks_api.domains.picks.models import Pick, PickLeg
 from dgn_picks_api.domains.teams.models import Player, Team
 from dgn_picks_api.domains.users.models import User
 from dgn_picks_api.domains.deposits.models import Deposit
+from dgn_picks_api.domains.balances.models import BalanceTransaction
 
-__all__ = ["Deposit", "Game", "Market", "OddsSnapshot", "Pick", "PickLeg", "Player", "Selection", "SportsbookSource", "Team", "User"]
+__all__ = ["BalanceTransaction", "Deposit", "Game", "Market", "OddsSnapshot", "Pick", "PickLeg", "Player", "Selection", "SportsbookSource", "Team", "User"]

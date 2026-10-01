@@ -24,6 +24,7 @@
       <li class="nav-item"><button id="configuration-tab" class="nav-link" data-coreui-toggle="tab" data-coreui-target="#configuration-pane" role="tab" aria-controls="configuration-pane"><i class="bi bi-sliders me-2"></i>Configuración</button></li>
       <li class="nav-item"><button id="users-tab" class="nav-link" data-coreui-toggle="tab" data-coreui-target="#users-pane" role="tab" aria-controls="users-pane"><i class="bi bi-people me-2"></i>Usuarios</button></li>
       <li class="nav-item"><button id="deposits-tab" class="nav-link" data-coreui-toggle="tab" data-coreui-target="#deposits-pane" role="tab" aria-controls="deposits-pane"><i class="bi bi-wallet2 me-2"></i>Depósitos</button></li>
+      <li class="nav-item"><button id="balances-tab" class="nav-link" data-coreui-toggle="tab" data-coreui-target="#balances-pane" role="tab" aria-controls="balances-pane"><i class="bi bi-cash-stack me-2"></i>Balances</button></li>
       <li class="nav-item"><button class="nav-link active" data-coreui-toggle="tab" data-coreui-target="#ship-pane"><i class="bi bi-rocket-takeoff me-2"></i>Git &amp; Railway</button></li>
       <li class="nav-item"><button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#graph-pane"><i class="bi bi-diagram-3 me-2"></i>Grafo en tiempo real</button></li>
     </ul>
@@ -32,6 +33,7 @@
       {% include "configuration.html" %}
       {% include "users.html" %}
       {% include "deposits.html" %}
+      {% include "balances.html" %}
       <section id="ship-pane" class="tab-pane fade show active"><div class="row g-4">
         <div class="col-xl-5"><div class="card h-100"><div class="card-body p-4">
           <div class="section-heading"><span class="icon-tile blue"><i class="bi bi-git"></i></span><div><h2 class="h5 mb-1">Publicar cambios</h2><p class="small text-medium-emphasis mb-0">Commit, push y seguimiento automático.</p></div></div>
@@ -75,5 +77,6 @@
   <script src="{{ url_for('static', filename='app.js') }}"></script>
   <script src="{{ url_for('static', filename='users.js') }}?v=20261001-users-list"></script>
   <script src="{{ url_for('static', filename='deposits.js') }}"></script>
+  <script src="{{ url_for('static', filename='balances.js') }}"></script>
 <script src="{{ url_for('static', filename='configuration.js') }}"></script>
 </body></html>

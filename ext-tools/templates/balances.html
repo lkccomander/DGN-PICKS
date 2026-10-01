@@ -1,0 +1,9 @@
+<section id="balances-pane" class="tab-pane fade" aria-labelledby="balances-tab">
+  <div class="card"><div class="card-body p-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3"><div><h2 class="h5 mb-1">Historial de balances</h2><p class="small text-medium-emphasis mb-0">Consulta movimientos y registra ajustes manuales auditables.</p></div><button id="balances-refresh" class="btn btn-outline-light" type="button">Actualizar</button></div>
+    <p id="balances-message" role="status" aria-live="polite"></p>
+    <form id="balance-adjustment-form" class="row g-3 align-items-end mb-4"><div class="col-md-3"><label class="form-label" for="balance-user-id">ID usuario</label><input id="balance-user-id" class="form-control" type="number" min="1" required></div><div class="col-md-3"><label class="form-label" for="balance-amount">Ajuste USD</label><input id="balance-amount" class="form-control" type="number" step="0.01" required placeholder="100.00 o -25.00"></div><div class="col-md-4"><label class="form-label" for="balance-reason">Motivo</label><input id="balance-reason" class="form-control" maxlength="240" required placeholder="Corrección manual"></div><div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Aplicar ajuste</button></div></form>
+    <div class="table-responsive users-list"><table class="table align-middle"><thead><tr><th>ID</th><th>Usuario</th><th>Monto</th><th>Tipo</th><th>Motivo</th><th>Fecha (UTC)</th><th>Operador</th></tr></thead><tbody id="balances-rows"></tbody></table></div>
+    <p id="balances-count" class="small text-medium-emphasis" aria-live="polite"></p>
+  </div></div>
+</section>

@@ -83,3 +83,13 @@ def deposit_history():
 @users_api.patch("/api/deposits/<int:deposit_id>")
 def decide_deposit(deposit_id: int):
     return forward(f"admin/deposits/{deposit_id}")
+
+
+@users_api.get("/api/balances/history")
+def balance_history():
+    return forward("admin/balances")
+
+
+@users_api.post("/api/balances/adjust")
+def balance_adjustment():
+    return forward("admin/balances/adjust")

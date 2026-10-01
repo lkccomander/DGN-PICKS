@@ -346,3 +346,20 @@ class DepositResponse(BaseModel):
 
 class DepositDecision(BaseModel):
     status: str = Field(pattern="^(approved|rejected)$")
+
+
+class BalanceTransactionResponse(BaseModel):
+    id: int
+    user_id: int
+    username: str | None = None
+    amount: Decimal
+    kind: str
+    reason: str
+    created_at: datetime
+    created_by: int | None = None
+
+
+class BalanceAdjustmentCreate(BaseModel):
+    user_id: int = Field(gt=0)
+    amount: Decimal = Field(gt=Decimal("-1000000.00"), lt=Decimal("1000000.00"), decimal_places=2)
+    reason: str = Field(min_length=1, max_length=240)
