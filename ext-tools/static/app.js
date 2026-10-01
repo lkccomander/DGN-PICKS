@@ -11,9 +11,15 @@ function renderGitConsole() {
 }
 
 function showLastGitStatus(status) {
+  const label = status
+    ? `${status.code === 0 ? 'LIMPIO' : 'ERROR'} · ${status.checked_at}`
+    : 'SIN CONSULTAR';
   $('git-last-status').textContent = status
     ? `Último estado: ${status.checked_at} · ${status.code === 0 ? 'Consulta correcta' : 'Error'} (exit ${status.code})`
     : 'Sin estado anterior guardado.';
+  $('dashboard-git-status').textContent = label;
+  $('dashboard-git-detail').textContent = status ? `exit ${status.code} · log local` : 'Consultando historial local';
+  $('dashboard-git-status').className = status?.code === 0 ? 'status-ok' : status ? 'status-error' : '';
 }
 
 async function loadGitLog() {
@@ -37,6 +43,9 @@ function setDeployVisual(status, message) {
   $('deploy-message').textContent = message || '';
   $('deploy-progress').style.width = status === 'ready' || status === 'failed' || status === 'error' ? '100%' : status === 'deploying' ? '62%' : '12%';
   if ($('menu-deploy-status')) $('menu-deploy-status').textContent = labels[status] || '—';
+  $('dashboard-deploy-status').textContent = labels[status] || 'SIN CONSULTAR';
+  $('dashboard-deploy-detail').textContent = message || 'Estado del último deployment';
+  $('dashboard-deploy-status').className = status === 'ready' ? 'status-ok' : ['failed','error'].includes(status) ? 'status-error' : '';
 }
 
 async function refreshState() {
@@ -55,6 +64,8 @@ async function refreshState() {
     $('graph-refresh').disabled = running;
     $('quick-graph-refresh').disabled = running;
     $('graph-operation').textContent = data.graph.message || '';
+    $('dashboard-graph-status').textContent = running ? 'ACTUALIZANDO' : (data.graph.message ? 'LISTO' : 'SIN CONSULTAR');
+    $('dashboard-graph-detail').textContent = data.graph.message || 'Graphify local';
     if (graphWasRunning && !running) await loadGraph();
     graphWasRunning = running;
   }
@@ -105,6 +116,8 @@ async function loadGraph() {
     const edges = (data.links || data.edges || []).length;
     $('graph-meta').textContent = `${nodes} nodos · ${edges} relaciones · actualizado ${meta.updated_at || '—'}`;
     $('menu-graph-status').textContent = `${nodes} nodos`;
+    $('dashboard-graph-status').textContent = 'LISTO';
+    $('dashboard-graph-detail').textContent = `${nodes} nodos · ${edges} relaciones`;
     const frame = $('graph-view');
     if (!meta.view_version) throw new Error('No existe la vista Graphify. Pulsa Actualizar grafo.');
     if (graphViewVersion !== meta.view_version) {

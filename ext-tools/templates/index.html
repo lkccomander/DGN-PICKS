@@ -15,6 +15,11 @@
       <div><p class="kicker mb-2">LOCAL CONTROL CENTER</p><h1>Ship, observe, understand.</h1><p class="text-medium-emphasis mb-0">Git + Railway y el grafo de conocimiento, en una sola ventana.</p></div>
       <span class="badge rounded-pill text-bg-secondary"><i class="bi bi-circle-fill me-2"></i>Listo</span>
     </div>
+    <section class="dashboard-status-grid mb-4" aria-label="Estado del workspace">
+      <article class="dashboard-status-card"><span class="status-card-label"><i class="bi bi-git"></i> GIT STATUS</span><strong id="dashboard-git-status">Cargando…</strong><small id="dashboard-git-detail">Consultando historial local</small></article>
+      <article class="dashboard-status-card"><span class="status-card-label"><i class="bi bi-cloud-check"></i> RAILWAY</span><strong id="dashboard-deploy-status">Sin consultar</strong><small id="dashboard-deploy-detail">Estado del último deployment</small></article>
+      <article class="dashboard-status-card"><span class="status-card-label"><i class="bi bi-diagram-3"></i> GRAFO</span><strong id="dashboard-graph-status">Cargando…</strong><small id="dashboard-graph-detail">Graphify local</small></article>
+    </section>
     <ul class="nav nav-tabs nav-tabs-accent mb-4" role="tablist">
       <li class="nav-item"><button id="configuration-tab" class="nav-link" data-coreui-toggle="tab" data-coreui-target="#configuration-pane" role="tab" aria-controls="configuration-pane"><i class="bi bi-sliders me-2"></i>Configuración</button></li>
       <li class="nav-item"><button id="users-tab" class="nav-link" data-coreui-toggle="tab" data-coreui-target="#users-pane" role="tab" aria-controls="users-pane"><i class="bi bi-people me-2"></i>Usuarios</button></li>
