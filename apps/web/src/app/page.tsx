@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useStoredValue } from "@/lib/use-stored-value";
-import { useCallback, useEffect, useMemo, useState, type FormEvent, type PointerEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   API_URL,
   fetchDashboardData,
@@ -72,10 +72,6 @@ export default function Home() {
   const [loginBusy, setLoginBusy] = useState(false);
   const [accountLabel, setAccountLabel] = useStoredValue("dgn-account-label");
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
-  const [depositLoading, setDepositLoading] = useState(false);
-  const [depositFormOpen, setDepositFormOpen] = useState(false);
-  const [depositAmount, setDepositAmount] = useState("");
-  const [depositMessage, setDepositMessage] = useState<string | null>(null);
 
   const loadDashboard = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
@@ -256,25 +252,6 @@ export default function Home() {
       setLoginBusy(false);
     }
   }, [loginPassword, loginUsername, setActiveUser, setAccountLabel, setToken]);
-  const submitDeposit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setDepositLoading(true);
-    setDepositMessage(null);
-    try {
-      const response = await fetch(`${API_URL}/api/v1/deposits`, {
-        method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json", ...browserAuthHeaders() },
-        body: JSON.stringify({ amount: Number(depositAmount) }),
-      });
-      const body = await response.json().catch(() => ({})) as { detail?: string };
-      if (!response.ok) throw new Error(body.detail || "Deposit could not be submitted.");
-      setDepositMessage("Deposit submitted and waiting for approval.");
-      setDepositAmount("");
-    } catch (requestError) {
-      setDepositMessage(requestError instanceof Error ? requestError.message : "Deposit could not be submitted.");
-    } finally {
-      window.setTimeout(() => setDepositLoading(false), 650);
-    }
-  }, [depositAmount]);
   const selectedGame = selectedGameId == null ? null : gamesById.get(selectedGameId) ?? null;
   const selectedGameMarkets = selectedGame == null ? [] : (data?.markets ?? []).filter((market) => market.game_id === selectedGame.id);
 
@@ -318,8 +295,6 @@ export default function Home() {
       </section> : null}
       {editingPick ? <section className="pick-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-pick-dialog-title"><form onSubmit={submitEdit}><div><span className="eyebrow">Edit pending pick</span><h2 id="edit-pick-dialog-title">Edit pick</h2><p>The taken line and price remain locked. Only pending stake and notes can change.</p></div><label>Stake (units)<input name="edit-stake" type="number" min="0.1" step="0.1" value={editStake} onChange={(event) => setEditStake(event.target.value)} required /></label><label>Note (optional)<input name="edit-notes" maxLength={1000} value={editNotes} onChange={(event) => setEditNotes(event.target.value)} /></label>{pickError ? <p className="pick-form-error" role="alert">{pickError}</p> : null}<div className="pick-dialog-actions"><button type="button" onClick={() => setEditingPick(null)} disabled={savingPick}>Cancel</button><button type="submit" disabled={savingPick}>{savingPick ? "Saving…" : "Save changes"}</button></div></form></section> : null}
       <footer><span>DGN-PICKS / 2026</span><span>Track the call. Keep the receipt.</span></footer>
-      {depositFormOpen ? <section className="deposit-modal" role="dialog" aria-modal="true" aria-labelledby="deposit-title"><form onSubmit={submitDeposit} className="deposit-form"><div><span className="section-kicker">ACCOUNT FUNDING</span><h2 id="deposit-title">Deposit funds</h2><p>Monthly limit: USD 1,000.00. Every deposit stays pending until an administrator approves it.</p></div><label>Amount (USD)<input type="number" min="0.01" max="1000" step="0.01" value={depositAmount} onChange={(event) => setDepositAmount(event.target.value)} required /></label>{depositMessage ? <p className="deposit-message" role="status">{depositMessage}</p> : null}<div className="deposit-actions"><button type="button" onClick={() => setDepositFormOpen(false)}>Cancel</button><button type="submit">Submit deposit</button></div></form></section> : null}
-      {depositLoading ? <section className="deposit-loading" role="status" aria-live="polite"><div className="deposit-loading-card"><CursorWave /><span className="sr-only">Loading deposit</span></div></section> : null}
     </main>
   );
 }
@@ -372,31 +347,3 @@ function PanelEmpty({ text }: { text: string }) { return <div className="panel-e
 function LoadingState() { return <section className="loading-board" aria-label="Loading dashboard"><div className="loader-line" /><div className="loader-line short" /><p>Reading the board…</p></section>; }
 
 function EmptyState() { return <section className="empty-state"><span className="eyebrow">Clear board</span><h2>No fixtures in the feed yet.</h2><p>When the Railway API has games or picks, they&apos;ll show up here automatically.</p></section>; }
-
-const cursorWaveShapes = Array.from({ length: 77 }, (_, index) => ({
-  x: index % 11,
-  y: Math.floor(index / 11),
-}));
-
-function CursorWave() {
-  const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
-  const [clicking, setClicking] = useState(false);
-  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    setPoint({ x: ((event.clientX - bounds.left) / bounds.width) * 100, y: ((event.clientY - bounds.top) / bounds.height) * 100 });
-  };
-  const handlePointerDown = () => {
-    setClicking(true);
-    window.setTimeout(() => setClicking(false), 520);
-  };
-  return <div className={`cursor-wave${clicking ? " is-clicking" : ""}`} onPointerMove={handlePointerMove} onPointerLeave={() => setPoint(null)} onPointerDown={handlePointerDown} aria-hidden="true">
-    {cursorWaveShapes.map(({ x, y }) => {
-      const centerX = ((x + 0.5) / 11) * 100;
-      const centerY = ((y + 0.5) / 7) * 100;
-      const dx = point ? point.x - centerX : 999;
-      const dy = point ? point.y - centerY : 999;
-      const influence = Math.max(0, 1 - Math.hypot(dx, dy) / 95);
-      return <span key={`${x}-${y}`} className="cursor-wave-shape" style={{ transform: `scale(${1 + influence * 0.85}) rotate(${influence * 18}deg)`, opacity: 0.2 + influence * 0.75 }} />;
-    })}
-  </div>;
-}
