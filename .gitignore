@@ -13,3 +13,5 @@ apps/web/playwright-report/
 
 # Daily provider snapshots
 data/ingestion/
+
+graphify-out/
