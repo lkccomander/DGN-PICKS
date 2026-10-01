@@ -327,3 +327,21 @@ class SeedPickDefinitionResponse(BaseModel):
     team_or_player: str
     state: str
     result: PickResult = PickResult.LOSS
+
+
+class DepositCreate(BaseModel):
+    amount: Decimal = Field(gt=0, le=Decimal("1000.00"), decimal_places=2)
+
+
+class DepositResponse(BaseModel):
+    id: int
+    user_id: int
+    username: str | None = None
+    amount: Decimal
+    status: str
+    created_at: datetime
+    reviewed_at: datetime | None = None
+
+
+class DepositDecision(BaseModel):
+    status: str = Field(pattern="^(approved|rejected)$")

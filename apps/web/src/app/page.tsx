@@ -73,6 +73,9 @@ export default function Home() {
   const [accountLabel, setAccountLabel] = useStoredValue("dgn-account-label");
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [depositLoading, setDepositLoading] = useState(false);
+  const [depositFormOpen, setDepositFormOpen] = useState(false);
+  const [depositAmount, setDepositAmount] = useState("");
+  const [depositMessage, setDepositMessage] = useState<string | null>(null);
 
   const loadDashboard = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
@@ -253,6 +256,25 @@ export default function Home() {
       setLoginBusy(false);
     }
   }, [loginPassword, loginUsername, setActiveUser, setAccountLabel, setToken]);
+  const submitDeposit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setDepositLoading(true);
+    setDepositMessage(null);
+    try {
+      const response = await fetch(`${API_URL}/api/v1/deposits`, {
+        method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json", ...browserAuthHeaders() },
+        body: JSON.stringify({ amount: Number(depositAmount) }),
+      });
+      const body = await response.json().catch(() => ({})) as { detail?: string };
+      if (!response.ok) throw new Error(body.detail || "Deposit could not be submitted.");
+      setDepositMessage("Deposit submitted and waiting for approval.");
+      setDepositAmount("");
+    } catch (requestError) {
+      setDepositMessage(requestError instanceof Error ? requestError.message : "Deposit could not be submitted.");
+    } finally {
+      window.setTimeout(() => setDepositLoading(false), 650);
+    }
+  }, [depositAmount]);
   const selectedGame = selectedGameId == null ? null : gamesById.get(selectedGameId) ?? null;
   const selectedGameMarkets = selectedGame == null ? [] : (data?.markets ?? []).filter((market) => market.game_id === selectedGame.id);
 
@@ -261,7 +283,7 @@ export default function Home() {
       <div className="stripe" aria-hidden="true" />
       <header className="landing-topbar">
         <Link className="landing-brand" href="#board" aria-label="DGN-PICKS home"><span>DGN<span>-</span>PICKS</span><small>college football intelligence</small></Link>
-        {hasAdminToken ? <div className="landing-account-bar"><span className="account-mail" aria-hidden="true">✉</span><span className="account-balance">USD 0.52</span><button type="button" className="account-deposit" onClick={() => { setDepositLoading(true); window.setTimeout(() => setDepositLoading(false), 1800); }}>DEPOSIT</button><div className="account-menu-wrap"><button type="button" className="account-trigger" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen((open) => !open)}><span className="account-avatar" aria-hidden="true">●</span><strong>{accountLabel || "AC254187"}</strong><span className="account-caret" aria-hidden="true">▲</span></button>{accountMenuOpen ? <div className="account-menu"><Link href="/account">My Account</Link><Link className="selected" href="#picks">Open picks</Link><button type="button" onClick={() => { window.localStorage.removeItem("dgn-admin-token"); window.localStorage.removeItem("dgn-account-label"); window.localStorage.removeItem("dgn-active-user"); setToken(""); setSession(null); setActiveUser("gato"); setAccountMenuOpen(false); }}>Log out <span aria-hidden="true">⇥</span></button></div> : null}</div></div> : <form className={`landing-auth ${loginBusy ? "is-authenticating" : ""}`} onSubmit={submitLogin} aria-busy={loginBusy}><span className={`connection ${loading ? "is-loading" : error ? "is-error" : ""}`}><i /> {loading ? "Syncing" : error ? "Offline" : "Live API"}</span><div className="login-fields"><label><span className="sr-only">Email or Client ID</span><input type="text" autoComplete="username" value={loginUsername} onChange={(event) => setLoginUsername(event.target.value)} placeholder="Email or Client ID" required /></label><label><span className="sr-only">Password</span><input type="password" autoComplete="current-password" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} placeholder="Password" required /></label><Link className="login-help" href="#help">Forgot email or password?</Link>{loginError ? <span className="login-error" role="alert">{loginError}</span> : null}</div><Link href="/admin">Admin</Link><button type="submit" className="landing-login" disabled={loginBusy}>{loginBusy ? <><span className="login-spinner" aria-hidden="true" /> SIGNING IN</> : "LOG IN"}</button><Link className="landing-join" href="/join">JOIN</Link></form>}
+        {hasAdminToken ? <div className="landing-account-bar"><span className="account-mail" aria-hidden="true">✉</span><span className="account-balance">USD 0.52</span><button type="button" className="account-deposit" onClick={() => { setDepositFormOpen(true); setDepositMessage(null); }}>DEPOSIT</button><div className="account-menu-wrap"><button type="button" className="account-trigger" aria-expanded={accountMenuOpen} onClick={() => setAccountMenuOpen((open) => !open)}><span className="account-avatar" aria-hidden="true">●</span><strong>{accountLabel || "AC254187"}</strong><span className="account-caret" aria-hidden="true">▲</span></button>{accountMenuOpen ? <div className="account-menu"><Link href="/account">My Account</Link><Link className="selected" href="#picks">Open picks</Link><button type="button" onClick={() => { window.localStorage.removeItem("dgn-admin-token"); window.localStorage.removeItem("dgn-account-label"); window.localStorage.removeItem("dgn-active-user"); setToken(""); setSession(null); setActiveUser("gato"); setAccountMenuOpen(false); }}>Log out <span aria-hidden="true">⇥</span></button></div> : null}</div></div> : <form className={`landing-auth ${loginBusy ? "is-authenticating" : ""}`} onSubmit={submitLogin} aria-busy={loginBusy}><span className={`connection ${loading ? "is-loading" : error ? "is-error" : ""}`}><i /> {loading ? "Syncing" : error ? "Offline" : "Live API"}</span><div className="login-fields"><label><span className="sr-only">Email or Client ID</span><input type="text" autoComplete="username" value={loginUsername} onChange={(event) => setLoginUsername(event.target.value)} placeholder="Email or Client ID" required /></label><label><span className="sr-only">Password</span><input type="password" autoComplete="current-password" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} placeholder="Password" required /></label><Link className="login-help" href="#help">Forgot email or password?</Link>{loginError ? <span className="login-error" role="alert">{loginError}</span> : null}</div><Link href="/admin">Admin</Link><button type="submit" className="landing-login" disabled={loginBusy}>{loginBusy ? <><span className="login-spinner" aria-hidden="true" /> SIGNING IN</> : "LOG IN"}</button><Link className="landing-join" href="/join">JOIN</Link></form>}
       </header>
 
       <nav className="landing-primary-nav" aria-label="Primary navigation"><Link className="active" href="#board">⚾ <span>SPORTS BOARD</span></Link><Link href="#games">◷ <span>LIVE CENTRE</span></Link><Link href="#markets">◆ <span>MARKETS</span></Link><Link href="#picks">▣ <span>MY PICKS</span></Link><Link href="#insights">▤ <span>RESOURCES</span></Link><span className="nav-clock">MLB · {activeGames.length} active</span></nav>
@@ -296,6 +318,7 @@ export default function Home() {
       </section> : null}
       {editingPick ? <section className="pick-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-pick-dialog-title"><form onSubmit={submitEdit}><div><span className="eyebrow">Edit pending pick</span><h2 id="edit-pick-dialog-title">Edit pick</h2><p>The taken line and price remain locked. Only pending stake and notes can change.</p></div><label>Stake (units)<input name="edit-stake" type="number" min="0.1" step="0.1" value={editStake} onChange={(event) => setEditStake(event.target.value)} required /></label><label>Note (optional)<input name="edit-notes" maxLength={1000} value={editNotes} onChange={(event) => setEditNotes(event.target.value)} /></label>{pickError ? <p className="pick-form-error" role="alert">{pickError}</p> : null}<div className="pick-dialog-actions"><button type="button" onClick={() => setEditingPick(null)} disabled={savingPick}>Cancel</button><button type="submit" disabled={savingPick}>{savingPick ? "Saving…" : "Save changes"}</button></div></form></section> : null}
       <footer><span>DGN-PICKS / 2026</span><span>Track the call. Keep the receipt.</span></footer>
+      {depositFormOpen ? <section className="deposit-modal" role="dialog" aria-modal="true" aria-labelledby="deposit-title"><form onSubmit={submitDeposit} className="deposit-form"><div><span className="section-kicker">ACCOUNT FUNDING</span><h2 id="deposit-title">Deposit funds</h2><p>Monthly limit: USD 1,000.00. Every deposit stays pending until an administrator approves it.</p></div><label>Amount (USD)<input type="number" min="0.01" max="1000" step="0.01" value={depositAmount} onChange={(event) => setDepositAmount(event.target.value)} required /></label>{depositMessage ? <p className="deposit-message" role="status">{depositMessage}</p> : null}<div className="deposit-actions"><button type="button" onClick={() => setDepositFormOpen(false)}>Cancel</button><button type="submit">Submit deposit</button></div></form></section> : null}
       {depositLoading ? <section className="deposit-loading" role="status" aria-live="polite"><div className="deposit-loading-card"><CursorWave /><span className="sr-only">Loading deposit</span></div></section> : null}
     </main>
   );

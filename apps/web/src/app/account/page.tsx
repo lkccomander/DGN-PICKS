@@ -27,6 +27,6 @@ export default function AccountPage() {
         <dt>Client ID</dt><dd>{current.account.username}</dd><dt>Display name</dt><dd>{current.account.display_name}</dd>
         <dt>Email</dt><dd>{current.account.email || "Not provided"}</dd><dt>Country</dt><dd>{current.account.country || "Not provided"}</dd>
         <dt>Role</dt><dd>{current.account.role}</dd></dl> : <p role="status">Loading your account…</p>}
-      <p>DGN-PICKS tracks predictions in units. No cash balances, deposits, or withdrawals.</p>
+      <p>Deposits are reviewed manually and remain pending until an administrator approves them. Monthly limit: USD 1,000.00.</p>
     </section></main>;
 }

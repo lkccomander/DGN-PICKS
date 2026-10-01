@@ -68,3 +68,13 @@ def collection():
 @users_api.route("/api/users/<int:user_id>", methods=["GET", "PATCH", "DELETE"])
 def member(user_id: int):
     return forward(f"users/{user_id}")
+
+
+@users_api.get("/api/deposits/pending")
+def pending_deposits():
+    return forward("admin/deposits/pending")
+
+
+@users_api.patch("/api/deposits/<int:deposit_id>")
+def decide_deposit(deposit_id: int):
+    return forward(f"admin/deposits/{deposit_id}")

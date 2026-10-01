@@ -7,6 +7,7 @@
   };
   function session(value) {
     token = value;
+    if (value) window.localStorage.setItem('dgn-ops-token', value); else window.localStorage.removeItem('dgn-ops-token');
     el('users-login').hidden = Boolean(token);
     el('users-logout').hidden = !token;
     if (!token) { rows = []; resetForm(); render(); }
@@ -135,6 +136,6 @@
       resetForm(); await load(); message('Usuario guardado.');
     });
   });
-  session(null);
+  session(window.localStorage.getItem('dgn-ops-token'));
   setBusy(false);
 })();
