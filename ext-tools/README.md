@@ -18,6 +18,14 @@ railway deployment list --json. The Graph tab reads
 ../graphify-out/graph.json, polls for changes, and can run graphify . --update.
 Set GRAPHIFY_COMMAND if the local graphify installation needs another command.
 
+**Ver estado** and **Ver estado Git** display the Git status result with a UTC
+timestamp and command exit code, and print the same result to the terminal.
+Each check appends to `ext-tools/logs/git-status.log` (UTF-8), including failed
+Git commands. The folder is created on the first check; existing entries are
+preserved across restarts. Log files are ignored by Git. If writing fails, the
+console displays a warning alongside the result. Automatic console polling
+preserves the last check until another Git operation updates the output.
+
 ## Usuarios (desktop y web)
 
 La pestaña **Usuarios** de Ops Console y **Usuarios** en la web `/admin`

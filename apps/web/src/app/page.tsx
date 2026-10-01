@@ -89,12 +89,12 @@ export default function Home() {
   useEffect(() => {
     const controller = new AbortController();
     fetchDashboardData(activeUser, controller.signal)
-      .then(setData)
+      .then(next => { if (!controller.signal.aborted) setData(next); })
       .catch((requestError: unknown) => {
         if (requestError instanceof DOMException && requestError.name === "AbortError") return;
         setError(requestError instanceof Error ? requestError.message : "Unable to reach the picks API.");
       })
-      .finally(() => setLoading(false));
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [activeUser]);
 

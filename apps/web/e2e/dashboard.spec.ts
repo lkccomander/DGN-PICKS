@@ -5,10 +5,10 @@ const operatorUsername = process.env.E2E_OPERATOR_USERNAME;
 const operatorPassword = process.env.E2E_OPERATOR_PASSWORD;
 const requiredEnvironment = Boolean(apiUrl && process.env.E2E_WEB_URL && operatorUsername && operatorPassword);
 
-type Game = { id: number; status: string };
+type Game = { id: number; status: string; home_team_id: number; away_team_id: number };
 type Market = { id: number; game_id: number; status: string; selections: Array<{ id: number; side?: string | null }> };
 type Snapshot = { selection_id: number; sportsbook_id: number; line_value?: string | null; american_odds?: number | null; decimal_odds: string };
-type Pick = { id: number; line_value?: string | null; american_odds?: number | null; selection_id?: number | null; market_id: number; notes?: string | null };
+type Pick = { id: number; line_value?: string | null; american_odds?: number | null; selection_id?: number | null; market_id: number; notes?: string | null; decimal_odds?: string | null; stake_units: string; user_id: number };
 
 async function json<T>(url: string, options: Parameters<typeof fetch>[1] = {}): Promise<T> {
   const response = await fetch(url, options);
@@ -25,7 +25,7 @@ function displayedLine(pick: Pick) {
 
 test.skip(!requiredEnvironment, "Set E2E_WEB_URL, E2E_API_URL, E2E_OPERATOR_USERNAME and E2E_OPERATOR_PASSWORD for the isolated test stack.");
 
-test("tracks a stored price after a later line observation", async ({ page }) => {
+test("owned picks can be edited/deleted and keep their stored price after market movement", async ({ page, request }) => {
   // This test writes data: enforce loopback origins and use only an isolated database.
   for (const origin of [apiUrl!, process.env.E2E_WEB_URL!]) {
     expect(["127.0.0.1", "localhost", "[::1]"]).toContain(new URL(origin).hostname);
@@ -39,7 +39,8 @@ test("tracks a stored price after a later line observation", async ({ page }) =>
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, email: `${username}@example.invalid`, display_name: "E2E account", password: "e2e-isolated-password" }),
   });
-  await page.addInitScript(({ token, username }) => {
+  await page.goto("/");
+  await page.evaluate(({ token, username }) => {
     localStorage.setItem("dgn-admin-token", token);
     localStorage.setItem("dgn-active-user", username);
     localStorage.setItem("dgn-account-label", username);
@@ -52,7 +53,10 @@ test("tracks a stored price after a later line observation", async ({ page }) =>
   const note = `e2e-price-${Date.now()}`;
   await page.goto("/");
   await expect(page.locator(".game-select").first()).toBeVisible();
-  await page.locator(`.game-select[data-game-id="${target!.game_id}"]`).click();
+  const teams = await json<Array<{ id: number; short_name: string }>>(`${apiUrl}/api/v1/teams`);
+  const game = games.find(item => item.id === target!.game_id)!;
+  const home = teams.find(team => team.id === game.home_team_id)!;
+  await page.locator(".game-select").filter({ hasText: home.short_name }).click();
   await expect(page.locator(".game-detail")).toBeVisible();
   await page.locator(`.market-row[data-market-id="${target!.id}"]`).first().getByRole("button", { name: /^Track / }).first().click();
   await expect(page.getByRole("dialog")).toBeVisible();
@@ -87,4 +91,41 @@ test("tracks a stored price after a later line observation", async ({ page }) =>
   await page.reload();
   const row = page.locator(".pick-row", { hasText: note });
   await expect(row).toContainText(originalLine);
+  const updated = (await json<Pick[]>(`${apiUrl}/api/v1/picks?user=${username}`)).find(pick => pick.id === created!.id)!;
+  expect(updated.line_value).toBe(created!.line_value);
+  expect(updated.decimal_odds).toBe(created!.decimal_odds);
+  expect(updated.american_odds).toBe(created!.american_odds);
+  await expect(row.getByRole("button", { name: "win", exact: true })).toHaveCount(0);
+
+  // Exercise the real same-origin proxy's ownership and grading boundaries.
+  const otherName = `other-${Date.now()}`;
+  const other = await json<{ access_token: string }>(`${apiUrl}/api/v1/auth/register`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: otherName, email: `${otherName}@example.invalid`, display_name: "Other account", password: "e2e-isolated-password" }),
+  });
+  expect((await request.patch(`/api/development/picks/${created!.id}`, {
+    headers: { Authorization: `Bearer ${other.access_token}` }, data: { user: username, notes: "forbidden" },
+  })).status()).toBe(403);
+  expect((await request.patch(`/api/development/picks/${created!.id}`, {
+    headers: { Authorization: `Bearer ${account.access_token}` }, data: { user: username, result: "win" },
+  })).status()).toBe(403);
+
+  await row.getByRole("button", { name: "Edit", exact: true }).click();
+  await page.getByLabel("Stake (units)").fill("2");
+  await page.getByLabel("Note (optional)").fill(`${note}-edited`);
+  await page.getByRole("button", { name: "Save changes" }).click();
+  await expect(row).toContainText("2.0u");
+  await expect(row).toContainText(`${note}-edited`);
+  await expect(row).toContainText(originalLine);
+  const afterEdit = (await json<Pick[]>(`${apiUrl}/api/v1/picks?user=${username}`)).find(pick => pick.id === created!.id)!;
+  expect(afterEdit.user_id).toBe(created!.user_id);
+  expect(afterEdit.line_value).toBe(created!.line_value);
+  expect(afterEdit.decimal_odds).toBe(created!.decimal_odds);
+  page.once("dialog", dialog => dialog.dismiss());
+  await row.getByRole("button", { name: "Delete", exact: true }).click();
+  await expect(row).toBeVisible();
+  page.once("dialog", dialog => dialog.accept());
+  await row.getByRole("button", { name: "Delete", exact: true }).click();
+  await expect(row).toHaveCount(0);
+  expect(await json<Pick[]>(`${apiUrl}/api/v1/picks?user=${username}`)).toEqual([]);
 });

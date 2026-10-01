@@ -20,6 +20,7 @@ from users_api import users_api
 
 ROOT = Path(__file__).resolve().parents[1]
 GRAPH_PATH = ROOT / "graphify-out" / "graph.json"
+GIT_STATUS_LOG_PATH = Path(__file__).resolve().parent / "logs" / "git-status.log"
 app = Flask(__name__)
 from security import install_desktop_boundary
 install_desktop_boundary(app)
@@ -31,6 +32,7 @@ state: dict[str, Any] = {
     "graph": {"running": False, "message": ""},
 }
 state_lock = threading.Lock()
+git_status_log_lock = threading.Lock()
 
 
 def run_command(args: list[str], cwd: Path = ROOT, timeout: int = 120) -> tuple[int, str]:
@@ -145,7 +147,25 @@ def api_state():
 @app.get("/api/git/status")
 def git_status():
     code, output = run_command(["git", "status", "--short", "--branch"])
-    return jsonify({"ok": code == 0, "output": output, "code": code})
+    checked_at = now()
+    report = f"[{checked_at}] git status --short --branch (exit {code})\n{output or 'Sin cambios.'}\n"
+    log_error = ""
+    with git_status_log_lock:
+        print(report, flush=True)
+        try:
+            GIT_STATUS_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+            with GIT_STATUS_LOG_PATH.open("a", encoding="utf-8") as log_file:
+                log_file.write(report + "\n")
+        except OSError:
+            log_error = "No se pudo guardar el resultado en el archivo de log."
+    displayed_output = report + (f"\n{log_error}" if log_error else "")
+    with state_lock:
+        if not state["git"]["running"]:
+            state["git"].update(output=displayed_output, error="" if code == 0 else output)
+    return jsonify({
+        "ok": code == 0, "output": displayed_output, "code": code,
+        "checked_at": checked_at, "log_error": log_error,
+    })
 
 
 @app.post("/api/git/push")
