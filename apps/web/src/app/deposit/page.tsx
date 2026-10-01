@@ -15,7 +15,7 @@ const methods = [
 
 type Deposit = { id: number; amount: string | number; status: "pending" | "approved" | "rejected"; created_at: string };
 
-function authHeaders() {
+function authHeaders(): Record<string, string> {
   if (typeof window === "undefined") return {};
   const token = window.localStorage.getItem("dgn-admin-token");
   return token ? { Authorization: `Bearer ${token}` } : {};
