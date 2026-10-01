@@ -14,23 +14,43 @@ Prerequisites: Git, Railway CLI authenticated with railway login, and the
 repository linked to the intended Railway project/environment.
 
 The Git tab runs explicit Git argument lists, then watches Railway with
-railway deployment list --json. The Graph tab reads
-../graphify-out/graph.json, polls for changes, and can run graphify . --update.
+railway deployment list --json. The Graph tab embeds Graphify's own
+`../graphify-out/graph.html`, including search, community filters and the node
+inspector. It polls metadata and reloads the view only when the HTML changes,
+preserving the layout and zoom between checks. **Actualizar grafo** runs
+`graphify update .` and shows progress and the final result; the button becomes
+available again when the operation ends. This command updates code structure;
+new semantic extraction of docs/images requires the Graphify skill separately.
 Set GRAPHIFY_COMMAND if the local graphify installation needs another command.
+
+**Commit & push** appends the current UTC timestamp to the entered commit
+message, for example `chore: update DGN-PICKS [2026-10-01T12:00:00+00:00]`.
 
 **Ver estado** and **Ver estado Git** display the Git status result with a UTC
 timestamp and command exit code, and print the same result to the terminal.
 Each check appends to `ext-tools/logs/git-status.log` (UTF-8), including failed
 Git commands. The folder is created on the first check; existing entries are
 preserved across restarts. Log files are ignored by Git. If writing fails, the
-console displays a warning alongside the result. Automatic console polling
-preserves the last check until another Git operation updates the output.
+console displays a warning alongside the result. The GUI loads the saved log
+when opened, shows the timestamp and success/error of the last recorded check,
+and appends new checks below earlier results. Automatic polling keeps that
+history visible alongside current commit/push output without duplicating entries.
 
 ## Usuarios (desktop y web)
 
 La pestaña **Usuarios** de Ops Console y **Usuarios** en la web `/admin`
 permiten buscar, crear, editar, activar/desactivar y eliminar cuentas.
 Ambas usan la misma API y requieren iniciar sesión como administrador o editor.
+
+En desktop, la lista muestra ID, usuario, nombre visible, email, país, estado y
+fecha de creación en UTC. Cada fila ofrece **Editar**, **Activar/Desactivar** y
+**Eliminar**. **Nuevo usuario** abre el formulario de creación; **Cancelar** lo
+cierra. La búsqueda incluye ID y país, y el filtro de estado permite mostrar
+todos, activos o inactivos. Las contraseñas no aparecen en la lista.
+
+Después de actualizar la consola, cierra todas las ventanas anteriores y vuelve
+a ejecutar `python app.py`; la versión de los recursos está marcada para evitar
+que pywebview reutilice la interfaz anterior desde su caché.
 
 El desktop usa `http://127.0.0.1:8000` por defecto. Para apuntarlo a otra API,
 configura su origen antes de iniciar la app (sin el sufijo `/api/v1`):

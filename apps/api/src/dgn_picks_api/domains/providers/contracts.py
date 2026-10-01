@@ -18,6 +18,8 @@ class NormalizedGame:
     status: GameStatus
     away_score: int | None = None
     home_score: int | None = None
+    sport: str = "ncaafb"
+    league: str = "NCAAFB"
 
 
 @dataclass(frozen=True)

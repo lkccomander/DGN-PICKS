@@ -30,12 +30,14 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const [games, picks, summary, teams, definitions] = await Promise.all([
+    const today = new Date().toISOString().slice(0, 10);
+    const [games, picks, summary, teams, definitions, mlbSchedule] = await Promise.all([
       getJson<Array<{ id: number }>>("/api/v1/games"),
       getJson<unknown[]>(`/api/v1/picks?user=${encodeURIComponent(user)}`),
       getJson<unknown>(`/api/v1/analytics/summary?user=${encodeURIComponent(user)}`),
       getJson<unknown[]>("/api/v1/teams"),
       getJson<unknown[]>(`/api/v1/seed/pick-definitions?user=${encodeURIComponent(user)}`),
+      getJson<unknown[]>(`/api/v1/schedules/mlb?date=${today}`).catch(() => []),
     ]);
     const markets = (await Promise.all(
       games.map((game) => getJson<Array<{ id: number }>>(`/api/v1/games/${game.id}/markets`)),
@@ -44,7 +46,7 @@ export async function GET(request: NextRequest) {
       markets.map((market) => getJson<unknown[]>(`/api/v1/markets/${market.id}/history`)),
     )).flat();
 
-    return NextResponse.json({ games, picks, summary, teams, definitions, markets, history });
+    return NextResponse.json({ games, picks, summary, teams, definitions, markets, history, mlbSchedule });
   } catch (error) {
     const status = (error as UpstreamError).status;
     return NextResponse.json(

@@ -43,6 +43,19 @@ export type DashboardData = {
   history: OddsSnapshot[];
   teams: Team[];
   definitions: SeedPickDefinition[];
+  mlbSchedule: MLBScheduleGame[];
+};
+
+export type MLBScheduleGame = {
+  external_id: string;
+  sport: string;
+  league: string;
+  kickoff_at: string;
+  away_team: string;
+  home_team: string;
+  status: string;
+  away_score?: number | null;
+  home_score?: number | null;
 };
 
 function normalizeSummary(summary: ApiSummary): Summary {
@@ -92,7 +105,7 @@ export async function fetchDashboardData(user: string, signal?: AbortSignal): Pr
     const detail = await response.text();
     throw new Error(detail || `Dashboard API returned ${response.status}`);
   }
-  const { games, picks, summary, teams, definitions, markets, history } = await response.json() as {
+  const { games, picks, summary, teams, definitions, markets, history, mlbSchedule } = await response.json() as {
     games: Game[];
     picks: ApiPick[];
     summary: ApiSummary;
@@ -100,6 +113,7 @@ export async function fetchDashboardData(user: string, signal?: AbortSignal): Pr
     definitions: ApiSeedPickDefinition[];
     markets: Market[];
     history: ApiOddsSnapshot[];
+    mlbSchedule: MLBScheduleGame[];
   };
-  return { games, picks: picks.map(normalizePick), summary: normalizeSummary(summary), markets, history: history.map(normalizeSnapshot), teams, definitions: definitions.map(normalizeSeedPickDefinition) };
+  return { games, picks: picks.map(normalizePick), summary: normalizeSummary(summary), markets, history: history.map(normalizeSnapshot), teams, definitions: definitions.map(normalizeSeedPickDefinition), mlbSchedule: mlbSchedule ?? [] };
 }

@@ -11,6 +11,7 @@ No API/domain semantics or release changes.
 - [x] Inspect console and project guidance.
 - [x] Implement timestamped reporting and append-only logging.
 - [x] Validate console tests and document the log location.
+- [x] Load saved history in the GUI, append checks, and show the last recorded status.
 
 ## Implementation plan
 Format the Git result once in the status route, print it, append it under a lock,
@@ -28,8 +29,13 @@ The repository already ignores *.log files.
 ## Decision Log
 Use ext-tools/logs/git-status.log relative to app.py, independent of launch directory.
 Store UTC timestamps and serialize log writes within the desktop process.
+Read persisted history through a desktop log endpoint on opening the GUI.
+Keep history separate from current push output and exclude status reports from
+polling updates to avoid duplicate entries.
 
 ## Outcomes & Retrospective
-Implemented and documented. All 21 desktop unittest tests passed, including three
-new status logging tests. Git diff whitespace checks passed. Tests used a
+Implemented and documented. All 24 desktop unittest tests passed, including six
+status logging/history tests. JavaScript syntax and a Node VM behavior check
+passed for history loading, last status messages, appending, and polling without
+duplication. Git diff whitespace checks passed. Tests used a
 temporary Linux virtual environment; the native Windows desktop was not launched.

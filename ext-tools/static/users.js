@@ -8,14 +8,15 @@
   function session(value) {
     token = value;
     el('users-login').hidden = Boolean(token);
-    el('users-workspace').hidden = !token;
     el('users-logout').hidden = !token;
     if (!token) { rows = []; resetForm(); render(); }
+    setBusy(busy);
   }
   function setBusy(value) {
     busy = value;
-    el('users-pane').querySelectorAll('button, input').forEach((node) => { node.disabled = value; });
+    el('users-pane').querySelectorAll('button, input, select').forEach((node) => { node.disabled = value; });
     el('user-username').disabled = value || editingId !== null;
+    for (const id of ['users-search', 'users-filter', 'users-refresh', 'user-new']) el(id).disabled = value || !token;
   }
   async function api(path, method = 'GET', body) {
     const response = await desktopFetch('/api/users' + path, {
@@ -40,31 +41,46 @@
   }
   function resetForm() {
     editingId = null; el('user-form').reset(); el('user-username').disabled = false;
-    el('user-form-title').textContent = 'Crear usuario'; el('user-save').textContent = 'Crear usuario'; el('user-cancel').hidden = true;
+    el('user-form').hidden = true;
+    el('user-form-title').textContent = 'Crear usuario'; el('user-save').textContent = 'Crear usuario';
+  }
+  function openForm() {
+    el('user-form').hidden = false;
+    el('user-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function createdAt(value) {
+    if (!value) return 'Sin fecha';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? 'Sin fecha' : date.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, ' UTC');
   }
   function edit(row) {
     editingId = row.id;
     for (const [id, key] of [['username', 'username'], ['display-name', 'display_name'], ['email', 'email'], ['country', 'country']]) el('user-' + id).value = row[key] || '';
     el('user-password').value = ''; el('user-active').checked = row.active;
     el('user-username').disabled = true; el('user-form-title').textContent = 'Editar @' + row.username;
-    el('user-save').textContent = 'Guardar cambios'; el('user-cancel').hidden = false;
+    el('user-save').textContent = 'Guardar cambios'; openForm();
     el('user-display-name').focus();
   }
   async function load() {
+    el('users-count').textContent = 'Cargando usuarios…';
     const data = await api('');
     if (!Array.isArray(data)) throw new Error('La API no devolvió una lista de usuarios.');
     rows = data; render();
   }
   function render() {
     const query = el('users-search').value.trim().toLowerCase();
-    const visible = rows.filter((row) => [row.username, row.display_name, row.email].some((value) => String(value || '').toLowerCase().includes(query)));
+    const filter = el('users-filter').value;
+    const visible = rows.filter((row) =>
+      [row.id, row.username, row.display_name, row.email, row.country].some((value) => String(value ?? '').toLowerCase().includes(query)) &&
+      (filter === 'all' || row.active === (filter === 'active')));
     el('users-rows').replaceChildren();
     for (const row of visible) {
       const tr = document.createElement('tr');
-      for (const text of ['@' + row.username + ' · #' + row.id, row.display_name + ' · ' + (row.email || 'Sin email') + ' · ' + (row.country || 'Sin país'), row.active ? 'Activo' : 'Inactivo']) {
+      for (const text of [String(row.id), '@' + row.username, row.display_name, row.email || 'Sin email', row.country || 'Sin país', row.active ? 'Activo' : 'Inactivo', createdAt(row.created_at)]) {
         const td = document.createElement('td'); td.textContent = text; tr.append(td);
       }
       const actions = document.createElement('td');
+      actions.className = 'users-actions';
       function button(label, callback, danger = false) {
         const node = document.createElement('button'); node.type = 'button'; node.textContent = label;
         node.className = 'btn btn-sm ' + (danger ? 'btn-outline-danger' : 'btn-outline-light') + ' m-1'; node.disabled = busy;
@@ -85,7 +101,13 @@
       }, true);
       tr.append(actions); el('users-rows').append(tr);
     }
-    el('users-count').textContent = visible.length ? visible.length + ' de ' + rows.length + ' usuarios' : rows.length ? 'Sin coincidencias.' : 'No hay usuarios.';
+    if (!visible.length) {
+      const tr = document.createElement('tr'), td = document.createElement('td');
+      td.colSpan = 8; td.className = 'text-center py-4';
+      td.textContent = !token ? 'Inicia sesión como administrador o editor para cargar los usuarios y usar los controles CRUD.' : rows.length ? 'Sin coincidencias.' : 'No hay usuarios. Crea el primero con Nuevo usuario.';
+      tr.append(td); el('users-rows').append(tr);
+    }
+    el('users-count').textContent = !token ? 'Lista pendiente de autenticación.' : visible.length ? visible.length + ' de ' + rows.length + ' usuarios' : rows.length ? 'Sin coincidencias.' : 'No hay usuarios.';
   }
   el('users-login').addEventListener('submit', (event) => {
     event.preventDefault();
@@ -98,7 +120,9 @@
   });
   el('users-logout').addEventListener('click', () => { session(null); message('Sesión cerrada.'); });
   el('user-cancel').addEventListener('click', resetForm);
+  el('user-new').addEventListener('click', () => { resetForm(); openForm(); el('user-username').focus(); });
   el('users-search').addEventListener('input', render);
+  el('users-filter').addEventListener('change', render);
   el('users-refresh').addEventListener('click', () => action(load));
   el('user-form').addEventListener('submit', (event) => {
     event.preventDefault();
@@ -111,4 +135,6 @@
       resetForm(); await load(); message('Usuario guardado.');
     });
   });
+  session(null);
+  setBusy(false);
 })();

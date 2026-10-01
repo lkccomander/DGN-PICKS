@@ -10,3 +10,11 @@ h1 { font-size:clamp(1.9rem,4vw,3.4rem); letter-spacing:-.05em; margin:0; }.kick
 @media (max-width: 1100px) { .workspace-layout { grid-template-columns:1fr; }.right-menu { position:static; display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }.right-menu-header,.right-menu-status,.right-menu-footer { grid-column:1 / -1; }.right-menu-section { border-top:1px solid #1d3b56; } }
 
 .configuration-section{border-top:1px solid #244663;padding-top:22px}.configuration-section:first-of-type{border-top:0;padding-top:0}.configuration-grid{display:grid;gap:16px;grid-template-columns:repeat(2,minmax(0,1fr))}.configuration-grid label{display:grid;gap:7px;color:#b9cce0;font-size:.82rem}.configuration-grid .config-checkbox{align-content:end;display:flex;align-items:center;padding-bottom:11px}.configuration-secret-state{color:#8ea4bd;font-size:.75rem}.configuration-process-output{min-height:92px;max-height:220px;overflow:auto;padding:13px;border:1px solid #19344d;border-radius:8px;background:#030c16;color:#a9c9e7;font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap}.configuration-notice{min-height:24px}.configuration-grid .form-control,.configuration-grid .form-select{width:100%}@media(max-width:700px){.configuration-grid{grid-template-columns:1fr}}
+.graph-canvas[hidden] { display:none; }
+.users-toolbar { display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap; }
+.users-search { flex:1; min-width:220px; }
+.users-list .table { --bs-table-bg:transparent; --bs-table-color:#eaf5ff; --bs-table-border-color:#234761; color:#eaf5ff; }
+.users-list th { color:#8ea4bd; font-size:12px; white-space:nowrap; }
+.users-list td { font-size:13px; overflow-wrap:anywhere; min-width:90px; }
+.users-list .users-actions { min-width:260px; white-space:nowrap; }
+.user-editor { padding:20px; border:1px solid #234761; border-radius:10px; background:#061a2d; }

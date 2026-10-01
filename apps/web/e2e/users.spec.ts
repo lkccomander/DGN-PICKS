@@ -6,7 +6,7 @@ for (const surface of ["web", "desktop"] as const) {
     const origin = surface === "web" ? process.env.E2E_WEB_URL : process.env.E2E_DESKTOP_URL;
     test.skip(!origin, "Set E2E_WEB_URL and/or E2E_DESKTOP_URL to a local test server.");
     test("creates, searches, edits, deactivates and deletes; preserves failures", async ({ page }) => {
-      let users = [{ id: 1, username: "gato", display_name: "Gato", email: "gato@example.com" as string | null, country: "GT" as string | null, active: true }];
+      let users = [{ id: 1, username: "gato", display_name: "Gato", email: "gato@example.com" as string | null, country: "GT" as string | null, active: true, created_at: "2026-09-17T12:30:00Z" }];
       const writes: Array<{ method: string; body: Record<string, unknown> }> = [];
       let failNext = false;
       const api = surface === "web" ? "/api/admin/users" : "/api/users";
@@ -38,12 +38,26 @@ for (const surface of ["web", "desktop"] as const) {
         await page.route("**/api/graph", (route) => route.fulfill({ json: { nodes: [], edges: [], meta: {} } }));
         await page.goto(origin!);
         await page.locator("#users-tab").click();
-        await page.getByLabel("Usuario administrador").fill("admin");
-        await page.getByLabel("Contraseña", { exact: true }).fill("test-password");
+        await expect(page.locator("#users-workspace")).toBeVisible();
+        await expect(page.locator("#users-rows")).toContainText("Inicia sesión como administrador o editor");
+        await expect(page.getByRole("button", { name: "Nuevo usuario", exact: true })).toBeDisabled();
+        await page.locator("#users-login").getByLabel("Usuario administrador").fill("admin");
+        await page.locator("#users-login").getByLabel("Contraseña", { exact: true }).fill("test-password");
         await page.getByRole("button", { name: "Entrar", exact: true }).click();
       }
       const row = (name: string) => page.locator(surface === "web" ? ".admin-table article" : "#users-rows tr").filter({ hasText: "@" + name });
       await expect(row("gato")).toBeVisible();
+      if (surface === "desktop") {
+        await expect(row("gato")).toContainText("2026-09-17 12:30:00 UTC");
+        await expect(row("gato").locator("td")).toHaveCount(8);
+        await page.getByLabel("Buscar usuarios").fill("GT");
+        await expect(row("gato")).toBeVisible();
+        await page.getByLabel("Buscar usuarios").fill("");
+        await page.locator("#users-filter").selectOption("inactive");
+        await expect(row("gato")).toHaveCount(0);
+        await page.locator("#users-filter").selectOption("all");
+        await page.getByRole("button", { name: "Nuevo usuario", exact: true }).click();
+      }
       await page.getByLabel("Usuario", { exact: true }).fill("demo");
       await page.getByLabel("Nombre visible", { exact: true }).fill("Demo User");
       await page.getByLabel("Email", { exact: true }).fill("demo@example.com");
@@ -82,6 +96,13 @@ for (const surface of ["web", "desktop"] as const) {
       await expect(surface === "web" ? page.locator(".admin-error[role=alert]") : page.locator("#users-message")).not.toBeEmpty();
       await expect(row("gato").getByRole("button", { name: "Desactivar", exact: true })).toBeEnabled();
       await page.screenshot({ path: "test-results/users-" + surface + ".png", fullPage: true });
+      if (surface === "desktop") {
+        await page.getByRole("button", { name: "Cerrar sesión", exact: true }).click();
+        await expect(page.locator("#users-workspace")).toBeVisible();
+        await expect(page.locator("#users-rows")).toContainText("Inicia sesión como administrador o editor");
+        await expect(row("gato")).toHaveCount(0);
+        await expect(page.getByRole("button", { name: "Nuevo usuario", exact: true })).toBeDisabled();
+      }
     });
   });
 }

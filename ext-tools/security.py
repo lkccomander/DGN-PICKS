@@ -46,5 +46,5 @@ def install_desktop_boundary(app):
     def protect_response(response):
         response.headers["Cache-Control"] = "no-store"
         response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["Content-Security-Policy"] = "frame-ancestors 'none'"
+        response.headers["Content-Security-Policy"] = "frame-ancestors 'self'" if request.path == "/api/graph/view" else "frame-ancestors 'none'"
         return response

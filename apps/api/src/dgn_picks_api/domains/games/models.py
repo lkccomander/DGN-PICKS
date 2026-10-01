@@ -17,6 +17,8 @@ class Game(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     external_ids: Mapped[dict] = mapped_column(JSON, default=dict)
     season: Mapped[int] = mapped_column(Integer, index=True)
+    sport: Mapped[str] = mapped_column(String(32), default="ncaafb", server_default="ncaafb", index=True)
+    league: Mapped[str] = mapped_column(String(32), default="NCAAFB", server_default="NCAAFB", index=True)
     week: Mapped[int] = mapped_column(Integer)
     kickoff_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     home_team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))

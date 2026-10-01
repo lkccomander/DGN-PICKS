@@ -139,6 +139,8 @@ class GameResponse(ORMModel):
     id: int
     external_ids: dict = Field(default_factory=dict)
     season: int
+    sport: str
+    league: str
     week: int
     kickoff_at: datetime
     home_team_id: int
@@ -152,6 +154,8 @@ class GameResponse(ORMModel):
 class GameCreate(BaseModel):
     external_ids: dict = Field(default_factory=dict)
     season: int = Field(gt=0)
+    sport: str = Field(default="ncaafb", min_length=2, max_length=32)
+    league: str = Field(default="NCAAFB", min_length=2, max_length=32)
     week: int = Field(gt=0)
     kickoff_at: datetime
     home_team_id: int = Field(gt=0)
@@ -165,6 +169,8 @@ class GameCreate(BaseModel):
 class GameUpdate(BaseModel):
     external_ids: dict | None = None
     season: int | None = Field(default=None, gt=0)
+    sport: str | None = Field(default=None, min_length=2, max_length=32)
+    league: str | None = Field(default=None, min_length=2, max_length=32)
     week: int | None = Field(default=None, gt=0)
     kickoff_at: datetime | None = None
     home_team_id: int | None = Field(default=None, gt=0)

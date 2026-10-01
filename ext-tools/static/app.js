@@ -1,5 +1,33 @@
 const $ = (id) => document.getElementById(id);
-let graphInstance = null;
+let graphViewVersion = null;
+let graphWasRunning = false;
+let gitHistory = '';
+let gitOperationOutput = '';
+
+function renderGitConsole() {
+  const console = $('git-output');
+  console.textContent = [gitHistory.trimEnd(), gitOperationOutput].filter(Boolean).join('\n\n') || 'Sin consultas guardadas.';
+  console.scrollTop = console.scrollHeight;
+}
+
+function showLastGitStatus(status) {
+  $('git-last-status').textContent = status
+    ? `Último estado: ${status.checked_at} · ${status.code === 0 ? 'Consulta correcta' : 'Error'} (exit ${status.code})`
+    : 'Sin estado anterior guardado.';
+}
+
+async function loadGitLog() {
+  try {
+    const response = await desktopFetch('/api/git/log');
+    const data = await response.json();
+    if (!response.ok || !data.ok) throw new Error(data.message || 'No se pudo cargar el log.');
+    gitHistory = data.output || '';
+    showLastGitStatus(data.last_status);
+  } catch (error) {
+    $('git-last-status').textContent = error.message;
+  }
+  renderGitConsole();
+}
 
 function setDeployVisual(status, message) {
   const labels = { ready:'LISTO', failed:'FALLÓ', deploying:'EN PROGRESO', error:'ERROR', unlinked:'NO VINCULADO', unavailable:'NO DISPONIBLE', timeout:'TIMEOUT', idle:'SIN CONSULTAR' };
@@ -15,28 +43,49 @@ async function refreshState() {
   const response = await desktopFetch('/api/state');
   const data = await response.json();
   const git = data.git || {};
-  $('git-output').textContent = git.output || git.error || 'Esperando una operación…';
+  const output = git.output || git.error || '';
+  // Status checks are already in the history; polling must not duplicate them.
+  if (!/^\[[^\]\n]+\] git status --short --branch \(exit -?\d+\)/.test(output)) {
+    gitOperationOutput = output;
+    renderGitConsole();
+  }
   if (data.deploy) setDeployVisual(data.deploy.status, data.deploy.message);
-  if (data.graph && data.graph.message) $('graph-meta').textContent = data.graph.message;
+  if (data.graph) {
+    const running = Boolean(data.graph.running);
+    $('graph-refresh').disabled = running;
+    $('quick-graph-refresh').disabled = running;
+    $('graph-operation').textContent = data.graph.message || '';
+    if (graphWasRunning && !running) await loadGraph();
+    graphWasRunning = running;
+  }
 }
 
 async function gitStatus() {
-  $('git-output').textContent = 'Consultando git…';
-  const response = await desktopFetch('/api/git/status');
-  const data = await response.json();
-  $('git-output').textContent = data.output || data.message || 'Sin cambios.';
+  await gitLogReady;
+  $('git-last-status').textContent = 'Consultando git…';
+  try {
+    const response = await desktopFetch('/api/git/status');
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'No se pudo consultar Git.');
+    gitHistory = gitHistory.trimEnd() + (gitHistory.trim() ? '\n\n' : '') + (data.output || data.message || 'Sin cambios.');
+    showLastGitStatus({checked_at: data.checked_at, code: data.code});
+  } catch (error) {
+    $('git-last-status').textContent = error.message;
+  }
+  renderGitConsole();
 }
 
 async function pushChanges() {
   const button = $('git-push');
   button.disabled = true;
-  $('git-output').textContent = 'Iniciando commit y push…';
+  gitOperationOutput = 'Iniciando commit y push…';
+  renderGitConsole();
   const response = await desktopFetch('/api/git/push', {
     method: 'POST', headers: {'Content-Type':'application/json'},
     body: JSON.stringify({branch:$('branch').value, message:$('commit-message').value})
   });
   const data = await response.json();
-  if (!data.ok) $('git-output').textContent = data.message;
+  if (!data.ok) { gitOperationOutput = data.message; renderGitConsole(); }
   button.disabled = false;
 }
 
@@ -46,41 +95,46 @@ async function refreshDeploy() {
   setDeployVisual(data.status, data.message);
 }
 
-function drawGraph(payload) {
-  const rawNodes = payload.nodes || [];
-  const rawEdges = payload.edges || [];
-  if (graphInstance) graphInstance.destroy();
-  graphInstance = cytoscape({
-    container: $('graph-canvas'),
-    elements: {
-      nodes: rawNodes.map((n, i) => ({data:{id:String(n.id), label:n.label || n.id, type:n.file_type || 'concept'}, position:{x:80+(i%12)*105,y:80+Math.floor(i/12)*82}})),
-      edges: rawEdges.map((e, i) => ({data:{id:'e'+i, source:String(e.source), target:String(e.target), label:e.relation || ''}}))
-    },
-    style: [
-      {selector:'node',style:{'background-color':'#168cff','label':'data(label)','color':'#eaf5ff','font-size':8,'text-wrap':'ellipsis','text-max-width':90,'text-valign':'bottom','text-margin-y':6,'width':14,'height':14,'border-width':1,'border-color':'#a9d8ff'}},
-      {selector:'node[type="image"]',style:{'background-color':'#e3222e','shape':'round-rectangle'}},
-      {selector:'node[type="document"]',style:{'background-color':'#e7f2ff','color':'#071a2f'}},
-      {selector:'edge',style:{'line-color':'#426683','target-arrow-color':'#426683','target-arrow-shape':'triangle','curve-style':'bezier','width':1,'opacity':.55}},
-      {selector:':selected',style:{'background-color':'#ffd166','line-color':'#ffd166','target-arrow-color':'#ffd166','z-index':99}}
-    ],
-    layout:{name:'cose', animate:true, padding:35, idealEdgeLength:100, nodeRepulsion:8000, gravity:.25}
-  });
-  const meta = payload.meta || {};
-  $('graph-meta').textContent = rawNodes.length + ' nodos · ' + rawEdges.length + ' relaciones · actualizado ' + (meta.updated_at || 'ahora');
-}
-
 async function loadGraph() {
-  const response = await desktopFetch('/api/graph');
-  const data = await response.json();
-  drawGraph(data);
-  if ($('menu-graph-status')) $('menu-graph-status').textContent = (data.nodes || []).length + ' nodos';
+  try {
+    const response = await desktopFetch('/api/graph');
+    const data = await response.json();
+    const meta = data.meta || {};
+    if (!response.ok || meta.error) throw new Error(meta.error || 'No se pudo cargar el grafo.');
+    const nodes = (data.nodes || []).length;
+    const edges = (data.links || data.edges || []).length;
+    $('graph-meta').textContent = `${nodes} nodos · ${edges} relaciones · actualizado ${meta.updated_at || '—'}`;
+    $('menu-graph-status').textContent = `${nodes} nodos`;
+    const frame = $('graph-view');
+    if (!meta.view_version) throw new Error('No existe la vista Graphify. Pulsa Actualizar grafo.');
+    if (graphViewVersion !== meta.view_version) {
+      frame.src = '/api/graph/view?v=' + encodeURIComponent(meta.view_version);
+      graphViewVersion = meta.view_version;
+    }
+    frame.hidden = false;
+    $('graph-empty').hidden = true;
+  } catch (error) {
+    $('graph-empty').textContent = error.message;
+    $('graph-empty').hidden = false;
+    $('graph-view').hidden = true;
+  }
 }
 
 async function refreshGraph() {
-  const button = $('graph-refresh');
-  button.disabled = true;
-  await desktopFetch('/api/graph/refresh', {method:'POST'});
-  setTimeout(async () => { await loadGraph(); button.disabled = false; }, 1200);
+  $('graph-refresh').disabled = true;
+  $('quick-graph-refresh').disabled = true;
+  $('graph-operation').textContent = 'Actualizando grafo…';
+  try {
+    const response = await desktopFetch('/api/graph/refresh', {method:'POST'});
+    const data = await response.json();
+    if (!response.ok || !data.ok) throw new Error(data.message || 'No se pudo actualizar el grafo.');
+    graphWasRunning = true;
+    await refreshState();
+  } catch (error) {
+    $('graph-operation').textContent = error.message;
+    $('graph-refresh').disabled = false;
+    $('quick-graph-refresh').disabled = false;
+  }
 }
 
 $('git-status').addEventListener('click', gitStatus);
@@ -91,6 +145,7 @@ $('quick-git-status').addEventListener('click', () => { document.querySelector('
 $('quick-deploy-refresh').addEventListener('click', () => { document.querySelector('[data-coreui-target="#ship-pane"]').click(); refreshDeploy(); });
 $('quick-graph-refresh').addEventListener('click', () => { document.querySelector('[data-coreui-target="#graph-pane"]').click(); refreshGraph(); });
 loadGraph();
-refreshState();
+const gitLogReady = loadGitLog();
+gitLogReady.then(refreshState);
 setInterval(refreshState, 2500);
 setInterval(loadGraph, 8000);

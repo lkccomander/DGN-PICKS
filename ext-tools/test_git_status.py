@@ -19,6 +19,15 @@ class GitStatusTests(unittest.TestCase):
         log_patch.start()
         self.addCleanup(log_patch.stop)
 
+    @patch("app.threading.Thread")
+    @patch("app.now", return_value="2026-10-01T12:00:00+00:00")
+    @patch("app.run_command", return_value=(0, "done"))
+    def test_commit_appends_timestamp_to_custom_message(self, command, clock, worker):
+        console.git_push("fix: estado", "main")
+        command.assert_any_call(["git", "commit", "-m", "fix: estado [2026-10-01T12:00:00+00:00]"])
+        self.assertIn("fix: estado [2026-10-01T12:00:00+00:00]", console.state["git"]["output"])
+        clock.assert_called_once()
+
     @patch("app.print")
     @patch("app.now", side_effect=["2026-10-01T12:00:00+00:00", "2026-10-01T12:01:00+00:00"])
     @patch("app.run_command", side_effect=[(0, "## main\n M documentación.md"), (1, "fatal: not a git repository")])
@@ -35,6 +44,32 @@ class GitStatusTests(unittest.TestCase):
         printer.assert_any_call(first["output"], flush=True)
         self.assertEqual(self.client.get("/api/state").get_json()["git"]["output"], second["output"])
         command.assert_called_with(["git", "status", "--short", "--branch"])
+        history = self.client.get("/api/git/log").get_json()
+        self.assertEqual(history["output"], self.log_path.read_text(encoding="utf-8"))
+        self.assertEqual(history["last_status"], {"checked_at": second["checked_at"], "code": 1})
+
+    def test_loads_saved_history_without_running_git(self):
+        saved = "[2026-09-30T12:00:00+00:00] git status --short --branch (exit 0)\n## main\n\n"
+        self.log_path.parent.mkdir()
+        self.log_path.write_text(saved, encoding="utf-8")
+        with patch("app.run_command") as command:
+            data = self.client.get("/api/git/log").get_json()
+        command.assert_not_called()
+        self.assertEqual(data["output"], saved)
+        self.assertEqual(data["last_status"], {"checked_at": "2026-09-30T12:00:00+00:00", "code": 0})
+
+    def test_missing_log_has_no_previous_status(self):
+        data = self.client.get("/api/git/log").get_json()
+        self.assertTrue(data["ok"])
+        self.assertEqual(data["output"], "")
+        self.assertIsNone(data["last_status"])
+
+    def test_unreadable_log_reports_error(self):
+        self.log_path.parent.mkdir()
+        self.log_path.mkdir()
+        response = self.client.get("/api/git/log")
+        self.assertEqual(response.status_code, 500)
+        self.assertFalse(response.get_json()["ok"])
 
     @patch("app.print")
     @patch("app.run_command", return_value=(0, "## main"))

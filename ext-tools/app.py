@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 import locale
 import os
+import re
+import shlex
 import shutil
 import subprocess
 import threading
@@ -11,7 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_file
 from configuration import configuration_api, hydrate_runtime_environment
 
 hydrate_runtime_environment()
@@ -20,6 +22,7 @@ from users_api import users_api
 
 ROOT = Path(__file__).resolve().parents[1]
 GRAPH_PATH = ROOT / "graphify-out" / "graph.json"
+GRAPH_HTML_PATH = ROOT / "graphify-out" / "graph.html"
 GIT_STATUS_LOG_PATH = Path(__file__).resolve().parent / "logs" / "git-status.log"
 app = Flask(__name__)
 from security import install_desktop_boundary
@@ -114,6 +117,7 @@ def monitor_deploy() -> None:
 
 def git_push(message: str, branch: str) -> None:
     set_state("git", running=True, output="", error="")
+    message = f"{message} [{now()}]"
     commands = [
         ["git", "status", "--short", "--branch"],
         ["git", "add", "-A"],
@@ -168,6 +172,23 @@ def git_status():
     })
 
 
+@app.get("/api/git/log")
+def git_log():
+    try:
+        with git_status_log_lock:
+            content = GIT_STATUS_LOG_PATH.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        content = ""
+    except (OSError, UnicodeError):
+        return jsonify({"ok": False, "output": "", "message": "No se pudo leer el archivo de log."}), 500
+    headers = re.findall(r"^\[([^\]\n]+)\] git status --short --branch \(exit (-?\d+)\)$", content, re.MULTILINE)
+    last = headers[-1] if headers else None
+    return jsonify({
+        "ok": True, "output": content,
+        "last_status": {"checked_at": last[0], "code": int(last[1])} if last else None,
+    })
+
+
 @app.post("/api/git/push")
 def git_push_route():
     payload = request.get_json(silent=True) or {}
@@ -196,19 +217,32 @@ def graph():
     try:
         payload = json.loads(GRAPH_PATH.read_text(encoding="utf-8"))
         payload["meta"] = {
-            "updated_at": datetime.fromtimestamp(GRAPH_PATH.stat().st_mtime, timezone.utc).isoformat()
+            "updated_at": datetime.fromtimestamp(GRAPH_PATH.stat().st_mtime, timezone.utc).isoformat(),
+            "view_version": str(GRAPH_HTML_PATH.stat().st_mtime_ns) if GRAPH_HTML_PATH.exists() else None,
         }
         return jsonify(payload)
     except (OSError, json.JSONDecodeError) as exc:
         return jsonify({"nodes": [], "edges": [], "meta": {"error": str(exc)}}), 500
 
 
+@app.get("/api/graph/view")
+def graph_view():
+    if not GRAPH_HTML_PATH.exists():
+        return "No existe graphify-out/graph.html. Actualiza el grafo para generar la vista.", 404
+    return send_file(GRAPH_HTML_PATH, mimetype="text/html")
+
+
 def refresh_graph() -> None:
-    set_state("graph", running=True, message="Actualizando grafo…")
-    command = os.environ.get("GRAPHIFY_COMMAND", "graphify").split()
-    code, output = run_command(command + [".", "--update"], timeout=20 * 60)
+    try:
+        command = shlex.split(os.environ.get("GRAPHIFY_COMMAND", "graphify"), posix=os.name != "nt")
+        command = [part.strip('"') for part in command]
+        if not command:
+            raise ValueError("GRAPHIFY_COMMAND está vacío.")
+        code, output = run_command(command + ["update", "."], timeout=20 * 60)
+    except (OSError, ValueError) as exc:
+        code, output = 1, str(exc)
     set_state("graph", running=False, message=output[-1000:] if output else
-              ("Grafo actualizado." if code == 0 else "Falló la actualización."), code=code)
+              ("Grafo actualizado." if code == 0 else "Falló la actualización."), code=code, updated_at=now())
 
 
 @app.post("/api/graph/refresh")
@@ -216,7 +250,12 @@ def graph_refresh():
     with state_lock:
         if state["graph"]["running"]:
             return jsonify({"ok": False, "message": "El grafo ya se está actualizando."}), 409
-    threading.Thread(target=refresh_graph, daemon=True).start()
+        state["graph"].update(running=True, message="Actualizando grafo…", code=None)
+    try:
+        threading.Thread(target=refresh_graph, daemon=True).start()
+    except RuntimeError:
+        set_state("graph", running=False, message="No se pudo iniciar la actualización.")
+        return jsonify({"ok": False, "message": "No se pudo iniciar la actualización."}), 500
     return jsonify({"ok": True})
 
 

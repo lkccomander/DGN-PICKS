@@ -12,6 +12,7 @@ from dgn_picks_api.api.v1.routes.markets import router as markets_router, select
 from dgn_picks_api.api.v1.routes.picks import router as picks_router
 from dgn_picks_api.api.v1.routes.pick_imports import router as pick_imports_router
 from dgn_picks_api.api.v1.routes.seed import router as seed_router
+from dgn_picks_api.api.v1.routes.schedules import router as schedules_router
 from dgn_picks_api.api.v1.routes.teams import players_router, router as teams_router
 from dgn_picks_api.api.v1.routes.users import router as users_router, admin_router as admin_users_router
 
@@ -47,6 +48,7 @@ for router in (
     picks_router,
     pick_imports_router,
     seed_router,
+    schedules_router,
     analytics_router,
     dev_router,
 ):

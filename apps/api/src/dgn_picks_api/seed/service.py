@@ -82,6 +82,8 @@ def seed_local_data(session: Session) -> SeedReport:
             game = Game(
                 external_ids={"fixture": normalized_game.external_id},
                 season=normalized_game.season,
+                sport=normalized_game.sport,
+                league=normalized_game.league,
                 week=normalized_game.week,
                 kickoff_at=normalized_game.kickoff_at,
                 home_team_id=home.id,

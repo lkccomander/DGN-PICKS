@@ -1,767 +1,1092 @@
 {
-  "/mnt/c/Projects/DGN-PICKS/.codebase-memory/artifact.json": {
+  ".codebase-memory/artifact.json": {
     "mtime": 1788808792.3274584,
     "ast_hash": "372f73d1ba85f6654f92d16e9a95f292",
-    "semantic_hash": "372f73d1ba85f6654f92d16e9a95f292"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/migrations/env.py": {
+  "apps/api/migrations/env.py": {
     "mtime": 1788841934.3874853,
     "ast_hash": "e4db127a46c83c8b1eedc8cfc9b81a81",
-    "semantic_hash": "e4db127a46c83c8b1eedc8cfc9b81a81"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/migrations/versions/0001_initial_schema.py": {
+  "apps/api/migrations/versions/0001_initial_schema.py": {
     "mtime": 1788808618.9153988,
     "ast_hash": "10b8b82877d3832e5afb46c51c3a628e",
-    "semantic_hash": "10b8b82877d3832e5afb46c51c3a628e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/migrations/versions/0002_m2_domain_schema.py": {
+  "apps/api/migrations/versions/0002_m2_domain_schema.py": {
     "mtime": 1788828058.9063008,
     "ast_hash": "b93519d3be6ab1127b3ff95af10bf873",
-    "semantic_hash": "b93519d3be6ab1127b3ff95af10bf873"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/migrations/versions/0003_align_game_table_name.py": {
+  "apps/api/migrations/versions/0003_align_game_table_name.py": {
     "mtime": 1788811969.9534676,
     "ast_hash": "90a102a32c6eeae607dcdbc66facda44",
-    "semantic_hash": "90a102a32c6eeae607dcdbc66facda44"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/migrations/versions/0004_align_m2_models.py": {
+  "apps/api/migrations/versions/0004_align_m2_models.py": {
     "mtime": 1788833185.107807,
     "ast_hash": "e74d2093f170a68bcfdbc69586629edb",
-    "semantic_hash": "e74d2093f170a68bcfdbc69586629edb"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/migrations/versions/0005_remove_legacy_m1_columns.py": {
+  "apps/api/migrations/versions/0005_remove_legacy_m1_columns.py": {
     "mtime": 1788843643.564778,
     "ast_hash": "b8d456756091457dedef8c501234f108",
-    "semantic_hash": "b8d456756091457dedef8c501234f108"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/migrations/versions/0006_backfill_pick_timestamps.py": {
+  "apps/api/migrations/versions/0006_backfill_pick_timestamps.py": {
     "mtime": 1788843957.7110045,
     "ast_hash": "2bb57f8be75a7db896fa2c1c14f0ae3f",
-    "semantic_hash": "2bb57f8be75a7db896fa2c1c14f0ae3f"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/migrations/versions/0007_remove_unresolved_malakai_seed_pick.py": {
+  "apps/api/migrations/versions/0007_remove_unresolved_malakai_seed_pick.py": {
     "mtime": 1789087720.2566333,
     "ast_hash": "5b6085f97ded81e398f9d4eacd0e9259",
-    "semantic_hash": "5b6085f97ded81e398f9d4eacd0e9259"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/railway_migrate.py": {
+  "apps/api/migrations/versions/0009_audit_integrity.py": {
+    "mtime": 1790297661.6516232,
+    "ast_hash": "0771b29855cbe35af8ef357ea3b3df6f",
+    "semantic_hash": ""
+  },
+  "apps/api/migrations/versions/0010_manual_pick_imports.py": {
+    "mtime": 1790452678.0962338,
+    "ast_hash": "95952538c6451f7a63358eeee026ccb1",
+    "semantic_hash": ""
+  },
+  "apps/api/migrations/versions/0011_restore_pick_leg_snapshot.py": {
+    "mtime": 1790453023.7971184,
+    "ast_hash": "b72dbdbeb3371eab2016387bcd22cd07",
+    "semantic_hash": ""
+  },
+  "apps/api/railway_migrate.py": {
     "mtime": 1788826202.7296567,
     "ast_hash": "c5d9d48db6cfefd9849c5a5e15fa4b7a",
-    "semantic_hash": "c5d9d48db6cfefd9849c5a5e15fa4b7a"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/railway_migrate_safe.py": {
-    "mtime": 1788826458.0054247,
-    "ast_hash": "59250efaa0ef596cec0e55ff4b16eb9f",
-    "semantic_hash": "59250efaa0ef596cec0e55ff4b16eb9f"
+  "apps/api/railway_migrate_safe.py": {
+    "mtime": 1790453023.7055724,
+    "ast_hash": "d8543e7eec9e707edb0289d9077fbe3c",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/__init__.py": {
+  "apps/api/src/dgn_picks_api/__init__.py": {
     "mtime": 1788807746.6097474,
     "ast_hash": "5ff2482c1f0c848657dd644e90d5785a",
-    "semantic_hash": "5ff2482c1f0c848657dd644e90d5785a"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/__init__.py": {
+  "apps/api/src/dgn_picks_api/api/__init__.py": {
     "mtime": 1788807821.6865947,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
-    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/routes/health.py": {
+  "apps/api/src/dgn_picks_api/api/routes/health.py": {
     "mtime": 1788808029.7039447,
     "ast_hash": "702964e26e57692addd6dc7caccf63dc",
-    "semantic_hash": "702964e26e57692addd6dc7caccf63dc"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/v1/auth.py": {
-    "mtime": 1789264724.63268,
-    "ast_hash": "833f572d6316b670ad383c8d706f650c",
-    "semantic_hash": "833f572d6316b670ad383c8d706f650c"
+  "apps/api/src/dgn_picks_api/api/v1/auth.py": {
+    "mtime": 1790297661.6803575,
+    "ast_hash": "591b444667437ac9042a824969ed2cc5",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/v1/dependencies.py": {
-    "mtime": 1789264677.1154368,
-    "ast_hash": "fe61e052a75e007232c391945ac0778d",
-    "semantic_hash": "fe61e052a75e007232c391945ac0778d"
+  "apps/api/src/dgn_picks_api/api/v1/dependencies.py": {
+    "mtime": 1790297661.7053244,
+    "ast_hash": "17417ea724bfcda71ceef0b69e1ae495",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/v1/routes/analytics.py": {
-    "mtime": 1788837029.0053034,
-    "ast_hash": "65b678af9cc1b911461ac5d2b0576133",
-    "semantic_hash": "65b678af9cc1b911461ac5d2b0576133"
+  "apps/api/src/dgn_picks_api/api/v1/routes/analytics.py": {
+    "mtime": 1790452915.075772,
+    "ast_hash": "75eb3248709cdd274c1c36e800842cf8",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/v1/routes/auth.py": {
-    "mtime": 1789264733.4713957,
-    "ast_hash": "c55eabfad498c5d3ee58ab8e9cdbe2cd",
-    "semantic_hash": "c55eabfad498c5d3ee58ab8e9cdbe2cd"
+  "apps/api/src/dgn_picks_api/api/v1/routes/auth.py": {
+    "mtime": 1790297661.8454063,
+    "ast_hash": "2e8019e3f1128c90cfd028dbd4108214",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/v1/routes/dev.py": {
+  "apps/api/src/dgn_picks_api/api/v1/routes/dev.py": {
     "mtime": 1789264701.0542765,
     "ast_hash": "9dbc8721f90c609e63678b8dbb2864e9",
-    "semantic_hash": "9dbc8721f90c609e63678b8dbb2864e9"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/v1/routes/games.py": {
+  "apps/api/src/dgn_picks_api/api/v1/routes/games.py": {
     "mtime": 1789264701.0938137,
     "ast_hash": "d8afc11698489025b883d2194211316c",
-    "semantic_hash": "d8afc11698489025b883d2194211316c"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/v1/routes/markets.py": {
+  "apps/api/src/dgn_picks_api/api/v1/routes/markets.py": {
     "mtime": 1789264889.6320598,
     "ast_hash": "765c0c7df81a19ac7c24461b7bc35c2d",
-    "semantic_hash": "765c0c7df81a19ac7c24461b7bc35c2d"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/v1/routes/picks.py": {
-    "mtime": 1789264701.1798263,
-    "ast_hash": "c26a8d243bcd4e638fd2f5e30f312cdc",
-    "semantic_hash": "c26a8d243bcd4e638fd2f5e30f312cdc"
+  "apps/api/src/dgn_picks_api/api/v1/routes/pick_imports.py": {
+    "mtime": 1790453487.241449,
+    "ast_hash": "43c18af0e21fcf6b23cd0b8f35955261",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/v1/routes/seed.py": {
-    "mtime": 1789083973.3413172,
-    "ast_hash": "304a55858f6f0fc1c931b30024eeac58",
-    "semantic_hash": "304a55858f6f0fc1c931b30024eeac58"
+  "apps/api/src/dgn_picks_api/api/v1/routes/picks.py": {
+    "mtime": 1790297875.1574929,
+    "ast_hash": "0649a99fb74f2739cc575d41677ddb9a",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/v1/routes/teams.py": {
+  "apps/api/src/dgn_picks_api/api/v1/routes/seed.py": {
+    "mtime": 1790297875.040496,
+    "ast_hash": "94630d5ddba75a15ead45245d7c9e615",
+    "semantic_hash": ""
+  },
+  "apps/api/src/dgn_picks_api/api/v1/routes/teams.py": {
     "mtime": 1789264701.2303593,
     "ast_hash": "9972cc079f4d24b23576fae626a66c56",
-    "semantic_hash": "9972cc079f4d24b23576fae626a66c56"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/v1/routes/users.py": {
-    "mtime": 1789264701.268359,
-    "ast_hash": "49dc2ef9565ae433f214fa39700a43a8",
-    "semantic_hash": "49dc2ef9565ae433f214fa39700a43a8"
+  "apps/api/src/dgn_picks_api/api/v1/routes/users.py": {
+    "mtime": 1790297661.763025,
+    "ast_hash": "922a80086816b2de67f760464fa9e42e",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/api/v1/schemas.py": {
-    "mtime": 1789264680.357695,
-    "ast_hash": "478f14e04f39d56d7f177734e82d2c42",
-    "semantic_hash": "478f14e04f39d56d7f177734e82d2c42"
+  "apps/api/src/dgn_picks_api/api/v1/schemas.py": {
+    "mtime": 1790452678.049153,
+    "ast_hash": "210288977bfbf40d5c588162acfb573e",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/db.py": {
+  "apps/api/src/dgn_picks_api/db.py": {
     "mtime": 1788842914.7986667,
     "ast_hash": "0b838ba2fcf687bb77453f5f3e446737",
-    "semantic_hash": "0b838ba2fcf687bb77453f5f3e446737"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/db/__init__.py": {
+  "apps/api/src/dgn_picks_api/db/__init__.py": {
     "mtime": 1788811518.6131353,
     "ast_hash": "43b49413beb754ff1c11246d78a0ccd5",
-    "semantic_hash": "43b49413beb754ff1c11246d78a0ccd5"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/db/base.py": {
+  "apps/api/src/dgn_picks_api/db/base.py": {
     "mtime": 1788811518.611136,
     "ast_hash": "16deb2759f7de2cf86f328dce6b2d38b",
-    "semantic_hash": "16deb2759f7de2cf86f328dce6b2d38b"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/db/models.py": {
+  "apps/api/src/dgn_picks_api/db/models.py": {
     "mtime": 1788811632.0751004,
     "ast_hash": "c2623438f4b6041813f4530522209a15",
-    "semantic_hash": "c2623438f4b6041813f4530522209a15"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/db/session.py": {
+  "apps/api/src/dgn_picks_api/db/session.py": {
     "mtime": 1788842908.4918716,
     "ast_hash": "baa46bf045cd7fa68a96679107a47682",
-    "semantic_hash": "baa46bf045cd7fa68a96679107a47682"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/__init__.py": {
+  "apps/api/src/dgn_picks_api/domains/__init__.py": {
     "mtime": 1788811518.6161394,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
-    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/common/__init__.py": {
+  "apps/api/src/dgn_picks_api/domains/common/__init__.py": {
     "mtime": 1788811518.619138,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
-    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/common/enums.py": {
+  "apps/api/src/dgn_picks_api/domains/common/enums.py": {
     "mtime": 1788811518.6211705,
     "ast_hash": "bd4459e3aabdd5b7112a6b218fef5401",
-    "semantic_hash": "bd4459e3aabdd5b7112a6b218fef5401"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/games/__init__.py": {
+  "apps/api/src/dgn_picks_api/domains/games/__init__.py": {
     "mtime": 1788811582.6743479,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
-    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/games/models.py": {
+  "apps/api/src/dgn_picks_api/domains/games/models.py": {
     "mtime": 1788811582.6763515,
     "ast_hash": "fef7b63053ab4d51ba91fa329c196659",
-    "semantic_hash": "fef7b63053ab4d51ba91fa329c196659"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/markets/__init__.py": {
+  "apps/api/src/dgn_picks_api/domains/markets/__init__.py": {
     "mtime": 1788811582.6783478,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
-    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/markets/models.py": {
+  "apps/api/src/dgn_picks_api/domains/markets/models.py": {
     "mtime": 1788811582.6793473,
     "ast_hash": "ab0c0d42a0a63e078fda5b8c3450c3e9",
-    "semantic_hash": "ab0c0d42a0a63e078fda5b8c3450c3e9"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/odds/__init__.py": {
+  "apps/api/src/dgn_picks_api/domains/odds/__init__.py": {
     "mtime": 1788811582.6838846,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
-    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/odds/calculations.py": {
+  "apps/api/src/dgn_picks_api/domains/odds/calculations.py": {
     "mtime": 1788811739.6311347,
     "ast_hash": "d807149e67baeef378734d7ef4e3142c",
-    "semantic_hash": "d807149e67baeef378734d7ef4e3142c"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/odds/models.py": {
+  "apps/api/src/dgn_picks_api/domains/odds/models.py": {
     "mtime": 1788811582.6858957,
     "ast_hash": "54eacd9f0a5507b0722284f1c5199b02",
-    "semantic_hash": "54eacd9f0a5507b0722284f1c5199b02"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/picks/__init__.py": {
+  "apps/api/src/dgn_picks_api/domains/picks/__init__.py": {
     "mtime": 1788811582.687881,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
-    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/picks/calculations.py": {
+  "apps/api/src/dgn_picks_api/domains/picks/calculations.py": {
     "mtime": 1788811739.6331325,
     "ast_hash": "9a7341e27f31467c6c91d79f5b29df2b",
-    "semantic_hash": "9a7341e27f31467c6c91d79f5b29df2b"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/picks/models.py": {
-    "mtime": 1788811582.694904,
-    "ast_hash": "8849df7344edb002114039b5fdbba2a4",
-    "semantic_hash": "8849df7344edb002114039b5fdbba2a4"
+  "apps/api/src/dgn_picks_api/domains/picks/imports.py": {
+    "mtime": 1790453022.7890453,
+    "ast_hash": "92ec3c1f6841961e944398b6d55cea05",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/picks/service.py": {
-    "mtime": 1789260415.845788,
-    "ast_hash": "7e65c7ece9e9310473e6f0d7fbe0a995",
-    "semantic_hash": "7e65c7ece9e9310473e6f0d7fbe0a995"
+  "apps/api/src/dgn_picks_api/domains/picks/models.py": {
+    "mtime": 1790452677.99605,
+    "ast_hash": "41d06a2166b42fac37853ba7f6e0dd2b",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/providers/__init__.py": {
+  "apps/api/src/dgn_picks_api/domains/picks/service.py": {
+    "mtime": 1790297875.192917,
+    "ast_hash": "e350cfc20b20b1d03520eb02ec259bda",
+    "semantic_hash": ""
+  },
+  "apps/api/src/dgn_picks_api/domains/providers/__init__.py": {
     "mtime": 1788811786.083562,
     "ast_hash": "5a1f5f3426f78c4951acc775b19895a2",
-    "semantic_hash": "5a1f5f3426f78c4951acc775b19895a2"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/providers/contracts.py": {
+  "apps/api/src/dgn_picks_api/domains/providers/contracts.py": {
     "mtime": 1788811786.0855641,
     "ast_hash": "8f48d482a793d42989559d8a1727cef7",
-    "semantic_hash": "8f48d482a793d42989559d8a1727cef7"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/providers/fixture.py": {
-    "mtime": 1788811786.0865614,
-    "ast_hash": "485b750dec1f46712d01855748303762",
-    "semantic_hash": "485b750dec1f46712d01855748303762"
+  "apps/api/src/dgn_picks_api/domains/providers/fixture.py": {
+    "mtime": 1790297875.071815,
+    "ast_hash": "962f7cbea4dfe52c16d2ccc44c2c9ef5",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/teams/__init__.py": {
+  "apps/api/src/dgn_picks_api/domains/teams/__init__.py": {
     "mtime": 1788811518.6301496,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
-    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/teams/models.py": {
+  "apps/api/src/dgn_picks_api/domains/teams/models.py": {
     "mtime": 1788811518.6311572,
     "ast_hash": "d45ce1896274690b6c07ef70ad135af3",
-    "semantic_hash": "d45ce1896274690b6c07ef70ad135af3"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/users/__init__.py": {
+  "apps/api/src/dgn_picks_api/domains/users/__init__.py": {
     "mtime": 1788811518.6251748,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
-    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/domains/users/models.py": {
-    "mtime": 1788811518.6271572,
-    "ast_hash": "e58f7e22983e3fec7b795b6dbc7a1282",
-    "semantic_hash": "e58f7e22983e3fec7b795b6dbc7a1282"
+  "apps/api/src/dgn_picks_api/domains/users/models.py": {
+    "mtime": 1790297661.609896,
+    "ast_hash": "fdff73e1efe73d718e1472a06d28b2bf",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/main.py": {
-    "mtime": 1789264685.9087963,
-    "ast_hash": "861e5dbb2505a37e55df58af61fe7c01",
-    "semantic_hash": "861e5dbb2505a37e55df58af61fe7c01"
+  "apps/api/src/dgn_picks_api/main.py": {
+    "mtime": 1790453491.4895706,
+    "ast_hash": "0ea928919927e52636b40d91191c7d12",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/seed/__init__.py": {
+  "apps/api/src/dgn_picks_api/seed/__init__.py": {
     "mtime": 1788812046.767058,
     "ast_hash": "09033a9948ef14346230a057ed17447b",
-    "semantic_hash": "09033a9948ef14346230a057ed17447b"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/seed/data.py": {
+  "apps/api/src/dgn_picks_api/seed/data.py": {
     "mtime": 1788812046.769058,
     "ast_hash": "8839d9649f7dfda7ac7d943f5774d059",
-    "semantic_hash": "8839d9649f7dfda7ac7d943f5774d059"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/seed/report.py": {
+  "apps/api/src/dgn_picks_api/seed/quarantine.py": {
+    "mtime": 1790297875.094347,
+    "ast_hash": "6dfe390991aeb53bc4d6db14754796cd",
+    "semantic_hash": ""
+  },
+  "apps/api/src/dgn_picks_api/seed/report.py": {
     "mtime": 1788812046.771061,
     "ast_hash": "2fd8377e490c7264a542885e1e9749af",
-    "semantic_hash": "2fd8377e490c7264a542885e1e9749af"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/src/dgn_picks_api/seed/service.py": {
-    "mtime": 1789083965.1467793,
-    "ast_hash": "a96f0e2539e9da3519ba1625c5fb08ae",
-    "semantic_hash": "a96f0e2539e9da3519ba1625c5fb08ae"
+  "apps/api/src/dgn_picks_api/seed/service.py": {
+    "mtime": 1790309083.4954123,
+    "ast_hash": "0e2d756f0ab3be3ea89cf0267d22f8b8",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/conftest.py": {
+  "apps/api/tests/conftest.py": {
     "mtime": 1788888817.7431502,
     "ast_hash": "5dfb380124444849ff0acef655c3294f",
-    "semantic_hash": "5dfb380124444849ff0acef655c3294f"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_analytics_api.py": {
-    "mtime": 1788837029.021772,
-    "ast_hash": "834015ac8c27e5bd5c407f39a4df42f1",
-    "semantic_hash": "834015ac8c27e5bd5c407f39a4df42f1"
+  "apps/api/tests/test_analytics_api.py": {
+    "mtime": 1790452915.4449832,
+    "ast_hash": "c691d39888e4380c0e6bfcbe3fadede5",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_api_v1.py": {
+  "apps/api/tests/test_api_v1.py": {
     "mtime": 1788835971.0067654,
     "ast_hash": "4ecb2cb4bedbc254367d7004b4b3e9c3",
-    "semantic_hash": "4ecb2cb4bedbc254367d7004b4b3e9c3"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_auth.py": {
-    "mtime": 1789264755.5431862,
-    "ast_hash": "59c8ef57ffb07e4c7b2f7a2ac4a4981f",
-    "semantic_hash": "59c8ef57ffb07e4c7b2f7a2ac4a4981f"
+  "apps/api/tests/test_auth.py": {
+    "mtime": 1790298074.0614038,
+    "ast_hash": "ed7841988588c834b36cf62999eeee36",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_calculations.py": {
+  "apps/api/tests/test_calculations.py": {
     "mtime": 1788811739.6351347,
     "ast_hash": "6a29daf3e7c3cd5398c9dba092528cd9",
-    "semantic_hash": "6a29daf3e7c3cd5398c9dba092528cd9"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_catalog_crud_api.py": {
+  "apps/api/tests/test_catalog_crud_api.py": {
     "mtime": 1789073042.801258,
     "ast_hash": "2f98bd4bf591ef589e9d6557a71a319b",
-    "semantic_hash": "2f98bd4bf591ef589e9d6557a71a319b"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_database_url.py": {
+  "apps/api/tests/test_database_url.py": {
     "mtime": 1788842920.1431274,
     "ast_hash": "bf4a07501ca09dad97a55f79ee21c326",
-    "semantic_hash": "bf4a07501ca09dad97a55f79ee21c326"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_fixture_provider.py": {
-    "mtime": 1788811786.0895848,
-    "ast_hash": "78354ef4d3b1e32ae3dfcf05abda5736",
-    "semantic_hash": "78354ef4d3b1e32ae3dfcf05abda5736"
+  "apps/api/tests/test_fixture_provider.py": {
+    "mtime": 1790298074.233476,
+    "ast_hash": "0e423ff3448af461c38378657c97f6a5",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_games_markets_crud_api.py": {
+  "apps/api/tests/test_games_markets_crud_api.py": {
     "mtime": 1789072156.204248,
     "ast_hash": "a5e1ae1ad0f6d658f4da8fb204a8396a",
-    "semantic_hash": "a5e1ae1ad0f6d658f4da8fb204a8396a"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_health.py": {
+  "apps/api/tests/test_health.py": {
     "mtime": 1789083183.2665722,
     "ast_hash": "c486f0fb32d2956cb29c2d788e252c1d",
-    "semantic_hash": "c486f0fb32d2956cb29c2d788e252c1d"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_migration_revision_ids.py": {
+  "apps/api/tests/test_migration_repair.py": {
+    "mtime": 1790453153.2497044,
+    "ast_hash": "31579216a53a8398608e32becf14a09c",
+    "semantic_hash": ""
+  },
+  "apps/api/tests/test_migration_revision_ids.py": {
     "mtime": 1789087734.9584615,
     "ast_hash": "72f743c6e2f479aa4e9a81badb57aeb7",
-    "semantic_hash": "72f743c6e2f479aa4e9a81badb57aeb7"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_models.py": {
+  "apps/api/tests/test_models.py": {
     "mtime": 1788811632.0877905,
     "ast_hash": "c1c89cef7bf3c0490491869f17975906",
-    "semantic_hash": "c1c89cef7bf3c0490491869f17975906"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_odds_history_api.py": {
+  "apps/api/tests/test_odds_history_api.py": {
     "mtime": 1789073236.6667845,
     "ast_hash": "b71fd5b776d968b2d838078afb520480",
-    "semantic_hash": "b71fd5b776d968b2d838078afb520480"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_picks_api.py": {
-    "mtime": 1789260737.560577,
-    "ast_hash": "ff4ae86fdeed5d6af339453b50cd062e",
-    "semantic_hash": "ff4ae86fdeed5d6af339453b50cd062e"
+  "apps/api/tests/test_pick_import_api.py": {
+    "mtime": 1790453491.8133848,
+    "ast_hash": "13dc863ebd9035be5a8de1d95724b064",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_seed.py": {
-    "mtime": 1789083979.638738,
-    "ast_hash": "22717d872f96b5bf7e5d5ff22b7e95c6",
-    "semantic_hash": "22717d872f96b5bf7e5d5ff22b7e95c6"
+  "apps/api/tests/test_pick_imports.py": {
+    "mtime": 1790453022.8355427,
+    "ast_hash": "61ea96df306a579405ee70ab93a697d5",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_seed_data.py": {
+  "apps/api/tests/test_picks_api.py": {
+    "mtime": 1790298074.0944061,
+    "ast_hash": "1b741bb55d6b11ffa6536c79f5778ef3",
+    "semantic_hash": ""
+  },
+  "apps/api/tests/test_remediation_api.py": {
+    "mtime": 1790298074.2460396,
+    "ast_hash": "32453f83a40f565a9782c527440ba420",
+    "semantic_hash": ""
+  },
+  "apps/api/tests/test_seed.py": {
+    "mtime": 1790298074.1409478,
+    "ast_hash": "fca956cd40caab2114b4c3dc99f0c3dc",
+    "semantic_hash": ""
+  },
+  "apps/api/tests/test_seed_data.py": {
     "mtime": 1788812046.7720585,
     "ast_hash": "ddc113736464a7109a945bab1396d144",
-    "semantic_hash": "ddc113736464a7109a945bab1396d144"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_seed_definitions_api.py": {
-    "mtime": 1789083130.9244719,
-    "ast_hash": "6ffcaf9ccbeeefb6e0898a23af0c1051",
-    "semantic_hash": "6ffcaf9ccbeeefb6e0898a23af0c1051"
+  "apps/api/tests/test_seed_definitions_api.py": {
+    "mtime": 1790298074.1759448,
+    "ast_hash": "d0e567ab20bfd544e20d1723b3ea4529",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/tests/test_users_crud_api.py": {
-    "mtime": 1788981492.3588665,
-    "ast_hash": "07766ac649edd77149f530763ee8bdda",
-    "semantic_hash": "07766ac649edd77149f530763ee8bdda"
+  "apps/api/tests/test_users_crud_api.py": {
+    "mtime": 1789606104.9351697,
+    "ast_hash": "594dcf623b0ea33d982173985e6aebeb",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/e2e/dashboard.spec.ts": {
-    "mtime": 1789081817.0227177,
-    "ast_hash": "ebbbfde2e8e78d2df2d51089c946d7c5",
-    "semantic_hash": "ebbbfde2e8e78d2df2d51089c946d7c5"
+  "apps/web/e2e/accounts.spec.ts": {
+    "mtime": 1790631391.3017795,
+    "ast_hash": "24688cd9cf0154283458e2c39411c54b",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/eslint.config.mjs": {
+  "apps/web/e2e/board-states.spec.ts": {
+    "mtime": 1790636281.601952,
+    "ast_hash": "1c41aa4a7f1784e17e6658167d62ae45",
+    "semantic_hash": ""
+  },
+  "apps/web/e2e/dashboard.spec.ts": {
+    "mtime": 1790633164.177869,
+    "ast_hash": "a99b34eccf0384e4a0831501b5e64460",
+    "semantic_hash": ""
+  },
+  "apps/web/e2e/public-import.spec.ts": {
+    "mtime": 1790453527.1457596,
+    "ast_hash": "5e486983e523390af32c3e0c87ab7e24",
+    "semantic_hash": ""
+  },
+  "apps/web/e2e/users.spec.ts": {
+    "mtime": 1790873209.054149,
+    "ast_hash": "e3f330965a87020affa037ef446ce958",
+    "semantic_hash": ""
+  },
+  "apps/web/eslint.config.mjs": {
     "mtime": 1788808310.5370252,
     "ast_hash": "db2982ec2024c55eba217c072820fa10",
-    "semantic_hash": "db2982ec2024c55eba217c072820fa10"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/next-env.d.ts": {
-    "mtime": 1788886250.138953,
-    "ast_hash": "2a74d3909800ca5467fa83b0ab4a4890",
-    "semantic_hash": "2a74d3909800ca5467fa83b0ab4a4890"
+  "apps/web/next-env.d.ts": {
+    "mtime": 1790631346.8720045,
+    "ast_hash": "aa94238a90e7d04b7a47ecc3145ba6a0",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/next.config.ts": {
-    "mtime": 1788808274.8924184,
-    "ast_hash": "6acda060e37291d55ca5e0d5f5e7c5df",
-    "semantic_hash": "6acda060e37291d55ca5e0d5f5e7c5df"
+  "apps/web/next.config.ts": {
+    "mtime": 1790298456.5370193,
+    "ast_hash": "9ad80473c3416bd203f247c57cf3b493",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/package.json": {
-    "mtime": 1789081706.0800908,
-    "ast_hash": "ababa843269c610e6e1b8ab4ac87a5f1",
-    "semantic_hash": "ababa843269c610e6e1b8ab4ac87a5f1"
+  "apps/web/package.json": {
+    "mtime": 1790297831.0105793,
+    "ast_hash": "193545db93516b3062690a27feb24de3",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/playwright.config.ts": {
-    "mtime": 1789081804.6779356,
-    "ast_hash": "0de288e76007c8d7259fa6c485c44d6e",
-    "semantic_hash": "0de288e76007c8d7259fa6c485c44d6e"
+  "apps/web/playwright.config.ts": {
+    "mtime": 1789611991.1883373,
+    "ast_hash": "574911ed338fdef39bee9077dc3b571c",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/src/app/account/page.tsx": {
-    "mtime": 1789417931.147676,
-    "ast_hash": "bf02eb55057ff19a0cdc9afaa2bb4896",
-    "semantic_hash": "bf02eb55057ff19a0cdc9afaa2bb4896"
+  "apps/web/src/app/account/page.tsx": {
+    "mtime": 1790298456.5023906,
+    "ast_hash": "3476ddd2aca0afd82ce113131af044d4",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/src/app/admin/page.tsx": {
-    "mtime": 1789268076.886688,
-    "ast_hash": "12f92bcc355d438a5fa580b825783fd7",
-    "semantic_hash": "12f92bcc355d438a5fa580b825783fd7"
+  "apps/web/src/app/admin/page.tsx": {
+    "mtime": 1790300174.8768816,
+    "ast_hash": "df6237cdc6e906f2b24ae7aab0f71490",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/src/app/api/admin/[...path]/route.ts": {
-    "mtime": 1789264897.8537395,
-    "ast_hash": "536c5ef7acdad6affdacd99a2b2c758d",
-    "semantic_hash": "536c5ef7acdad6affdacd99a2b2c758d"
+  "apps/web/src/app/admin/users-panel.tsx": {
+    "mtime": 1789606231.854396,
+    "ast_hash": "989c584cb2c37653f52084e36d90e9df",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/src/app/api/dashboard/route.ts": {
-    "mtime": 1789089889.3353963,
-    "ast_hash": "872475b0ca0b58a2780f0531eb931b28",
-    "semantic_hash": "872475b0ca0b58a2780f0531eb931b28"
+  "apps/web/src/app/api/admin/[...path]/route.ts": {
+    "mtime": 1790298456.3801339,
+    "ast_hash": "11f387fb894029ff66e5144cee9f3a33",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/src/app/api/development/picks/[pickId]/route.ts": {
-    "mtime": 1789267630.5933933,
-    "ast_hash": "3dc3b516ac92fd0f1575f43ed00b57f8",
-    "semantic_hash": "3dc3b516ac92fd0f1575f43ed00b57f8"
+  "apps/web/src/app/api/auth/[...path]/route.ts": {
+    "mtime": 1790298456.4079146,
+    "ast_hash": "0d2563baca75fc9598fc0c30c214a0cb",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/src/app/api/development/picks/route.ts": {
-    "mtime": 1789267625.7800956,
-    "ast_hash": "7c1ed4e6c954d55ea464cf1d019db068",
-    "semantic_hash": "7c1ed4e6c954d55ea464cf1d019db068"
+  "apps/web/src/app/api/dashboard/route.ts": {
+    "mtime": 1790452915.3171914,
+    "ast_hash": "e8c726253a60b7844e0164d615105f83",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/src/app/join/page.tsx": {
-    "mtime": 1789419423.8586526,
-    "ast_hash": "89151411adf51d14f97be14c296d5cb9",
-    "semantic_hash": "89151411adf51d14f97be14c296d5cb9"
+  "apps/web/src/app/api/development/picks/[pickId]/route.ts": {
+    "mtime": 1790298456.4874434,
+    "ast_hash": "d1d77c6699efad12862a160f1ffce354",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/src/app/layout.tsx": {
+  "apps/web/src/app/api/development/picks/route.ts": {
+    "mtime": 1790298456.4553287,
+    "ast_hash": "06a4d48d09f72bbda873df438681871a",
+    "semantic_hash": ""
+  },
+  "apps/web/src/app/join/page.tsx": {
+    "mtime": 1790309083.4263577,
+    "ast_hash": "43d11469e15ed98edad3013f14cd1fee",
+    "semantic_hash": ""
+  },
+  "apps/web/src/app/layout.tsx": {
     "mtime": 1789416788.3415804,
     "ast_hash": "e16f7819595a507c33e7d88791e87406",
-    "semantic_hash": "e16f7819595a507c33e7d88791e87406"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/src/app/page.tsx": {
-    "mtime": 1789424599.624792,
-    "ast_hash": "c5572af80fba3c587494cb8c0d1995f5",
-    "semantic_hash": "c5572af80fba3c587494cb8c0d1995f5"
+  "apps/web/src/app/page.tsx": {
+    "mtime": 1790636281.4054167,
+    "ast_hash": "7f50effa4673a8e9a1e7ee2e5a4fb5bd",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/src/lib/dashboard-api.ts": {
-    "mtime": 1789089972.3486507,
-    "ast_hash": "0692faff43bfbdf5aeb1ad7d877a0f55",
-    "semantic_hash": "0692faff43bfbdf5aeb1ad7d877a0f55"
+  "apps/web/src/lib/dashboard-api.ts": {
+    "mtime": 1790298456.3474627,
+    "ast_hash": "6f19a7b7f192ea3a650bf2150eb08418",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/src/lib/generated-api-client.ts": {
-    "mtime": 1789265005.091177,
-    "ast_hash": "cc4803c4f6fbf4edccf110b1fa31e081",
-    "semantic_hash": "cc4803c4f6fbf4edccf110b1fa31e081"
+  "apps/web/src/lib/generated-api-client.ts": {
+    "mtime": 1790463185.641482,
+    "ast_hash": "1bdb7780721fc26820163f739a25ad64",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/tsconfig.json": {
+  "apps/web/src/lib/use-stored-value.ts": {
+    "mtime": 1790298456.2713451,
+    "ast_hash": "ff8e81ad889ade011049ad2919e0ea8b",
+    "semantic_hash": ""
+  },
+  "apps/web/tsconfig.json": {
     "mtime": 1788886250.098331,
     "ast_hash": "8b350dbe1492c6e9ac1b81d92c56fa09",
-    "semantic_hash": "8b350dbe1492c6e9ac1b81d92c56fa09"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/logs.1788825170131.json": {
+  "data/fixtures/qa-pick-outcomes.json": {
+    "mtime": 1790297875.2532907,
+    "ast_hash": "f512d62662a7c97ebee294aad7fa0d63",
+    "semantic_hash": ""
+  },
+  "data/imports/gato-2026-09-26.json": {
+    "mtime": 1790452792.6034808,
+    "ast_hash": "1d24874afa13e26c5af75e7fcceebf79",
+    "semantic_hash": ""
+  },
+  "ext-tools/app.py": {
+    "mtime": 1790871617.0401652,
+    "ast_hash": "4c44463240803aa5eeb109ab74f84662",
+    "semantic_hash": ""
+  },
+  "ext-tools/configuration.py": {
+    "mtime": 1789681796.9215763,
+    "ast_hash": "5d73b9def19e76a9992d32a700cca627",
+    "semantic_hash": ""
+  },
+  "ext-tools/security.py": {
+    "mtime": 1790871618.0465872,
+    "ast_hash": "c3c2f87ce752f68155d7e8da5ccba405",
+    "semantic_hash": ""
+  },
+  "ext-tools/static/app.js": {
+    "mtime": 1790871620.6571822,
+    "ast_hash": "f2e08916691af8829bf4345272b15c38",
+    "semantic_hash": ""
+  },
+  "ext-tools/static/configuration.js": {
+    "mtime": 1790300176.4164617,
+    "ast_hash": "c1ad3aba85c834d99fa27293949803e5",
+    "semantic_hash": ""
+  },
+  "ext-tools/static/security.js": {
+    "mtime": 1790300175.1406565,
+    "ast_hash": "f7c513febbd88e4a39ef7a236802333b",
+    "semantic_hash": ""
+  },
+  "ext-tools/static/users.js": {
+    "mtime": 1790873207.7989533,
+    "ast_hash": "1c816aa75cd73838f615345a4e80c593",
+    "semantic_hash": ""
+  },
+  "ext-tools/test_configuration.py": {
+    "mtime": 1790300176.6093855,
+    "ast_hash": "49489360611e34110b6d08624901cf2f",
+    "semantic_hash": ""
+  },
+  "ext-tools/test_git_status.py": {
+    "mtime": 1790871506.1617918,
+    "ast_hash": "3e20eee520f5241d806baec76fcdebf8",
+    "semantic_hash": ""
+  },
+  "ext-tools/test_graph.py": {
+    "mtime": 1790871683.5191336,
+    "ast_hash": "0affa69506cce00b310ac2a5c08ebeaa",
+    "semantic_hash": ""
+  },
+  "ext-tools/test_security.py": {
+    "mtime": 1790300176.6194293,
+    "ast_hash": "57cd98679a047a0abddf3d4a04259fd9",
+    "semantic_hash": ""
+  },
+  "ext-tools/test_users_api.py": {
+    "mtime": 1790306983.4250264,
+    "ast_hash": "8d8d958f82019ec90417d2b2a4c3b90d",
+    "semantic_hash": ""
+  },
+  "ext-tools/users_api.py": {
+    "mtime": 1790300176.4830792,
+    "ast_hash": "b5ea4b02b271d61e3a4c47f81b6cfbff",
+    "semantic_hash": ""
+  },
+  "logs/logs.1788825170131.json": {
     "mtime": 1788825170.7953117,
     "ast_hash": "5c3a4c4b07a28567ac6265218c44a5c3",
-    "semantic_hash": "5c3a4c4b07a28567ac6265218c44a5c3"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/logs.1788826130385.json": {
+  "logs/logs.1788826130385.json": {
     "mtime": 1788826131.5202315,
     "ast_hash": "37d431ffd25d1e3fefc2cac1b9dc904f",
-    "semantic_hash": "37d431ffd25d1e3fefc2cac1b9dc904f"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/logs.1788826354071.json": {
+  "logs/logs.1788826354071.json": {
     "mtime": 1788826354.5816977,
     "ast_hash": "a5f28fc495945a45c008e61e74a6550f",
-    "semantic_hash": "a5f28fc495945a45c008e61e74a6550f"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/logs.1788826601880.json": {
+  "logs/logs.1788826601880.json": {
     "mtime": 1788826602.4293404,
     "ast_hash": "2ec64867032811fa76a61c5b9fe63cd4",
-    "semantic_hash": "2ec64867032811fa76a61c5b9fe63cd4"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/logs.1788826769247.json": {
+  "logs/logs.1788826769247.json": {
     "mtime": 1788826771.7161493,
     "ast_hash": "2ec64867032811fa76a61c5b9fe63cd4",
-    "semantic_hash": "2ec64867032811fa76a61c5b9fe63cd4"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/logs.1788826945871.json": {
+  "logs/logs.1788826945871.json": {
     "mtime": 1788826946.5298715,
     "ast_hash": "5338dd3f3e3dce5d36558ded19371cae",
-    "semantic_hash": "5338dd3f3e3dce5d36558ded19371cae"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/logs.1788827326642.json": {
+  "logs/logs.1788827326642.json": {
     "mtime": 1788827327.377118,
     "ast_hash": "6ede6c7320faa8b33bf3d0084719c642",
-    "semantic_hash": "6ede6c7320faa8b33bf3d0084719c642"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/logs.1788827793375.json": {
+  "logs/logs.1788827793375.json": {
     "mtime": 1788827794.1599705,
     "ast_hash": "3a8375628edcee90bf10d76f693c9fc2",
-    "semantic_hash": "3a8375628edcee90bf10d76f693c9fc2"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/logs.1788842817166.json": {
+  "logs/logs.1788842817166.json": {
     "mtime": 1788842818.0627282,
     "ast_hash": "84ae85c59bd51dc02af67ff424ace921",
-    "semantic_hash": "84ae85c59bd51dc02af67ff424ace921"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/logs.1789085916602.json": {
+  "logs/logs.1789085916602.json": {
     "mtime": 1789085917.892768,
     "ast_hash": "ba67a66a2edd16c31055f1fec989b810",
-    "semantic_hash": "ba67a66a2edd16c31055f1fec989b810"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/logs.1789087359951.json": {
+  "logs/logs.1789087359951.json": {
     "mtime": 1789087360.5498066,
     "ast_hash": "7f784fff8361ce8c31ed36c44ba433df",
-    "semantic_hash": "7f784fff8361ce8c31ed36c44ba433df"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/logs.1789089551001.json": {
+  "logs/logs.1789089551001.json": {
     "mtime": 1789089551.465196,
     "ast_hash": "049809cd86c4adff5aa35a7f7be9a39b",
-    "semantic_hash": "049809cd86c4adff5aa35a7f7be9a39b"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/package.json": {
+  "package.json": {
     "mtime": 1789081264.5348935,
     "ast_hash": "3c462d70679aefcd2da178637b84fe50",
-    "semantic_hash": "3c462d70679aefcd2da178637b84fe50"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/packages/api-client/openapi.json": {
-    "mtime": 1789265005.0225391,
-    "ast_hash": "36613b10893ed19a9cc994815c815c3a",
-    "semantic_hash": "36613b10893ed19a9cc994815c815c3a"
+  "packages/api-client/openapi.json": {
+    "mtime": 1790463185.0997126,
+    "ast_hash": "0fc44651e9d8e28d7f0652a7054ba42f",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/packages/api-client/package.json": {
+  "packages/api-client/package.json": {
     "mtime": 1789080293.730517,
     "ast_hash": "d1428542180203d99dd7d3a64bac3ac6",
-    "semantic_hash": "d1428542180203d99dd7d3a64bac3ac6"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/packages/api-client/src/index.ts": {
-    "mtime": 1789265005.0654578,
-    "ast_hash": "cc4803c4f6fbf4edccf110b1fa31e081",
-    "semantic_hash": "cc4803c4f6fbf4edccf110b1fa31e081"
+  "packages/api-client/src/index.ts": {
+    "mtime": 1790463185.5848007,
+    "ast_hash": "1bdb7780721fc26820163f739a25ad64",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/scripts/generate_api_client.py": {
-    "mtime": 1789086089.5712726,
-    "ast_hash": "ed355aaf596cb3494b749b8a0b712117",
-    "semantic_hash": "ed355aaf596cb3494b749b8a0b712117"
+  "scripts/generate_api_client.py": {
+    "mtime": 1790300216.1186702,
+    "ast_hash": "eaa19a20823ab141ba4f0416064d4757",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/scripts/smoke_api.py": {
+  "scripts/import_pick_manifest.py": {
+    "mtime": 1790453022.8151717,
+    "ast_hash": "5db06336be4f8fe7e6df723db6171188",
+    "semantic_hash": ""
+  },
+  "scripts/quarantine_legacy_seed.py": {
+    "mtime": 1790297875.1044345,
+    "ast_hash": "fee44426ded023f112ab12c4c3d3b631",
+    "semantic_hash": ""
+  },
+  "scripts/smoke_api.py": {
     "mtime": 1789075191.2620878,
     "ast_hash": "667370833545b3ff81734d73f917556c",
-    "semantic_hash": "667370833545b3ff81734d73f917556c"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/skills-lock.json": {
+  "scripts/verify_seed.py": {
+    "mtime": 1790306983.6475556,
+    "ast_hash": "2c3ae847b9be5e3761ad035c328086d5",
+    "semantic_hash": ""
+  },
+  "scripts/wait_for_http.py": {
+    "mtime": 1790306983.6676905,
+    "ast_hash": "7037bcdb7affd1139d1137777e0aa342",
+    "semantic_hash": ""
+  },
+  "skills-lock.json": {
     "mtime": 1789083618.3066869,
     "ast_hash": "ebf703b2245de261b16b42f6a6c690b6",
-    "semantic_hash": "ebf703b2245de261b16b42f6a6c690b6"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/.agents/skills/setup-matt-pocock-skills/SKILL.md": {
+  ".agents/skills/setup-matt-pocock-skills/SKILL.md": {
     "mtime": 1789083536.7974095,
     "ast_hash": "a3985dfac4f9ea33d2966d7351a9f297",
-    "semantic_hash": "a3985dfac4f9ea33d2966d7351a9f297"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/.agents/skills/setup-matt-pocock-skills/agents/openai.yaml": {
+  ".agents/skills/setup-matt-pocock-skills/agents/openai.yaml": {
     "mtime": 1789083536.8008735,
     "ast_hash": "bbbf8a2456c84c476a541609cf1fc0a6",
-    "semantic_hash": "bbbf8a2456c84c476a541609cf1fc0a6"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/.agents/skills/setup-matt-pocock-skills/domain.md": {
+  ".agents/skills/setup-matt-pocock-skills/domain.md": {
     "mtime": 1789083536.8018966,
     "ast_hash": "2c5f2c5f8b714234251bc55dbfdc0da0",
-    "semantic_hash": "2c5f2c5f8b714234251bc55dbfdc0da0"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/.agents/skills/setup-matt-pocock-skills/issue-tracker-github.md": {
+  ".agents/skills/setup-matt-pocock-skills/issue-tracker-github.md": {
     "mtime": 1789083536.8039007,
     "ast_hash": "744b02931f517ab68b446e8b3c757bdb",
-    "semantic_hash": "744b02931f517ab68b446e8b3c757bdb"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/.agents/skills/setup-matt-pocock-skills/issue-tracker-gitlab.md": {
+  ".agents/skills/setup-matt-pocock-skills/issue-tracker-gitlab.md": {
     "mtime": 1789083536.804891,
     "ast_hash": "13ae1ba8d02cd383cb0094f7559a51ec",
-    "semantic_hash": "13ae1ba8d02cd383cb0094f7559a51ec"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/.agents/skills/setup-matt-pocock-skills/issue-tracker-local.md": {
+  ".agents/skills/setup-matt-pocock-skills/issue-tracker-local.md": {
     "mtime": 1789083536.8058968,
     "ast_hash": "f7a4c1d8300e294d0d8872dac7c37c52",
-    "semantic_hash": "f7a4c1d8300e294d0d8872dac7c37c52"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/.agents/skills/setup-matt-pocock-skills/triage-labels.md": {
+  ".agents/skills/setup-matt-pocock-skills/triage-labels.md": {
     "mtime": 1789083536.8058968,
     "ast_hash": "85409347dbf487c8a25c9dac59708b83",
-    "semantic_hash": "85409347dbf487c8a25c9dac59708b83"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/AGENTS.md": {
-    "mtime": 1788805490.467409,
-    "ast_hash": "a153a91e47f2808b99aa2b188b36c999",
-    "semantic_hash": "a153a91e47f2808b99aa2b188b36c999"
+  ".claude/skills/setup-matt-pocock-skills/SKILL.md": {
+    "mtime": 1789083536.7974095,
+    "ast_hash": "a3985dfac4f9ea33d2966d7351a9f297",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/ARCHITECTURE.md": {
-    "mtime": 1789422497.4678037,
-    "ast_hash": "63eb5712f30fa246189c8798441cee6f",
-    "semantic_hash": "63eb5712f30fa246189c8798441cee6f"
+  ".claude/skills/setup-matt-pocock-skills/agents/openai.yaml": {
+    "mtime": 1789083536.8008735,
+    "ast_hash": "bbbf8a2456c84c476a541609cf1fc0a6",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/PACK-MANIFEST.txt": {
+  ".claude/skills/setup-matt-pocock-skills/domain.md": {
+    "mtime": 1789083536.8018966,
+    "ast_hash": "2c5f2c5f8b714234251bc55dbfdc0da0",
+    "semantic_hash": ""
+  },
+  ".claude/skills/setup-matt-pocock-skills/issue-tracker-github.md": {
+    "mtime": 1789083536.8039007,
+    "ast_hash": "744b02931f517ab68b446e8b3c757bdb",
+    "semantic_hash": ""
+  },
+  ".claude/skills/setup-matt-pocock-skills/issue-tracker-gitlab.md": {
+    "mtime": 1789083536.804891,
+    "ast_hash": "13ae1ba8d02cd383cb0094f7559a51ec",
+    "semantic_hash": ""
+  },
+  ".claude/skills/setup-matt-pocock-skills/issue-tracker-local.md": {
+    "mtime": 1789083536.8058968,
+    "ast_hash": "f7a4c1d8300e294d0d8872dac7c37c52",
+    "semantic_hash": ""
+  },
+  ".claude/skills/setup-matt-pocock-skills/triage-labels.md": {
+    "mtime": 1789083536.8058968,
+    "ast_hash": "85409347dbf487c8a25c9dac59708b83",
+    "semantic_hash": ""
+  },
+  ".github/workflows/validate.yml": {
+    "mtime": 1790308942.0275068,
+    "ast_hash": "4d93d1b295cd6511a4052a8c1f37d485",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1790474340.6515272,
+    "ast_hash": "bcc9648ec37cb78666ed1030a414837b",
+    "semantic_hash": ""
+  },
+  "ARCHITECTURE.md": {
+    "mtime": 1790439319.4687634,
+    "ast_hash": "87ca76c8bd3004fdcac5f4fe785ef991",
+    "semantic_hash": ""
+  },
+  "PACK-MANIFEST.txt": {
     "mtime": 1788841891.334488,
     "ast_hash": "a801dd0a4ed9258b70b49090f3d29796",
-    "semantic_hash": "a801dd0a4ed9258b70b49090f3d29796"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/PLANS.md": {
-    "mtime": 1789072715.9478073,
-    "ast_hash": "0d50d9abb057b73c0d8e9da08a7707a4",
-    "semantic_hash": "0d50d9abb057b73c0d8e9da08a7707a4"
+  "PLANS.md": {
+    "mtime": 1790474340.78705,
+    "ast_hash": "63fcfeb8d1fe8d5329140be9553efa56",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/README.md": {
-    "mtime": 1789264947.9143128,
-    "ast_hash": "e14b83b0afbe53cab0d35314e1ff7552",
-    "semantic_hash": "e14b83b0afbe53cab0d35314e1ff7552"
+  "PROJECT-RECAP.md": {
+    "mtime": 1790474340.8034391,
+    "ast_hash": "d48d3be9a2b151c58d1a83b71b504c07",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/STATUS.md": {
-    "mtime": 1789266790.8689125,
-    "ast_hash": "7ea6e622fdb522a35b4b661e9bfca356",
-    "semantic_hash": "7ea6e622fdb522a35b4b661e9bfca356"
+  "README.md": {
+    "mtime": 1790474340.7716837,
+    "ast_hash": "dbfe90ea6f4a320353d4a22d58841c00",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/api/requirements.txt": {
+  "STATUS.md": {
+    "mtime": 1790474340.7468114,
+    "ast_hash": "fba1f62ce1af5020e4a35a29bb87f656",
+    "semantic_hash": ""
+  },
+  "apps/api/requirements.txt": {
     "mtime": 1789083001.1250072,
     "ast_hash": "337e2a645116276ff43989ec2607d212",
-    "semantic_hash": "337e2a645116276ff43989ec2607d212"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docker-compose.yml": {
+  "docker-compose.yml": {
     "mtime": 1788807070.4072144,
     "ast_hash": "b1217f84619d2e891b18b7c975064238",
-    "semantic_hash": "b1217f84619d2e891b18b7c975064238"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/design-docs/branding.md": {
+  "docs/checkpoints/2026-09-24-remediation.md": {
+    "mtime": 1790473345.4862537,
+    "ast_hash": "b5680b182c0c1a6a65ab2464f18142b8",
+    "semantic_hash": ""
+  },
+  "docs/checkpoints/2026-09-26-gato-publication.md": {
+    "mtime": 1790474340.842164,
+    "ast_hash": "c62554dfab3552711a43b538f3fe2c64",
+    "semantic_hash": ""
+  },
+  "docs/data-reviews/2026-09-26-gato-picks.md": {
+    "mtime": 1790473345.7743385,
+    "ast_hash": "c9698a144028826fcd46a30b730db546",
+    "semantic_hash": ""
+  },
+  "docs/design-docs/branding.md": {
     "mtime": 1788805490.5611477,
     "ast_hash": "2eaa80d0c8f337802d67fa3f5a18d737",
-    "semantic_hash": "2eaa80d0c8f337802d67fa3f5a18d737"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/exec-plans/active/2026-09-07-m2-domain-seed.md": {
+  "docs/exec-plans/active/2026-09-07-m2-domain-seed.md": {
     "mtime": 1788919158.3699324,
     "ast_hash": "69cd0619583b6bbc39628a42701c7899",
-    "semantic_hash": "69cd0619583b6bbc39628a42701c7899"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/exec-plans/active/2026-09-08-compact-dashboard.md": {
+  "docs/exec-plans/active/2026-09-08-compact-dashboard.md": {
     "mtime": 1789404527.7320905,
     "ast_hash": "5e15892a81858a0dcf45cea6884856a1",
-    "semantic_hash": "5e15892a81858a0dcf45cea6884856a1"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/exec-plans/active/2026-09-12-pick-management.md": {
+  "docs/exec-plans/active/2026-09-12-pick-management.md": {
     "mtime": 1789260812.0737772,
     "ast_hash": "83f01fbfc4d975ae1a3d32b5f939126d",
-    "semantic_hash": "83f01fbfc4d975ae1a3d32b5f939126d"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/exec-plans/completed/2026-09-09-m3-users-crud.md": {
+  "docs/exec-plans/active/2026-09-16-account-auth-and-user-admin.md": {
+    "mtime": 1789588207.8648677,
+    "ast_hash": "56b56d01364ef2e4d2fccb32fafe0e29",
+    "semantic_hash": ""
+  },
+  "docs/exec-plans/active/2026-09-24-audit-remediation.md": {
+    "mtime": 1790473345.5834968,
+    "ast_hash": "75131ab9807ca0a12b22e490ea297806",
+    "semantic_hash": ""
+  },
+  "docs/exec-plans/active/2026-09-26-gato-picks-import.md": {
+    "mtime": 1790473345.7064407,
+    "ast_hash": "bd8060293d7f9ba6558fa8ea91bbca10",
+    "semantic_hash": ""
+  },
+  "docs/exec-plans/active/2026-09-28-mvp-validation.md": {
+    "mtime": 1790612506.8105059,
+    "ast_hash": "2604557c63568add3e24888dc10a9163",
+    "semantic_hash": ""
+  },
+  "docs/exec-plans/completed/2026-09-09-m3-users-crud.md": {
     "mtime": 1789067628.3983822,
     "ast_hash": "28315a517609bc1b3349ad096c99de6b",
-    "semantic_hash": "28315a517609bc1b3349ad096c99de6b"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/exec-plans/completed/2026-09-10-m3-catalog-crud.md": {
+  "docs/exec-plans/completed/2026-09-10-m3-catalog-crud.md": {
     "mtime": 1789072707.8677528,
     "ast_hash": "fc88351a1bbd22abe16b32a0a2f6df0e",
-    "semantic_hash": "fc88351a1bbd22abe16b32a0a2f6df0e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/product-specs/001-local-mvp.md": {
-    "mtime": 1789422493.1040063,
-    "ast_hash": "8fef446d0b8bce9bee89838541f53459",
-    "semantic_hash": "8fef446d0b8bce9bee89838541f53459"
+  "docs/exec-plans/completed/2026-09-16-desktop-web-users.md": {
+    "mtime": 1789658806.0744393,
+    "ast_hash": "a8082523f4861405faf0541b80634e76",
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/superpowers/plans/2026-09-07-api-v1-plan.md": {
+  "docs/exec-plans/completed/2026-09-17-ops-console-configuration.md": {
+    "mtime": 1789680913.2858367,
+    "ast_hash": "21ac9c42d935765f8ffaa1a5b4ac832c",
+    "semantic_hash": ""
+  },
+  "docs/exec-plans/completed/2026-10-01-ops-graphify-view.md": {
+    "mtime": 1790871746.8817744,
+    "ast_hash": "a9ffb33ea95c0623da5e7865104644c5",
+    "semantic_hash": ""
+  },
+  "docs/exec-plans/completed/2026-10-01-ops-status-log.md": {
+    "mtime": 1790871472.4653754,
+    "ast_hash": "81141a9cd1f380592f9035a34014a1c4",
+    "semantic_hash": ""
+  },
+  "docs/product-specs/001-local-mvp.md": {
+    "mtime": 1790453527.1690094,
+    "ast_hash": "a82497cfe21ad2b17104627bd70c2b1a",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-09-07-api-v1-plan.md": {
     "mtime": 1788834990.6375675,
     "ast_hash": "f2cd316c64816bc0181454980143c909",
-    "semantic_hash": "f2cd316c64816bc0181454980143c909"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/superpowers/plans/2026-09-07-milestone-1-bootstrap.md": {
+  "docs/superpowers/plans/2026-09-07-milestone-1-bootstrap.md": {
     "mtime": 1788918819.3214233,
     "ast_hash": "a4e589f970de913e23ed6e04e29880ba",
-    "semantic_hash": "a4e589f970de913e23ed6e04e29880ba"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/superpowers/plans/2026-09-07-picks-dashboard.md": {
+  "docs/superpowers/plans/2026-09-07-picks-dashboard.md": {
     "mtime": 1788829830.8416884,
     "ast_hash": "70464b566cace926c25e9d68ca8f38ef",
-    "semantic_hash": "70464b566cace926c25e9d68ca8f38ef"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/superpowers/specs/2026-09-07-api-v1-design.md": {
+  "docs/superpowers/plans/2026-09-17-ops-console-configuration.md": {
+    "mtime": 1789672760.983979,
+    "ast_hash": "939a964b041124133314b667a4ee5e5a",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-09-07-api-v1-design.md": {
     "mtime": 1788834877.1521165,
     "ast_hash": "ba82eb8db71c77c28c9dbfec61aaffd7",
-    "semantic_hash": "ba82eb8db71c77c28c9dbfec61aaffd7"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/superpowers/specs/2026-09-07-m2-domain-seed-design.md": {
+  "docs/superpowers/specs/2026-09-07-m2-domain-seed-design.md": {
     "mtime": 1788810924.2530735,
     "ast_hash": "54e5d64c7b59e59fedb4dfaf98a7aa0a",
-    "semantic_hash": "54e5d64c7b59e59fedb4dfaf98a7aa0a"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/docs/superpowers/specs/2026-09-07-picks-dashboard-design.md": {
+  "docs/superpowers/specs/2026-09-07-picks-dashboard-design.md": {
     "mtime": 1788829574.6407597,
     "ast_hash": "0e2bf956d9abfc0eb98cdf6421df4126",
-    "semantic_hash": "0e2bf956d9abfc0eb98cdf6421df4126"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/logs/railwaystatus.md": {
+  "docs/superpowers/specs/2026-09-17-ops-console-configuration-design.md": {
+    "mtime": 1789671721.9290156,
+    "ast_hash": "7b69f7aae67ab9c4cbfb6c999e563e91",
+    "semantic_hash": ""
+  },
+  "ext-tools/README.md": {
+    "mtime": 1790873407.6452322,
+    "ast_hash": "49f0f3a9efe113fcd3cf2f3e02a1c114",
+    "semantic_hash": ""
+  },
+  "ext-tools/requirements.txt": {
+    "mtime": 1789492187.7312605,
+    "ast_hash": "1b2f2d7a6b5a3603399befbf9698b462",
+    "semantic_hash": ""
+  },
+  "ext-tools/templates/configuration.html": {
+    "mtime": 1789675816.909611,
+    "ast_hash": "bcddd9f5a7beb8a679919adc504b5563",
+    "semantic_hash": ""
+  },
+  "ext-tools/templates/index.html": {
+    "mtime": 1790873403.6255155,
+    "ast_hash": "88a33b5d4133ce2c5f75e3a9cd57357c",
+    "semantic_hash": ""
+  },
+  "ext-tools/templates/users.html": {
+    "mtime": 1790873169.8849716,
+    "ast_hash": "12a8e6593e9ff557f67565ecb7d811c9",
+    "semantic_hash": ""
+  },
+  "logs/railwaystatus.md": {
     "mtime": 1788842217.3896737,
     "ast_hash": "4b6019b5684a4b6f26c1af85f680fad1",
-    "semantic_hash": "4b6019b5684a4b6f26c1af85f680fad1"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/packages/api-client/README.md": {
+  "packages/api-client/README.md": {
     "mtime": 1789086110.9583194,
     "ast_hash": "31970ad814ecdc75111e3df413549355",
-    "semantic_hash": "31970ad814ecdc75111e3df413549355"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/spec-sitio-apuestas.md": {
+  "picks09262026.md": {
+    "mtime": 1790439264.8801036,
+    "ast_hash": "279b172d5b9f8ca30517eb9ed2810650",
+    "semantic_hash": ""
+  },
+  "spec-sitio-apuestas.md": {
     "mtime": 1789490753.7506492,
     "ast_hash": "8a365673e471c44d548cac2e83f2d480",
-    "semantic_hash": "8a365673e471c44d548cac2e83f2d480"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/public/brand/ChatGPT Image Sep 7, 2026, 10_49_38 AM (1).png": {
+  "apps/web/public/brand/ChatGPT Image Sep 7, 2026, 10_49_38 AM (1).png": {
     "mtime": 1788799779.2525241,
     "ast_hash": "5eae0a994a7894561a1ece5f1df88088",
-    "semantic_hash": "5eae0a994a7894561a1ece5f1df88088"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/public/brand/ChatGPT Image Sep 7, 2026, 10_49_38 AM (2).png": {
+  "apps/web/public/brand/ChatGPT Image Sep 7, 2026, 10_49_38 AM (2).png": {
     "mtime": 1788799780.6051652,
     "ast_hash": "9017b808addbd59fcb4011bbdcefca6e",
-    "semantic_hash": "9017b808addbd59fcb4011bbdcefca6e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/public/brand/ChatGPT Image Sep 7, 2026, 10_49_39 AM (3).png": {
+  "apps/web/public/brand/ChatGPT Image Sep 7, 2026, 10_49_39 AM (3).png": {
     "mtime": 1788799781.375901,
     "ast_hash": "a458157955300e2cb574e98cab97cae5",
-    "semantic_hash": "a458157955300e2cb574e98cab97cae5"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/public/brand/ChatGPT Image Sep 7, 2026, 10_49_41 AM (4).png": {
+  "apps/web/public/brand/ChatGPT Image Sep 7, 2026, 10_49_41 AM (4).png": {
     "mtime": 1788799782.4625108,
     "ast_hash": "2ea004e8b197a2a45462234d8b3fc2d9",
-    "semantic_hash": "2ea004e8b197a2a45462234d8b3fc2d9"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/public/brand/dgn-picks-brand-guide.png": {
+  "apps/web/public/brand/dgn-picks-brand-guide.png": {
     "mtime": 1788800577.4967985,
     "ast_hash": "2ea004e8b197a2a45462234d8b3fc2d9",
-    "semantic_hash": "2ea004e8b197a2a45462234d8b3fc2d9"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/public/brand/dgn-picks-icon-square-transparent.png": {
+  "apps/web/public/brand/dgn-picks-icon-square-transparent.png": {
     "mtime": 1788800577.4578097,
     "ast_hash": "a458157955300e2cb574e98cab97cae5",
-    "semantic_hash": "a458157955300e2cb574e98cab97cae5"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/public/brand/dgn-picks-icon-square.png": {
+  "apps/web/public/brand/dgn-picks-icon-square.png": {
     "mtime": 1788800577.4340336,
     "ast_hash": "9017b808addbd59fcb4011bbdcefca6e",
-    "semantic_hash": "9017b808addbd59fcb4011bbdcefca6e"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/public/brand/dgn-picks-logo-horizontal-transparent.png": {
+  "apps/web/public/brand/dgn-picks-logo-horizontal-transparent.png": {
     "mtime": 1788800577.378035,
     "ast_hash": "5eae0a994a7894561a1ece5f1df88088",
-    "semantic_hash": "5eae0a994a7894561a1ece5f1df88088"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/public/brand/dgn-picks-logo-horizontal.png": {
+  "apps/web/public/brand/dgn-picks-logo-horizontal.png": {
     "mtime": 1788800577.5338142,
     "ast_hash": "810d44c6144a2145714c5880f5ed8631",
-    "semantic_hash": "810d44c6144a2145714c5880f5ed8631"
+    "semantic_hash": ""
   },
-  "/mnt/c/Projects/DGN-PICKS/apps/web/public/icodgn.png": {
+  "apps/web/public/icodgn.png": {
     "mtime": 1789416713.1387715,
     "ast_hash": "a259a7459193b576fa0e53bfda0c785c",
-    "semantic_hash": "a259a7459193b576fa0e53bfda0c785c"
+    "semantic_hash": ""
+  },
+  "docs/exec-plans/completed/2026-10-01-ops-users-list.md": {
+    "mtime": 1790872929.238378,
+    "ast_hash": "cf80408d50ddf760224b3a9ac0176e96",
+    "semantic_hash": ""
   }
 }
