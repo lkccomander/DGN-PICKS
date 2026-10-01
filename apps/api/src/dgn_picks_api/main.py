@@ -16,6 +16,7 @@ from dgn_picks_api.api.v1.routes.schedules import router as schedules_router
 from dgn_picks_api.api.v1.routes.teams import players_router, router as teams_router
 from dgn_picks_api.api.v1.routes.users import router as users_router, admin_router as admin_users_router
 from dgn_picks_api.api.v1.routes.deposits import router as deposits_router, admin_router as admin_deposits_router
+from dgn_picks_api.api.v1.routes.balances import admin_router as admin_balances_router
 
 app = FastAPI(title="DGN-PICKS API", version="0.1.0")
 
@@ -42,6 +43,7 @@ for router in (
     admin_users_router,
     deposits_router,
     admin_deposits_router,
+    admin_balances_router,
     auth_router,
     teams_router,
     players_router,
