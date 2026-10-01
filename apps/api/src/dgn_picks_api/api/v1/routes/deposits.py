@@ -25,7 +25,8 @@ def _month_bounds() -> tuple[datetime, datetime]:
 def _response(deposit: Deposit, username: str | None = None) -> DepositResponse:
     return DepositResponse(id=deposit.id, user_id=deposit.user_id, username=username,
                            amount=deposit.amount, status=deposit.status,
-                           created_at=deposit.created_at, reviewed_at=deposit.reviewed_at)
+                           created_at=deposit.created_at, reviewed_at=deposit.reviewed_at,
+                           reviewer_id=deposit.reviewer_id)
 
 
 @router.post("", response_model=DepositResponse, status_code=201)
@@ -58,6 +59,12 @@ def list_my_deposits(identity: dict[str, str] = Depends(require_identity), db: S
 @admin_router.get("/pending", response_model=list[DepositResponse])
 def list_pending_deposits(db: Session = Depends(get_db)) -> list[DepositResponse]:
     rows = db.execute(select(Deposit, User.username).join(User, User.id == Deposit.user_id).where(Deposit.status == "pending").order_by(Deposit.created_at)).all()
+    return [_response(deposit, username) for deposit, username in rows]
+
+
+@admin_router.get("", response_model=list[DepositResponse])
+def list_all_deposits(db: Session = Depends(get_db)) -> list[DepositResponse]:
+    rows = db.execute(select(Deposit, User.username).join(User, User.id == Deposit.user_id).order_by(Deposit.created_at.desc())).all()
     return [_response(deposit, username) for deposit, username in rows]
 
 

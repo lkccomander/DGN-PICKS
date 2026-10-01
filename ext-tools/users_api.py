@@ -75,6 +75,11 @@ def pending_deposits():
     return forward("admin/deposits/pending")
 
 
+@users_api.get("/api/deposits/history")
+def deposit_history():
+    return forward("admin/deposits")
+
+
 @users_api.patch("/api/deposits/<int:deposit_id>")
 def decide_deposit(deposit_id: int):
     return forward(f"admin/deposits/{deposit_id}")

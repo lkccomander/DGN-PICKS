@@ -341,6 +341,7 @@ class DepositResponse(BaseModel):
     status: str
     created_at: datetime
     reviewed_at: datetime | None = None
+    reviewer_id: int | None = None
 
 
 class DepositDecision(BaseModel):
