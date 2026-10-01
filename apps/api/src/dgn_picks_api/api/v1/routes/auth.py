@@ -2,6 +2,7 @@ import os
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from dgn_picks_api.api.v1.auth import authenticate, authenticate_user, current_identity, issue_token, signing_configured
@@ -9,6 +10,7 @@ from dgn_picks_api.api.v1.dependencies import get_db, require_identity
 from dgn_picks_api.api.v1.schemas import AuthResponse, LoginRequest, RegistrationRequest, RegistrationResponse, UserResponse, AccountResponse
 from dgn_picks_api.domains.users.models import User
 from dgn_picks_api.domains.users.passwords import hash_password
+from dgn_picks_api.domains.balances.models import BalanceTransaction
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -56,6 +58,7 @@ def me(authorization: str | None = Header(default=None), db: Session = Depends(g
 @router.get("/account", response_model=AccountResponse)
 def account(identity: dict[str, str] = Depends(require_identity), db: Session = Depends(get_db)) -> AccountResponse:
     user = db.get(User, int(identity["user_id"])) if "user_id" in identity else None
+    balance = db.scalar(select(func.coalesce(func.sum(BalanceTransaction.amount), 0)).where(BalanceTransaction.user_id == int(identity["user_id"]))) if "user_id" in identity else 0
     return AccountResponse(username=identity["username"], role=identity["role"],
                            display_name=user.display_name if user else identity["username"],
-                           email=user.email if user else None, country=user.country if user else None)
+                           email=user.email if user else None, country=user.country if user else None, balance=balance)

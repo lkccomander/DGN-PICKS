@@ -24,6 +24,7 @@ class AccountResponse(BaseModel):
     display_name: str
     email: str | None = None
     country: str | None = None
+    balance: Decimal = Decimal("0.00")
 
 
 class UserResponse(ORMModel):
