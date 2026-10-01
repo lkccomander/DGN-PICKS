@@ -326,3 +326,4 @@ class SeedPickDefinitionResponse(BaseModel):
     side: str | None = None
     team_or_player: str
     state: str
+    result: PickResult = PickResult.LOSS

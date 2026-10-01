@@ -37,7 +37,7 @@ export type Components = {
       "PublicUserResponse": { "id" : number; "username" : string; "display_name" : string; "active" : boolean; "created_at" : string };
       "RegistrationRequest": { "username" : string; "email" : string; "display_name" : string; "country"?: string | null; "password" : string };
       "RegistrationResponse": { "user" : Components["schemas"]["UserResponse"]; "access_token" : string; "token_type"?: string };
-      "SeedPickDefinitionResponse": { "number" : number; "description" : string; "market_type" : string; "line_value" : string; "side"?: string | null; "team_or_player" : string; "state" : string };
+      "SeedPickDefinitionResponse": { "number" : number; "description" : string; "market_type" : string; "line_value" : string; "side"?: string | null; "team_or_player" : string; "state" : string; "result" : Components["schemas"]["PickResult"] };
       "SeedReportResponse": { "users_inserted" : number; "users_existing" : number; "games_inserted" : number; "markets_inserted" : number; "snapshots_inserted" : number; "picks_inserted" : number; "duplicate_snapshots" : number; "unresolved_definitions" : Array<string>; "unresolved_count" : number };
       "SelectionCreate": { "market_id" : number; "selection_key" : string; "team_id"?: number | null; "player_id"?: number | null; "side"?: string | null };
       "SelectionResponse": { "id" : number; "market_id" : number; "selection_key" : string; "team_id"?: number | null; "player_id"?: number | null; "side"?: string | null };

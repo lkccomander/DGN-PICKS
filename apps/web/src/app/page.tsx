@@ -304,8 +304,7 @@ function PickRow({ pick, game, teamsById, canManage, canGrade, onEdit, onDelete,
 }
 
 function SeedDefinitionRow({ definition }: { definition: SeedPickDefinition }) {
-  const status = definition.side == null ? "Side/date needed to grade" : "Event/date needed to grade";
-  return <article className="pick-row seed-definition"><div className="pick-main"><span className="result-dot" /><div><strong>{definition.description}</strong><span>Seed definition #{definition.number} · {definition.team_or_player}</span></div></div><span className="pick-line">{Number(definition.line_value) > 0 ? "+" : ""}{definition.line_value}</span><span className="pick-stake">—</span><span className="status-pill">{status}</span></article>;
+  return <article className="pick-row seed-definition"><div className="pick-main"><span className="result-dot loss" /><div><strong>{definition.description}</strong><span>Seed definition #{definition.number} · {definition.team_or_player}</span></div></div><span className="pick-line">{Number(definition.line_value) > 0 ? "+" : ""}{definition.line_value}</span><span className="pick-stake">—</span><span className="status-pill loss">LOSS</span></article>;
 }
 
 function GameRow({ game, teamsById, onSelect }: { game: Game; teamsById: Map<number, Team>; onSelect: (gameId: number) => void }) {

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from dgn_picks_api.api.v1.dependencies import get_db
 from dgn_picks_api.api.v1.schemas import SeedPickDefinitionResponse
 from dgn_picks_api.domains.picks.models import Pick
+from dgn_picks_api.domains.common.enums import PickResult
 from dgn_picks_api.domains.users.models import User
 from dgn_picks_api.seed.data import GATO_PICK_DEFINITIONS, PickDefinition
 
@@ -27,6 +28,7 @@ def gato_pick_definitions(materialized_descriptions: set[str]) -> list[SeedPickD
             side=definition.side,
             team_or_player=definition.team_or_player,
             state=definition_state(definition, materialized_descriptions),
+            result=PickResult.LOSS,
         )
         for definition in GATO_PICK_DEFINITIONS
     ]
