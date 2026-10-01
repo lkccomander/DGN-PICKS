@@ -62,6 +62,7 @@
 .app-shell{font-family:Arial,Helvetica,sans-serif;background:#06182b;color:#eef5fb;font-size:14px;min-height:100vh}
 .landing-topbar{max-width:1260px;min-height:72px;margin:0 auto;background:#071c31;border-left:1px solid #173a57;border-right:1px solid #173a57;padding-left:8px;padding-right:8px}
 .landing-brand>span{font-size:1.52rem;letter-spacing:-.07em}.landing-brand small{font-size:.52rem}
+.landing-account-bar{gap:20px}.landing-account-bar .account-mail{border-right:1px solid rgba(181,207,228,.28);font-size:1.25rem;padding-right:20px}.landing-account-bar .account-balance{font-size:1rem;font-weight:700;white-space:nowrap}.landing-account-bar .account-deposit{background:#20c866;border:0;border-radius:2px;color:#fff;cursor:pointer;font-size:.82rem;font-weight:900;padding:12px 29px}.landing-account-bar .account-trigger{font-size:.92rem;gap:10px}.landing-account-bar .account-avatar{background:#eef5fb;color:#18334c;font-size:.62rem;height:20px;width:20px}.landing-account-bar .account-caret{font-size:.62rem}
 .landing-primary-nav{max-width:1260px;min-height:49px;height:49px;margin:0 auto;padding-left:8px;padding-right:8px;background:#092744;border-left:1px solid #173a57;border-right:1px solid #173a57;gap:28px}
 .landing-primary-nav a{height:49px;font-size:.73rem}.landing-primary-nav a.active{border-bottom-color:#ff5a19}.nav-clock{font-size:.65rem}
 .landing-toolbar{max-width:1260px;min-height:43px;height:43px;margin:0 auto;padding:5px 8px;background:#071d32;border:1px solid #173a57;border-top:0}
