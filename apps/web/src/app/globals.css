@@ -58,16 +58,16 @@
 @media(max-width:800px){.landing-layout,.account-layout{width:calc(100% - 24px)}.landing-topbar,.landing-primary-nav,.account-topbar,.account-primary-nav{padding-left:18px}}
 @media(max-width:700px){.sports-rail{margin-bottom:0;margin-top:0}.account-sidebar{margin-bottom:0;margin-top:0}}
 
-/* Market-board baseline: compact sportsbook proportions and 14px Arial UI type. */
-.app-shell{font-family:Arial,Helvetica,sans-serif;background:#06182b;color:#eef5fb;font-size:14px}
-.landing-topbar{min-height:72px;background:#071c31;padding-left:max(14px,calc((100vw - 1600px) / 2 + 14px));padding-right:max(14px,calc((100vw - 1600px) / 2 + 14px))}
+/* Market-board baseline: centered shell, compact Arial UI and restrained blue palette. */
+.app-shell{font-family:Arial,Helvetica,sans-serif;background:#06182b;color:#eef5fb;font-size:14px;min-height:100vh}
+.landing-topbar{max-width:1280px;min-height:72px;margin:0 auto;background:#071c31;border-left:1px solid #173a57;border-right:1px solid #173a57;padding-left:14px;padding-right:14px}
 .landing-brand>span{font-size:1.52rem;letter-spacing:-.07em}.landing-brand small{font-size:.52rem}
-.landing-primary-nav{min-height:49px;height:49px;padding-left:max(14px,calc((100vw - 1600px) / 2 + 14px));padding-right:max(14px,calc((100vw - 1600px) / 2 + 14px));background:#092744;gap:28px}
+.landing-primary-nav{max-width:1280px;min-height:49px;height:49px;margin:0 auto;padding-left:14px;padding-right:14px;background:#092744;border-left:1px solid #173a57;border-right:1px solid #173a57;gap:28px}
 .landing-primary-nav a{height:49px;font-size:.73rem}.landing-primary-nav a.active{border-bottom-color:#ff5a19}.nav-clock{font-size:.65rem}
-.landing-toolbar{width:100%;max-width:none;min-height:43px;height:43px;padding:5px 14px;background:#071d32;border-bottom:1px solid #23425d}
-.landing-layout{width:100%;max-width:1600px;grid-template-columns:234px minmax(0,1fr);min-height:calc(100vh - 164px)}
+.landing-toolbar{max-width:1280px;min-height:43px;height:43px;margin:0 auto;padding:5px 14px;background:#071d32;border:1px solid #173a57;border-top:0}
+.landing-layout{width:100%;max-width:1280px;grid-template-columns:218px minmax(0,1fr);margin:0 auto;border-left:1px solid #173a57;border-right:1px solid #173a57;min-height:calc(100vh - 164px);background:#06182b}
 .sports-rail{margin:0;padding:21px 14px 48px;background:#06182b}.sports-rail a{font-size:.77rem;padding:9px 10px}.rail-heading{font-size:.68rem}.rail-callout{font-size:.72rem}
-.landing-main{padding:20px 14px 50px}.landing-hero{display:block;min-height:148px;padding:20px 18px;background:linear-gradient(110deg,#103965,#0a2948 62%,#0d4165);border-color:#1a5278}
+.landing-main{padding:18px 14px 50px;background:#071d32}.landing-hero{display:block;min-height:148px;padding:20px 18px;background:linear-gradient(110deg,#103965,#0a2948 62%,#0d4165);border-color:#1a5278}
 .landing-hero h1{font-size:1.7rem;line-height:1;margin:12px 0 8px;letter-spacing:-.055em}.landing-hero p{font-size:.73rem;margin:0;max-width:410px}.hero-kicker{font-size:.65rem}.hero-graphic{position:absolute;right:2%;top:2px;width:31%;height:145px;min-width:180px}.hero-ball{font-size:3.8rem;border-width:9px;height:108px;width:108px}.hero-lines{height:200px;top:-24px}.hero-lines:after{height:200px}.hero-tabs{position:absolute;bottom:0;left:0;right:0;display:flex;gap:30px;padding:0 18px;border-top:1px solid rgba(181,207,228,.18)}.hero-tabs a{color:#9fb6c7;font-size:.68rem;font-weight:900;padding:12px 0;text-decoration:none}.hero-tabs a.active{border-bottom:3px solid #ff5a19;color:#fff}
 .market-strip{margin-top:14px}.market-strip div{padding:12px 15px}.market-strip span,.section-kicker{font-size:.59rem}.market-strip strong{font-size:1.08rem}.board-section,.slate-panel,.bet-slip,.picks-drawer{margin-top:14px}.board-section-head{padding:14px 15px}.board-section-head h2{font-size:.98rem}.board-actions input,.board-actions select{font-size:.64rem;padding:7px}.board-columns{font-size:.55rem;padding:10px 15px 5px}.board-section .market-list{padding:0 15px}.board-section .market-row{min-height:72px}.market-ident strong{font-size:.77rem}.market-ident span,.market-selections span,.movement small{font-size:.62rem}
 .below-board{gap:14px}.slate-panel .game-list{padding:0 15px}.game-row{min-height:60px;font-size:.78rem}.bet-slip-tabs span{font-size:.68rem;padding:14px}.bet-slip-body{padding:20px}.bet-slip-body h3{font-size:.83rem}.bet-slip-body p{font-size:.67rem}
