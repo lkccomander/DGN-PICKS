@@ -327,10 +327,11 @@ class SeedPickDefinitionResponse(BaseModel):
     side: str | None = None
     team_or_player: str
     state: str
-    result: PickResult = PickResult.LOSS
+    result: PickResult = PickResult.PENDING
 
 
 class DepositCreate(BaseModel):
+    """Request non-redeemable virtual credits; legacy schema name is retained."""
     amount: Decimal = Field(gt=0, le=Decimal("1000.00"), decimal_places=2)
 
 
@@ -350,6 +351,7 @@ class DepositDecision(BaseModel):
 
 
 class BalanceTransactionResponse(BaseModel):
+    """Non-monetary credit ledger entry, including preserved legacy history."""
     id: int
     user_id: int
     username: str | None = None

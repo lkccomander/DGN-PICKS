@@ -1,3 +1,13 @@
+# October 14, 2026 validation update
+
+The audit below is historical. Follow [STATUS.md](STATUS.md) and the
+[current validation plan](docs/exec-plans/active/2026-10-14-validation-release.md)
+for current evidence. Public Gato results are four wins/six losses with unknown
+odds; the 13 original definitions remain unresolved separately. The user confirmed
+non-monetary virtual credits: approval and auditable adjustments use the existing
+ledger; picks remain in units without automatic credit settlement. Final acceptance,
+CI and direct Railway publication evidence is recorded in the current handoff.
+
 > **Current update — 2026-09-26:** Remediation phases 1–3 and the Gato import are implemented in `32104bb` / `53c75c5`; API and web are deployed on Railway. See [STATUS.md](STATUS.md) and the [publication checkpoint](docs/checkpoints/2026-09-26-gato-publication.md). The original audit below remains historical.
 
 ## Current phase checklist

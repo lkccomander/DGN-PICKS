@@ -5,11 +5,11 @@
   const message = (text, error = false) => { el('deposits-message').textContent = text; el('deposits-message').className = error ? 'text-danger' : 'text-success'; };
   const statusLabel = (status) => ({ pending: 'Pendiente', approved: 'Aprobado', rejected: 'Rechazado' }[status] || status);
   const dateLabel = (value) => value ? new Date(value).toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, ' UTC') : '—';
-  const money = (value) => 'USD ' + Number(value || 0).toFixed(2);
+  const money = (value) => Number(value || 0).toFixed(2) + ' créditos';
   async function api(path, method = 'GET', body) {
     const response = await desktopFetch('/api/deposits' + path, { method, cache: 'no-store', headers: { Accept: 'application/json', Authorization: 'Bearer ' + token(), ...(body ? {'Content-Type':'application/json'} : {}) }, ...(body ? {body: JSON.stringify(body)} : {}) });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.detail || 'No se pudo consultar depósitos.');
+    if (!response.ok) throw new Error(data.detail || 'No se pudo consultar solicitudes de créditos.');
     return data;
   }
   function detailCell(row) {
@@ -23,8 +23,8 @@
   function render() {
     const filter = el('deposits-filter').value, visible = filter === 'all' ? rows : rows.filter((row) => row.status === filter);
     el('deposits-rows').replaceChildren();
-    for (const row of visible) { const tr = document.createElement('tr'); for (const value of [String(row.id), '@' + (row.username || row.user_id), 'USD ' + Number(row.amount).toFixed(2), dateLabel(row.created_at), statusLabel(row.status), dateLabel(row.reviewed_at)]) { const td = document.createElement('td'); td.textContent = value; tr.append(td); } tr.append(detailCell(row)); el('deposits-rows').append(tr); }
-    if (!visible.length) { const tr = document.createElement('tr'), td = document.createElement('td'); td.colSpan = 7; td.className = 'text-center py-4'; td.textContent = filter === 'all' ? 'No hay depósitos registrados.' : `No hay depósitos ${statusLabel(filter).toLowerCase()}s.`; tr.append(td); el('deposits-rows').append(tr); }
+    for (const row of visible) { const tr = document.createElement('tr'); for (const value of [String(row.id), '@' + (row.username || row.user_id), Number(row.amount).toFixed(2) + ' créditos', dateLabel(row.created_at), statusLabel(row.status), dateLabel(row.reviewed_at)]) { const td = document.createElement('td'); td.textContent = value; tr.append(td); } tr.append(detailCell(row)); el('deposits-rows').append(tr); }
+    if (!visible.length) { const tr = document.createElement('tr'), td = document.createElement('td'); td.colSpan = 7; td.className = 'text-center py-4'; td.textContent = filter === 'all' ? 'No hay solicitudes de créditos registradas.' : `No hay solicitudes en estado ${statusLabel(filter).toLowerCase()}.`; tr.append(td); el('deposits-rows').append(tr); }
     el('deposits-count').textContent = `${visible.length} visible(s) · ${rows.length} total(es)`;
     const summary = el('deposits-summary');
     summary.replaceChildren();
@@ -36,8 +36,8 @@
     ];
     for (const [label, count, amount] of cards) { const col = document.createElement('div'); col.className = 'col-sm-6 col-xl-3'; col.innerHTML = `<article class="dashboard-status-card h-100"><span class="status-card-label">${label}</span><strong>${count}</strong><small>${money(amount)}</small></article>`; summary.append(col); }
   }
-  async function load() { if (!token()) { message('Inicia sesión en Usuarios para consultar depósitos.', true); return; } try { rows = await api('/history'); render(); message('Historial actualizado.'); } catch (error) { message(error.message, true); } }
-  async function decide(id, status) { if (busy) return; busy = true; try { await api('/' + id, 'PATCH', { status }); await load(); message(status === 'approved' ? 'Depósito aprobado.' : 'Depósito rechazado.'); } catch (error) { message(error.message, true); } finally { busy = false; render(); } }
+  async function load() { if (!token()) { message('Inicia sesión en Usuarios para consultar créditos.', true); return; } try { rows = await api('/history'); render(); message('Historial actualizado.'); } catch (error) { message(error.message, true); } }
+  async function decide(id, status) { if (busy) return; busy = true; try { await api('/' + id, 'PATCH', { status }); await load(); message(status === 'approved' ? 'Créditos aprobados.' : 'Solicitud de créditos rechazada.'); } catch (error) { message(error.message, true); } finally { busy = false; render(); } }
   el('deposits-refresh').addEventListener('click', () => void load()); el('deposits-filter').addEventListener('change', render);
   document.querySelector('[data-coreui-target="#deposits-pane"]').addEventListener('click', () => void load()); render();
 })();

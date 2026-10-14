@@ -25,6 +25,20 @@ function displayedLine(pick: Pick) {
 
 test.skip(!requiredEnvironment, "Set E2E_WEB_URL, E2E_API_URL, E2E_OPERATOR_USERNAME and E2E_OPERATOR_PASSWORD for the isolated test stack.");
 
+test("NCAA fixtures and thirteen unresolved Gato definitions stay visible without invented losses", async ({ page }) => {
+  for (const origin of [apiUrl!, process.env.E2E_WEB_URL!]) {
+    expect(["127.0.0.1", "localhost", "[::1]"]).toContain(new URL(origin).hostname);
+  }
+  await page.goto("/");
+  await expect(page.getByLabel("League filter")).toHaveValue("all");
+  await page.getByLabel("League filter").selectOption("NCAAFB");
+  await expect(page.locator(".game-select")).toHaveCount(4);
+  await expect(page.locator(".seed-definition")).toHaveCount(13);
+  await expect(page.locator(".seed-definition .status-pill")).toHaveText(Array(13).fill("Unresolved"));
+  await expect(page.locator(".seed-definition .loss")).toHaveCount(0);
+  await expect(page.locator(".seed-definition").filter({ hasText: "Malakai Toney" })).not.toContainText(/over|under/i);
+});
+
 test("owned picks can be edited/deleted and keep their stored price after market movement", async ({ page, request }) => {
   // This test writes data: enforce loopback origins and use only an isolated database.
   for (const origin of [apiUrl!, process.env.E2E_WEB_URL!]) {
@@ -125,7 +139,9 @@ test("owned picks can be edited/deleted and keep their stored price after market
   await row.getByRole("button", { name: "Delete", exact: true }).click();
   await expect(row).toBeVisible();
   page.once("dialog", dialog => dialog.accept());
+  const deleted = page.waitForResponse(response => response.url().includes(`/api/development/picks/${created!.id}`) && response.request().method() === "DELETE");
   await row.getByRole("button", { name: "Delete", exact: true }).click();
+  expect((await deleted).status()).toBe(204);
   await expect(row).toHaveCount(0);
   expect(await json<Pick[]>(`${apiUrl}/api/v1/picks?user=${username}`)).toEqual([]);
 });

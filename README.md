@@ -4,9 +4,15 @@ NCAA College Football picks, lines, props, and line movement tracker. DGN-PICKS 
 
 ## Current project state
 
-The [current checklist](STATUS.md) and [publication checkpoint](docs/checkpoints/2026-09-26-gato-publication.md) record the deployed release: ten requested picks for Gato are public, six synthetic legacy records are archived, and all 13 original definitions remain preserved for review. Current validation includes 105 API tests, web lint/types/build, generated-client consistency, migration SQL through `0011_restore_pick_leg_snapshot` on disposable PostgreSQL 18, and a passing anonymous desktop/mobile browser test against production. The desktop suite previously passed 18 tests.
+The [current checklist](STATUS.md) tracks the October 14 validation and release.
+The September [publication checkpoint](docs/checkpoints/2026-09-26-gato-publication.md)
+is historical evidence. Gato's ten published picks currently report four wins and
+six losses; missing odds keep profit/ROI unavailable. All 13 original unresolved
+pick definitions are preserved separately.
 
-Commit `53c75c5` was deployed directly to Railway on 2026-09-27 UTC (September 26 locally). GitHub synchronization through `cb58207` is confirmed after the authentication update. The required release workflow is to commit/push to GitHub, deploy the same committed application code directly to Railway, and verify the deployed services. Wider authenticated browser acceptance and grading of the original card remain open; see the [source/evaluation review](docs/data-reviews/2026-09-26-gato-picks.md).
+Release workflow: commit and push reviewed source to GitHub, deploy the same
+committed application directly to Railway, and verify the service deployment IDs
+and public behavior. Acceptance and release results are recorded in STATUS.
 
 | Service | Railway URL |
 |---|---|
@@ -55,13 +61,28 @@ Seed users are `gato`, `daran`, and `noch`. The 13 original Gato definitions rem
 
 Odds snapshots are append-oriented and a pick retains its taken line and price. Analytics reports pending exposure separately. Settled ROI uses priced, settled stake; if settled price data is incomplete, profit and ROI are unavailable rather than guessed.
 
-DGN-PICKS currently tracks picks in units. It does not keep or promise a token balance/ledger, real-money balance, deposits, withdrawals, or redemption. Virtual token accounting, email verification, password reset delivery, a live odds provider, and CLV remain future work.
+DGN-PICKS tracks picks in units, independently of its virtual-credit ledger.
+New accounts start with zero paper credits. Account holders can request credits
+for administrator approval; pending and approved requests share a 1,000-credit
+UTC monthly cap. Approved requests and manual adjustments append auditable ledger
+entries. Existing history is retained. Credits have no monetary value and cannot
+be purchased, transferred, withdrawn or redeemed. No payment methods are offered.
+Legacy `deposits` routes and schema names remain for compatibility only.
+Automatic credit stake/settlement accounting, email verification, password reset
+delivery, a live odds provider, and CLV remain future work.
 
 ## Local browser acceptance
 
-The Playwright pick flow writes test data. Run it only against a disposable database and loopback API/web origins. Provide the isolated operator credentials as `E2E_OPERATOR_USERNAME` and `E2E_OPERATOR_PASSWORD`, plus `E2E_API_URL` and `E2E_WEB_URL`, then run `npm run test:e2e` from `apps/web`. It registers a unique test account and adds fixture history; reset the disposable database after the run.
+Playwright writes test data. Run it only against a disposable database and loopback
+API/web/desktop origins. Set `E2E_OPERATOR_USERNAME`, `E2E_OPERATOR_PASSWORD`,
+`E2E_API_URL`, `E2E_WEB_URL`, `E2E_DESKTOP_URL`, and the isolated API signing secret
+as `E2E_AUTH_SECRET`, then run `npm run test:e2e` from the repository root.
+The suite registers unique accounts, creates picks and market history, checks
+session revocation/expiry, and submits/reviews virtual-credit requests. Reset the
+disposable database afterward. The production import test is read-only and runs
+separately with `E2E_PUBLIC_BATCH=gato-2026-09-26` and the deployed web URL.
 
-Other checks are described in `.github/workflows/validate.yml`. Use [STATUS.md](STATUS.md) and the [checkpoint](docs/checkpoints/2026-09-24-remediation.md) for current evidence and next steps.
+Other checks are described in `.github/workflows/validate.yml`. Use [STATUS.md](STATUS.md) for current evidence and next steps.
 
 ## Project rules
 

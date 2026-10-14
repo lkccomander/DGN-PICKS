@@ -23,6 +23,7 @@ jobs:
       DGN_AUTH_ROLE: admin
       DGN_API_INTERNAL_URL: http://127.0.0.1:8000
       NEXT_PUBLIC_API_URL: http://127.0.0.1:8000
+      DGN_CORS_ORIGINS: http://127.0.0.1:3000
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -53,10 +54,13 @@ jobs:
         env:
           E2E_API_URL: http://127.0.0.1:8000
           E2E_WEB_URL: http://127.0.0.1:3000
+          E2E_DESKTOP_URL: http://127.0.0.1:5000
+          E2E_AUTH_SECRET: isolated-ci-signing-secret
           E2E_OPERATOR_USERNAME: ci-operator
           E2E_OPERATOR_PASSWORD: isolated-ci-password
         run: |
           python -m uvicorn dgn_picks_api.main:app --host 127.0.0.1 --port 8000 &
           npm --prefix apps/web run start -- --hostname 127.0.0.1 --port 3000 &
-          python scripts/wait_for_http.py http://127.0.0.1:8000/api/health http://127.0.0.1:3000
+          PYTHONPATH=ext-tools python -c 'from app import app; app.run(host="127.0.0.1", port=5000)' &
+          python scripts/wait_for_http.py http://127.0.0.1:8000/api/health http://127.0.0.1:3000 http://127.0.0.1:5000
           npm run test:e2e

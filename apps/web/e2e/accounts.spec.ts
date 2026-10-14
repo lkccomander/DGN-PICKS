@@ -32,7 +32,7 @@ for (const width of [1440, 390]) {
     await page.getByLabel("Confirm password", { exact: true }).fill("different-password");
     await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "CREATE ACCOUNT" }).click();
-    await expect(page.getByRole("alert")).toHaveText("Passwords do not match.");
+    await expect(page.locator("main").getByRole("alert")).toHaveText("Passwords do not match.");
     await page.getByLabel("Confirm password", { exact: true }).fill(password);
     await page.getByRole("button", { name: "CREATE ACCOUNT" }).click();
     await expect(page.getByRole("status")).toContainText("Account created.");
@@ -42,8 +42,10 @@ for (const width of [1440, 390]) {
     await expect(page.getByText("No picks have been recorded for this user yet.")).toBeVisible();
     await page.locator(".account-trigger").click();
     await page.getByRole("link", { name: "My Account", exact: true }).click();
-    await expect(page.locator(".profile-fields")).toContainText(email);
-    await expect(page.locator(".profile-fields")).toContainText("Costa Rica");
+    await expect(page.getByLabel("Email", { exact: true })).toHaveValue(email);
+    await expect(page.getByLabel("Country", { exact: true })).toHaveValue("Costa Rica");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+    await page.screenshot({ path: `test-results/account-private-${width}.png`, fullPage: true });
     const token = await page.evaluate(() => localStorage.getItem("dgn-admin-token"));
     const publicUsers = await (await request.get(`${api}/api/v1/users`)).json();
     const user = publicUsers.find((item: { username: string }) => item.username === username);
@@ -66,7 +68,7 @@ for (const width of [1440, 390]) {
     await page.getByLabel("Email or Client ID").fill(email);
     await page.getByLabel("Password", { exact: true }).fill("wrong-password");
     await page.getByRole("button", { name: "LOG IN", exact: true }).click();
-    await expect(page.getByRole("alert")).toContainText("Invalid credentials");
+    await expect(page.locator("main").getByRole("alert")).toContainText("Invalid credentials");
     await page.getByLabel("Password", { exact: true }).fill(password);
     await page.getByRole("button", { name: "LOG IN", exact: true }).click();
     await expect(page.locator(".account-trigger")).toContainText(username.toUpperCase());

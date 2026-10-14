@@ -6,13 +6,18 @@
 
 export type Components = {
   schemas: {
-      "AccountResponse": { "username" : string; "role" : string; "display_name" : string; "email"?: string | null; "country"?: string | null };
+      "AccountResponse": { "username" : string; "role" : string; "display_name" : string; "email"?: string | null; "country"?: string | null; "balance"?: string };
       "AnalyticsSummary": { "wins" : number; "losses" : number; "pushes" : number; "pending" : number; "void" : number; "total_units_risked" : string; "profit_units" : string | null; "roi" : string | null; "pending_units"?: string; "unpriced_settled_count"?: number };
       "AuthResponse": { "access_token" : string; "token_type"?: string; "username" : string; "role" : string };
-      "GameCreate": { "external_ids"?: Record<string, unknown>; "season" : number; "week" : number; "kickoff_at" : string; "home_team_id" : number; "away_team_id" : number; "venue"?: string | null; "status"?: Components["schemas"]["GameStatus"]; "home_score"?: number | null; "away_score"?: number | null };
+      "BalanceAdjustmentCreate": { "user_id" : number; "amount" : number | string; "reason" : string };
+      "BalanceTransactionResponse": { "id" : number; "user_id" : number; "username"?: string | null; "amount" : string; "kind" : string; "reason" : string; "created_at" : string; "created_by"?: number | null };
+      "DepositCreate": { "amount" : number | string };
+      "DepositDecision": { "status" : string };
+      "DepositResponse": { "id" : number; "user_id" : number; "username"?: string | null; "amount" : string; "status" : string; "created_at" : string; "reviewed_at"?: string | null; "reviewer_id"?: number | null };
+      "GameCreate": { "external_ids"?: Record<string, unknown>; "season" : number; "sport"?: string; "league"?: string; "week" : number; "kickoff_at" : string; "home_team_id" : number; "away_team_id" : number; "venue"?: string | null; "status"?: Components["schemas"]["GameStatus"]; "home_score"?: number | null; "away_score"?: number | null };
       "GameResponse": { "id" : number; "external_ids"?: Record<string, unknown>; "season" : number; "sport" : string; "league" : string; "week" : number; "kickoff_at" : string; "home_team_id" : number; "away_team_id" : number; "venue"?: string | null; "status" : Components["schemas"]["GameStatus"]; "home_score"?: number | null; "away_score"?: number | null };
       "GameStatus": "scheduled" | "live" | "final" | "postponed" | "cancelled";
-      "GameUpdate": { "external_ids"?: Record<string, unknown> | null; "season"?: number | null; "week"?: number | null; "kickoff_at"?: string | null; "home_team_id"?: number | null; "away_team_id"?: number | null; "venue"?: string | null; "status"?: Components["schemas"]["GameStatus"] | null; "home_score"?: number | null; "away_score"?: number | null };
+      "GameUpdate": { "external_ids"?: Record<string, unknown> | null; "season"?: number | null; "sport"?: string | null; "league"?: string | null; "week"?: number | null; "kickoff_at"?: string | null; "home_team_id"?: number | null; "away_team_id"?: number | null; "venue"?: string | null; "status"?: Components["schemas"]["GameStatus"] | null; "home_score"?: number | null; "away_score"?: number | null };
       "HTTPValidationError": { "detail"?: Array<Components["schemas"]["ValidationError"]> };
       "HealthResponse": { "status" : string; "service" : string };
       "ImportGame": { "key" : string; "kickoff_at" : string; "season" : number; "week" : number; "status" : Components["schemas"]["GameStatus"]; "home_team" : Components["schemas"]["ImportTeam"]; "away_team" : Components["schemas"]["ImportTeam"]; "source_urls" : Array<string> };
@@ -37,7 +42,8 @@ export type Components = {
       "PublicUserResponse": { "id" : number; "username" : string; "display_name" : string; "active" : boolean; "created_at" : string };
       "RegistrationRequest": { "username" : string; "email" : string; "display_name" : string; "country"?: string | null; "password" : string };
       "RegistrationResponse": { "user" : Components["schemas"]["UserResponse"]; "access_token" : string; "token_type"?: string };
-      "SeedPickDefinitionResponse": { "number" : number; "description" : string; "market_type" : string; "line_value" : string; "side"?: string | null; "team_or_player" : string; "state" : string; "result" : Components["schemas"]["PickResult"] };
+      "ScheduleGameResponse": { "external_id" : string; "sport" : string; "league" : string; "kickoff_at" : string; "away_team" : string; "home_team" : string; "status" : string; "away_score"?: number | null; "home_score"?: number | null };
+      "SeedPickDefinitionResponse": { "number" : number; "description" : string; "market_type" : string; "line_value" : string; "side"?: string | null; "team_or_player" : string; "state" : string; "result"?: Components["schemas"]["PickResult"] };
       "SeedReportResponse": { "users_inserted" : number; "users_existing" : number; "games_inserted" : number; "markets_inserted" : number; "snapshots_inserted" : number; "picks_inserted" : number; "duplicate_snapshots" : number; "unresolved_definitions" : Array<string>; "unresolved_count" : number };
       "SelectionCreate": { "market_id" : number; "selection_key" : string; "team_id"?: number | null; "player_id"?: number | null; "side"?: string | null };
       "SelectionResponse": { "id" : number; "market_id" : number; "selection_key" : string; "team_id"?: number | null; "player_id"?: number | null; "side"?: string | null };
@@ -54,6 +60,11 @@ export type Components = {
 
 export type ApiPath =
   | `/api/health`
+  | `/api/v1/admin/balances`
+  | `/api/v1/admin/balances/adjust`
+  | `/api/v1/admin/deposits`
+  | `/api/v1/admin/deposits/pending`
+  | `/api/v1/admin/deposits/${number}`
   | `/api/v1/admin/pick-imports`
   | `/api/v1/admin/pick-imports/legacy-seed-quarantine`
   | `/api/v1/admin/users`
@@ -63,6 +74,7 @@ export type ApiPath =
   | `/api/v1/auth/login`
   | `/api/v1/auth/me`
   | `/api/v1/auth/register`
+  | `/api/v1/deposits`
   | `/api/v1/dev/seed`
   | `/api/v1/games`
   | `/api/v1/games/${number}`
@@ -76,6 +88,8 @@ export type ApiPath =
   | `/api/v1/picks/${number}/grade`
   | `/api/v1/players`
   | `/api/v1/players/${number}`
+  | `/api/v1/schedules/admin/mlb/sync`
+  | `/api/v1/schedules/mlb`
   | `/api/v1/seed/pick-definitions`
   | `/api/v1/selections`
   | `/api/v1/selections/${number}`

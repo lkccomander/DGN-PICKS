@@ -22,7 +22,7 @@ def list_balance_history(db: Session = Depends(get_db)) -> list[BalanceTransacti
     return [_response(transaction, username) for transaction, username in rows]
 
 
-@admin_router.post("/adjust", response_model=BalanceTransactionResponse, status_code=201)
+@admin_router.post("/adjust", response_model=BalanceTransactionResponse, status_code=201, description="Auditable non-monetary virtual-credit adjustment; credits have no cash value.")
 def create_balance_adjustment(payload: BalanceAdjustmentCreate, identity: dict[str, str] = Depends(require_editor_identity), db: Session = Depends(get_db)) -> BalanceTransactionResponse:
     if db.get(User, payload.user_id) is None:
         raise HTTPException(status_code=404, detail="User not found")

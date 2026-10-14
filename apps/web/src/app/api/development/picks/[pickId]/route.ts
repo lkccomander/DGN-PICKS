@@ -46,7 +46,7 @@ async function forward(request: Request, pickId: string, method: "PATCH" | "DELE
     redirect: "error",
   });
   const responseBody = await response.text();
-  return new NextResponse(responseBody, {
+  return new NextResponse(response.status === 204 ? null : responseBody, {
     status: response.status,
     headers: { "Content-Type": response.headers.get("Content-Type") ?? "application/json" },
   });

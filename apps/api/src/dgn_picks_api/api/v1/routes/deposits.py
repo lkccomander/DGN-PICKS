@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from dgn_picks_api.api.v1.dependencies import get_db, require_editor_identity, require_identity
@@ -12,8 +12,8 @@ from dgn_picks_api.domains.deposits.models import Deposit
 from dgn_picks_api.domains.balances.models import BalanceTransaction
 from dgn_picks_api.domains.users.models import User
 
-router = APIRouter(prefix="/deposits", tags=["deposits"])
-admin_router = APIRouter(prefix="/admin/deposits", tags=["admin-deposits"], dependencies=[Depends(require_editor_identity)])
+router = APIRouter(prefix="/deposits", tags=["virtual-credits"])
+admin_router = APIRouter(prefix="/admin/deposits", tags=["admin-virtual-credits"], dependencies=[Depends(require_editor_identity)])
 
 
 def _month_bounds() -> tuple[datetime, datetime]:
@@ -30,18 +30,20 @@ def _response(deposit: Deposit, username: str | None = None) -> DepositResponse:
                            reviewer_id=deposit.reviewer_id)
 
 
-@router.post("", response_model=DepositResponse, status_code=201)
+@router.post("", response_model=DepositResponse, status_code=201, description="Request non-monetary, non-redeemable virtual credits. Legacy deposit path retained for compatibility.")
 def create_deposit(payload: DepositCreate, identity: dict[str, str] = Depends(require_identity), db: Session = Depends(get_db)) -> DepositResponse:
     if "user_id" not in identity:
         raise HTTPException(status_code=400, detail="A registered user account is required")
     user_id = int(identity["user_id"])
+    # Serialize requests for one owner before checking the monthly quota.
+    db.scalar(select(User).where(User.id == user_id).with_for_update())
     start, end = _month_bounds()
     used = db.scalar(select(func.coalesce(func.sum(Deposit.amount), 0)).where(
         Deposit.user_id == user_id, Deposit.status.in_(["pending", "approved"]),
         Deposit.created_at >= start, Deposit.created_at <= end,
     )) or Decimal("0")
     if used + payload.amount > Decimal("1000.00"):
-        raise HTTPException(status_code=409, detail="Monthly deposit limit is USD 1,000.00")
+        raise HTTPException(status_code=409, detail="Monthly virtual-credit request limit is 1,000.00 credits")
     deposit = Deposit(user_id=user_id, amount=payload.amount, status="pending")
     db.add(deposit)
     db.commit()
@@ -73,15 +75,20 @@ def list_all_deposits(db: Session = Depends(get_db)) -> list[DepositResponse]:
 def decide_deposit(deposit_id: int, payload: DepositDecision, identity: dict[str, str] = Depends(require_editor_identity), db: Session = Depends(get_db)) -> DepositResponse:
     deposit = db.get(Deposit, deposit_id)
     if deposit is None:
-        raise HTTPException(status_code=404, detail="Deposit not found")
+        raise HTTPException(status_code=404, detail="Virtual-credit request not found")
     if deposit.status != "pending":
-        raise HTTPException(status_code=409, detail="Deposit has already been reviewed")
-    deposit.status = payload.status
-    deposit.reviewed_at = datetime.now(UTC)
-    deposit.reviewer_id = int(identity["user_id"]) if "user_id" in identity else None
+        raise HTTPException(status_code=409, detail="Virtual-credit request has already been reviewed")
+    reviewer_id = int(identity["user_id"]) if "user_id" in identity else None
+    # Claim the pending request atomically, so simultaneous reviews cannot credit it twice.
+    reviewed = db.execute(update(Deposit).where(Deposit.id == deposit_id, Deposit.status == "pending").values(
+        status=payload.status, reviewed_at=datetime.now(UTC), reviewer_id=reviewer_id,
+    ))
+    if reviewed.rowcount != 1:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="Virtual-credit request has already been reviewed")
     if payload.status == "approved":
-        db.add(BalanceTransaction(user_id=deposit.user_id, amount=deposit.amount, kind="deposit",
-                                  reason=f"Approved deposit #{deposit.id}", created_by=deposit.reviewer_id))
+        db.add(BalanceTransaction(user_id=deposit.user_id, amount=deposit.amount, kind="virtual_credit",
+                                  reason=f"Approved non-monetary virtual-credit request #{deposit.id}", created_by=reviewer_id))
     db.commit()
     db.refresh(deposit)
     username = db.scalar(select(User.username).where(User.id == deposit.user_id))

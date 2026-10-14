@@ -45,4 +45,20 @@ Browser
 ## MVP calculation and seed semantics
 - The 13 supplied Gato picks are unresolved product definitions until the missing event, side, or taken-price facts are supplied. They are never completed by matching QA fixtures.
 - Pending exposure is separate from settled risk. ROI uses settled stake with known taken odds. Incomplete settled price data makes profit/ROI unavailable rather than treating unknown results as zero.
-- MVP stakes are units. Virtual token balances and ledger are future work; no monetary balance or redemption exists.
+- MVP stakes remain units, independently of the non-monetary virtual-credit ledger. No monetary balance or redemption exists.
+
+## Virtual credits and schedules — 2026-10-14
+
+- CFBD and MLB schedule adapters exist at the provider boundary; fixture ingestion
+  remains available. NFL ingestion is pending. Schedules do not supply live odds or CLV.
+- The user confirmed virtual credits without real money. New accounts start at
+  zero credits. Administrator-approved requests and auditable manual adjustments
+  change the ledger; account balance is its sum. Pending/rejected requests do not
+  credit the account. Existing history is preserved.
+- Pending and approved requests share the existing 1,000-credit monthly cap,
+  using UTC calendar months. Credits have no monetary value and cannot be purchased,
+  transferred, withdrawn or redeemed. Picks still use units; there is no automatic
+  credit debit or settlement. That accounting remains a separate future milestone.
+- Legacy `deposits` tables, schema names and routes remain for compatibility;
+  their application semantics are non-monetary credit requests. No payment processor
+  or monetary funding methods are exposed by this workflow.

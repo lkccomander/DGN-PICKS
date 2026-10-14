@@ -28,7 +28,7 @@ def gato_pick_definitions(materialized_descriptions: set[str]) -> list[SeedPickD
             side=definition.side,
             team_or_player=definition.team_or_player,
             state=definition_state(definition, materialized_descriptions),
-            result=PickResult.LOSS,
+            result=PickResult.PENDING,
         )
         for definition in GATO_PICK_DEFINITIONS
     ]

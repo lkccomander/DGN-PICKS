@@ -104,7 +104,7 @@ dgn-picks/
 - username (unique)
 - display_name
 - active
-- virtual token balance and/or token ledger (paper credits only; exact accounting model to be finalized before implementation)
+- virtual credit balance derived from its append-oriented ledger (paper credits only; pick stake/settlement accounting remains future work)
 - created_at
 
 Seed users:
@@ -289,7 +289,7 @@ GET    /api/v1/picks
 POST   /api/v1/picks
 PATCH  /api/v1/picks/{pick_id}
 DELETE /api/v1/picks/{pick_id}
-GET    /api/v1/analytics/picks-summary
+GET    /api/v1/analytics/summary
 POST   /api/v1/dev/seed
 ```
 
@@ -492,6 +492,20 @@ Clean bootstrap, automated tests, E2E, docs sync.
 
 - 2026-09-26: Verified user-supplied picks can be imported through an editor/admin operation with a unique owner/batch/key, original text and source evidence. Import stores the supplied line directly, keeps unknown odds null, uses the documented 1u default when stake is absent, and creates no odds observations. Imported markets remain closed until current availability is independently established. Regular prediction eligibility is unchanged.
 - 2026-09-26: Dashboard summary queries are scoped to the selected user, including the public default Gato card. Historical records without event/date facts remain explicitly unresolved until they can be graded from real results.
+
+- 2026-10-14: The user confirmed credits without real money. Replace USD,
+  funding and payment-method language with virtual-credit requests. Keep existing
+  request/ledger history and legacy table/route/schema names for compatibility.
+  New accounts start at zero; approval credits the account once and rejection does
+  not. Manual administrator/editor adjustments retain an audit reason. Preserve
+  the existing monthly request cap as 1,000 non-monetary credits (pending plus
+  approved requests, UTC calendar month). Credits cannot be purchased, transferred,
+  withdrawn or redeemed. Picks continue in units without automatic credit debits
+  or credit settlement; those rules remain future scope.
+
+- 2026-10-14: Market board defaults to all recorded leagues with a league filter,
+  preserving NCAA fixtures and the MLB schedule preview. Original unresolved seed
+  definitions return pending and display unresolved, without affecting real picks.
 
 ## 22. Progress
 - [x] Product concept

@@ -3,6 +3,11 @@
     "schemas": {
       "AccountResponse": {
         "properties": {
+          "balance": {
+            "default": "0.00",
+            "title": "Balance",
+            "type": "string"
+          },
           "country": {
             "anyOf": [
               {
@@ -58,14 +63,12 @@
           },
           "pending_units": {
             "default": "0",
-            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
             "title": "Pending Units",
             "type": "string"
           },
           "profit_units": {
             "anyOf": [
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -81,7 +84,6 @@
           "roi": {
             "anyOf": [
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -91,7 +93,6 @@
             "title": "Roi"
           },
           "total_units_risked": {
-            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
             "title": "Total Units Risked",
             "type": "string"
           },
@@ -150,6 +151,208 @@
         "title": "AuthResponse",
         "type": "object"
       },
+      "BalanceAdjustmentCreate": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "exclusiveMaximum": 1000000.0,
+                "exclusiveMinimum": -1000000.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Amount"
+          },
+          "reason": {
+            "maxLength": 240,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "user_id": {
+            "exclusiveMinimum": 0.0,
+            "title": "User Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id",
+          "amount",
+          "reason"
+        ],
+        "title": "BalanceAdjustmentCreate",
+        "type": "object"
+      },
+      "BalanceTransactionResponse": {
+        "description": "Non-monetary credit ledger entry, including preserved legacy history.",
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "user_id": {
+            "title": "User Id",
+            "type": "integer"
+          },
+          "username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Username"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "amount",
+          "kind",
+          "reason",
+          "created_at"
+        ],
+        "title": "BalanceTransactionResponse",
+        "type": "object"
+      },
+      "DepositCreate": {
+        "description": "Request non-redeemable virtual credits; legacy schema name is retained.",
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 1000.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Amount"
+          }
+        },
+        "required": [
+          "amount"
+        ],
+        "title": "DepositCreate",
+        "type": "object"
+      },
+      "DepositDecision": {
+        "properties": {
+          "status": {
+            "pattern": "^(approved|rejected)$",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "DepositDecision",
+        "type": "object"
+      },
+      "DepositResponse": {
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At"
+          },
+          "reviewer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewer Id"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "user_id": {
+            "title": "User Id",
+            "type": "integer"
+          },
+          "username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Username"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "amount",
+          "status",
+          "created_at"
+        ],
+        "title": "DepositResponse",
+        "type": "object"
+      },
       "GameCreate": {
         "properties": {
           "away_score": {
@@ -196,10 +399,24 @@
             "title": "Kickoff At",
             "type": "string"
           },
+          "league": {
+            "default": "NCAAFB",
+            "maxLength": 32,
+            "minLength": 2,
+            "title": "League",
+            "type": "string"
+          },
           "season": {
             "exclusiveMinimum": 0.0,
             "title": "Season",
             "type": "integer"
+          },
+          "sport": {
+            "default": "ncaafb",
+            "maxLength": 32,
+            "minLength": 2,
+            "title": "Sport",
+            "type": "string"
           },
           "status": {
             "$ref": "#/components/schemas/GameStatus",
@@ -279,9 +496,17 @@
             "title": "Kickoff At",
             "type": "string"
           },
+          "league": {
+            "title": "League",
+            "type": "string"
+          },
           "season": {
             "title": "Season",
             "type": "integer"
+          },
+          "sport": {
+            "title": "Sport",
+            "type": "string"
           },
           "status": {
             "$ref": "#/components/schemas/GameStatus"
@@ -305,6 +530,8 @@
         "required": [
           "id",
           "season",
+          "sport",
+          "league",
           "week",
           "kickoff_at",
           "home_team_id",
@@ -399,6 +626,19 @@
             ],
             "title": "Kickoff At"
           },
+          "league": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "League"
+          },
           "season": {
             "anyOf": [
               {
@@ -410,6 +650,19 @@
               }
             ],
             "title": "Season"
+          },
+          "sport": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sport"
           },
           "status": {
             "anyOf": [
@@ -561,7 +814,6 @@
                 "type": "number"
               },
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,5}|(?=[\\d.]{1,11}0*$)\\d{0,5}\\.\\d{0,5}0*$)",
                 "type": "string"
               },
               {
@@ -595,7 +847,6 @@
                 "type": "number"
               },
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,7}|(?=[\\d.]{1,11}0*$)\\d{0,7}\\.\\d{0,3}0*$)",
                 "type": "string"
               }
             ],
@@ -662,7 +913,6 @@
                 "type": "number"
               },
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,7}|(?=[\\d.]{1,11}0*$)\\d{0,7}\\.\\d{0,3}0*$)",
                 "type": "string"
               }
             ],
@@ -957,7 +1207,6 @@
                 "type": "number"
               },
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               }
             ],
@@ -971,7 +1220,6 @@
                 "type": "number"
               },
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -986,7 +1234,6 @@
                 "type": "number"
               },
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -1051,7 +1298,6 @@
             "type": "string"
           },
           "decimal_odds": {
-            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
             "title": "Decimal Odds",
             "type": "string"
           },
@@ -1062,7 +1308,6 @@
           "implied_probability": {
             "anyOf": [
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -1074,7 +1319,6 @@
           "line_value": {
             "anyOf": [
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -1162,7 +1406,6 @@
                 "type": "number"
               },
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               }
             ],
@@ -1267,7 +1510,6 @@
           "decimal_odds": {
             "anyOf": [
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -1299,7 +1541,6 @@
           "line_value": {
             "anyOf": [
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -1331,7 +1572,6 @@
           "profit_units": {
             "anyOf": [
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -1355,7 +1595,6 @@
             "title": "Selection Id"
           },
           "stake_units": {
-            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
             "title": "Stake Units",
             "type": "string"
           },
@@ -1408,7 +1647,6 @@
                 "type": "number"
               },
               {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -1678,6 +1916,71 @@
         "title": "RegistrationResponse",
         "type": "object"
       },
+      "ScheduleGameResponse": {
+        "properties": {
+          "away_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Away Score"
+          },
+          "away_team": {
+            "title": "Away Team",
+            "type": "string"
+          },
+          "external_id": {
+            "title": "External Id",
+            "type": "string"
+          },
+          "home_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Home Score"
+          },
+          "home_team": {
+            "title": "Home Team",
+            "type": "string"
+          },
+          "kickoff_at": {
+            "title": "Kickoff At",
+            "type": "string"
+          },
+          "league": {
+            "title": "League",
+            "type": "string"
+          },
+          "sport": {
+            "title": "Sport",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "external_id",
+          "sport",
+          "league",
+          "kickoff_at",
+          "away_team",
+          "home_team",
+          "status"
+        ],
+        "title": "ScheduleGameResponse",
+        "type": "object"
+      },
       "SeedPickDefinitionResponse": {
         "properties": {
           "description": {
@@ -1685,7 +1988,6 @@
             "type": "string"
           },
           "line_value": {
-            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
             "title": "Line Value",
             "type": "string"
           },
@@ -1696,6 +1998,10 @@
           "number": {
             "title": "Number",
             "type": "integer"
+          },
+          "result": {
+            "$ref": "#/components/schemas/PickResult",
+            "default": "pending"
           },
           "side": {
             "anyOf": [
@@ -2407,6 +2713,293 @@
         ]
       }
     },
+    "/api/v1/admin/balances": {
+      "get": {
+        "operationId": "list_balance_history_api_v1_admin_balances_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BalanceTransactionResponse"
+                  },
+                  "title": "Response List Balance History Api V1 Admin Balances Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Balance History",
+        "tags": [
+          "admin-balances"
+        ]
+      }
+    },
+    "/api/v1/admin/balances/adjust": {
+      "post": {
+        "description": "Auditable non-monetary virtual-credit adjustment; credits have no cash value.",
+        "operationId": "create_balance_adjustment_api_v1_admin_balances_adjust_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BalanceAdjustmentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BalanceTransactionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Balance Adjustment",
+        "tags": [
+          "admin-balances"
+        ]
+      }
+    },
+    "/api/v1/admin/deposits": {
+      "get": {
+        "operationId": "list_all_deposits_api_v1_admin_deposits_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DepositResponse"
+                  },
+                  "title": "Response List All Deposits Api V1 Admin Deposits Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List All Deposits",
+        "tags": [
+          "admin-virtual-credits"
+        ]
+      }
+    },
+    "/api/v1/admin/deposits/pending": {
+      "get": {
+        "operationId": "list_pending_deposits_api_v1_admin_deposits_pending_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DepositResponse"
+                  },
+                  "title": "Response List Pending Deposits Api V1 Admin Deposits Pending Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Pending Deposits",
+        "tags": [
+          "admin-virtual-credits"
+        ]
+      }
+    },
+    "/api/v1/admin/deposits/{deposit_id}": {
+      "patch": {
+        "operationId": "decide_deposit_api_v1_admin_deposits__deposit_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "deposit_id",
+            "required": true,
+            "schema": {
+              "title": "Deposit Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositDecision"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepositResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Decide Deposit",
+        "tags": [
+          "admin-virtual-credits"
+        ]
+      }
+    },
     "/api/v1/admin/pick-imports": {
       "post": {
         "description": "Plan by default. Explicit apply commits the complete manifest atomically.",
@@ -2899,6 +3492,117 @@
         "summary": "Register",
         "tags": [
           "auth"
+        ]
+      }
+    },
+    "/api/v1/deposits": {
+      "get": {
+        "operationId": "list_my_deposits_api_v1_deposits_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DepositResponse"
+                  },
+                  "title": "Response List My Deposits Api V1 Deposits Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List My Deposits",
+        "tags": [
+          "virtual-credits"
+        ]
+      },
+      "post": {
+        "description": "Request non-monetary, non-redeemable virtual credits. Legacy deposit path retained for compatibility.",
+        "operationId": "create_deposit_api_v1_deposits_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepositResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Deposit",
+        "tags": [
+          "virtual-credits"
         ]
       }
     },
@@ -4595,6 +5299,138 @@
         "summary": "Update Player",
         "tags": [
           "players"
+        ]
+      }
+    },
+    "/api/v1/schedules/admin/mlb/sync": {
+      "post": {
+        "operationId": "sync_mlb_schedule_api_v1_schedules_admin_mlb_sync_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "force",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Force",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Sync Mlb Schedule Api V1 Schedules Admin Mlb Sync Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sync Mlb Schedule",
+        "tags": [
+          "schedules"
+        ]
+      }
+    },
+    "/api/v1/schedules/mlb": {
+      "get": {
+        "operationId": "mlb_schedule_api_v1_schedules_mlb_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleGameResponse"
+                  },
+                  "title": "Response Mlb Schedule Api V1 Schedules Mlb Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mlb Schedule",
+        "tags": [
+          "schedules"
         ]
       }
     },
