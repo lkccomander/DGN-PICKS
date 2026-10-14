@@ -525,7 +525,7 @@ Clean bootstrap, automated tests, E2E, docs sync.
 - [x] Market board
 - [x] Line movement
 - [x] Pick tracker
-- [ ] MVP validation
+- [x] MVP validation
 
 ## 23. Codex implementation rules
 - Read `AGENTS.md` and this spec first.

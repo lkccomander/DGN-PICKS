@@ -15,7 +15,7 @@ Complete the production account lifecycle and expose user CRUD in the authentica
 - [x] Add registration/login and authenticated user identity.
 - [x] Enforce user ownership for pick mutations.
 - [x] Add admin Users tab and connect Join form.
-- [ ] Validate API, web build, and deployment configuration.
+- [x] Validate API, web build, and deployment configuration.
 
 ## Implementation plan
 
@@ -46,3 +46,13 @@ Complete the production account lifecycle and expose user CRUD in the authentica
 ## Outcomes & Retrospective
 
 Implementation is complete. Python syntax validation and the Windows Node production build pass. Full pytest execution remains blocked in the current WSL environment because pytest/FastAPI are not installed there; deployment and live migration verification remain the release follow-up.
+
+## Verified closeout — 2026-10-14
+
+Closed by the [MVP validation/release checkpoint](../../checkpoints/2026-10-14-mvp-validation-release.md).
+Final application source `47a127af0220b98253a676f72829f082ae49692f`: green GitHub CI,
+116 API tests, 29 desktop tests, 10 isolated browser scenarios, clean install,
+contract/lint/types/build/audit and PostgreSQL migration/seed checks. API/web were
+deployed directly to Railway and verified; public desktop/mobile acceptance passed.
+Native Windows pywebview graphics and original-card research are separate limits,
+not claims of this acceptance. Earlier validation notes above are historical.

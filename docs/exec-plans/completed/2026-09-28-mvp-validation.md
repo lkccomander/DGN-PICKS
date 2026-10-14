@@ -13,11 +13,11 @@ tokens, live providers, and CLV are outside this milestone.
 ## Progress
 - [x] Read the source documents and current handoff; user selected MVP validation.
 - [x] Inspect remote CI: both synchronized runs fail at clean npm installation.
-- [ ] Repair the lockfile and verify a fresh dependency installation.
-- [ ] Verify migrations and seed repeatability on disposable PostgreSQL.
-- [ ] Complete account, pick, responsive, and desktop browser acceptance.
-- [ ] Run API, desktop, contract, lint, type, build, and CI checks.
-- [ ] Reconcile milestone evidence, publish through GitHub and Railway, verify release.
+- [x] Repair the lockfile and verify a fresh dependency installation.
+- [x] Verify migrations and seed repeatability on disposable PostgreSQL.
+- [x] Complete account, pick, responsive, and desktop browser acceptance.
+- [x] Run API, desktop, contract, lint, type, build, and CI checks.
+- [x] Reconcile milestone evidence, publish through GitHub and Railway, verify release.
 
 ## Implementation plan
 1. Repair the incomplete web lockfile without changing requested dependency versions.
@@ -42,4 +42,14 @@ remote GitHub workflow and deployed health/public behavior.
   and unresolved historical facts remain intact.
 
 ## Outcomes & Retrospective
-In progress.
+Completed by the October 14 closeout below.
+
+## Verified closeout — 2026-10-14
+
+Closed by the [MVP validation/release checkpoint](../../checkpoints/2026-10-14-mvp-validation-release.md).
+Final application source `47a127af0220b98253a676f72829f082ae49692f`: green GitHub CI,
+116 API tests, 29 desktop tests, 10 isolated browser scenarios, clean install,
+contract/lint/types/build/audit and PostgreSQL migration/seed checks. API/web were
+deployed directly to Railway and verified; public desktop/mobile acceptance passed.
+Native Windows pywebview graphics and original-card research are separate limits,
+not claims of this acceptance. Earlier validation notes above are historical.

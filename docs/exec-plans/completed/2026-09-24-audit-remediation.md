@@ -16,8 +16,8 @@ Token accounting, live providers, CLV, and email verification remain future scop
 - [x] Phase 2: seed/QA separation, reversible legacy quarantine, fixture coverage, analytics.
 - [x] Phase 3 implementation: desktop boundary, truthful account UI, lint fixes, dependencies, contract/CI.
 - [x] Final post-edit API, lint/type/build, and generated-client checks passed during Gato publication.
-- [ ] Phase 3 acceptance: wider isolated authenticated/account/desktop browser suite.
-- [ ] Phase 4: final validation, closeout, and deployment checklist.
+- [x] Phase 3 acceptance: wider isolated authenticated/account/desktop browser suite.
+- [x] Phase 4: final validation, closeout, and deployment checklist.
 - [x] Reconcile README, environment example, product Decision Log, architecture notes, and recap.
 
 ## Implementation plan
@@ -53,3 +53,13 @@ approved escalation path. Existing .claude/skills changes are unrelated.
 
 ## Outcomes & Retrospective
 The later authorized Gato publication deployed the implementation to Railway, applied the strict legacy quarantine, and passed public desktop/mobile browser acceptance. Current API (105), frontend, generated-client, and migration checks passed. See the [publication checkpoint](../../checkpoints/2026-09-26-gato-publication.md). Wider isolated authenticated/account/desktop browser acceptance and remote CI remain open; production publication does not close those checks.
+
+## Verified closeout — 2026-10-14
+
+Closed by the [MVP validation/release checkpoint](../../checkpoints/2026-10-14-mvp-validation-release.md).
+Final application source `47a127af0220b98253a676f72829f082ae49692f`: green GitHub CI,
+116 API tests, 29 desktop tests, 10 isolated browser scenarios, clean install,
+contract/lint/types/build/audit and PostgreSQL migration/seed checks. API/web were
+deployed directly to Railway and verified; public desktop/mobile acceptance passed.
+Native Windows pywebview graphics and original-card research are separate limits,
+not claims of this acceptance. Earlier validation notes above are historical.

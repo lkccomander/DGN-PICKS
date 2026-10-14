@@ -1,7 +1,7 @@
 # October 14, 2026 validation update
 
 The audit below is historical. Follow [STATUS.md](STATUS.md) and the
-[current validation plan](docs/exec-plans/active/2026-10-14-validation-release.md)
+[current validation plan](docs/exec-plans/completed/2026-10-14-validation-release.md)
 for current evidence. Public Gato results are four wins/six losses with unknown
 odds; the 13 original definitions remain unresolved separately. The user confirmed
 non-monetary virtual credits: approval and auditable adjustments use the existing

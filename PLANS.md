@@ -1,6 +1,13 @@
 # PLANS.md — DGN-PICKS
 
-Read [STATUS.md](STATUS.md) for the latest session handoff, verified progress, and next steps. Current work: [2026-10-14 validation and release](docs/exec-plans/active/2026-10-14-validation-release.md), coordinating CI repair, isolated acceptance, documentation reconciliation, and publication. The [Gato publication checkpoint](docs/checkpoints/2026-09-26-gato-publication.md) is historical evidence; current production results and deployment IDs belong in STATUS and the current release checkpoint. Releases must use GitHub for committed source and direct Railway deployment, followed by verification; see `AGENTS.md`.
+Read [STATUS.md](STATUS.md) for current evidence and next steps. The
+[October 14 validation/release](docs/exec-plans/completed/2026-10-14-validation-release.md)
+is complete and published; the [checkpoint](docs/checkpoints/2026-10-14-mvp-validation-release.md)
+records source, CI and direct Railway deployment IDs. The original Gato card still
+awaits authoritative event/side facts in the
+[active review](docs/exec-plans/active/2026-09-26-gato-picks-import.md).
+Release workflow remains GitHub source history followed by direct Railway upload
+and service verification; see `AGENTS.md`.
 
 For work spanning multiple files, migrations, or UI/API integration, create an ExecPlan in `docs/exec-plans/active/`.
 

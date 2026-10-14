@@ -20,9 +20,9 @@ retain request/ledger history, and keep pick units independent of credit account
 - [x] Repair lockfile and verify clean dependency installation and checks.
 - [x] Complete isolated account, owned-pick/stored-price and desktop acceptance.
 - [x] Reconcile final local milestone evidence and open items.
-- [ ] Commit reviewed changes and push to GitHub; verify remote CI.
-- [ ] Deploy the same committed application directly to Railway.
-- [ ] Record source SHA, service deployment IDs and public verification.
+- [x] Commit reviewed changes and push to GitHub; verify remote CI.
+- [x] Deploy the same committed application directly to Railway.
+- [x] Record source SHA, service deployment IDs and public verification.
 
 ## Implementation plan
 1. Repair the web lockfile and investigate generated-client drift without an
@@ -35,7 +35,7 @@ retain request/ledger history, and keep pick units independent of credit account
    unrelated user work. Publish via GitHub, then Railway, and verify services.
 
 ## Validation
-Final API suite: 115 passed. Desktop unit suite: 29 passed. Clean npm installation,
+Final API suite: 116 passed. Desktop unit suite: 29 passed. Clean npm installation,
 production audit (zero vulnerabilities), generated-client consistency, lint,
 standalone TypeScript and the production build passed.
 Disposable PostgreSQL 16 fresh upgrade/head, downgrade/base, and re-upgrade/head
@@ -46,8 +46,7 @@ expiry, loading/failure/retry/empty states at both sizes, NCAA fixtures/unresolv
 definitions, owned pick edits/deletion and immutable taken price after movement,
 web/desktop user CRUD, and credit request/desktop approval/one ledger entry/own
 balance. Nine passed together; the multi-app credit case passed separately with
-its 60-second timeout. CI will verify the complete suite together. Remote CI and
-release verification remain pending.
+its 60-second timeout. CI will verify the complete suite together. Remote CI and direct Railway verification passed.
 
 Clean npm installation; API domain tests; desktop tests; generated-client check;
 web lint/types/build; isolated browser acceptance; remote GitHub CI; Railway
@@ -90,7 +89,17 @@ limits as agents complete their work; open checklist items are not acceptance.
   methods, transfer/redemption or automatic pick settlement.
 
 ## Outcomes & Retrospective
-In progress. Baseline production API deployment:
+Completed. Initial baseline production API deployment:
 `577580c7-c231-49a3-ac78-ffdce6b05685`; web:
 `7bacf90e-f97b-4dff-8e00-22afc4080bfe`, both SUCCESS and linked to source
-`afd7219c25e18fd1992234fc8db5d56fc617a60a`. Final release evidence remains open.
+`afd7219c25e18fd1992234fc8db5d56fc617a60a`. Final release evidence is recorded in the checkpoint below.
+
+## Verified closeout — 2026-10-14
+
+Closed by the [MVP validation/release checkpoint](../../checkpoints/2026-10-14-mvp-validation-release.md).
+Final application source `47a127af0220b98253a676f72829f082ae49692f`: green GitHub CI,
+116 API tests, 29 desktop tests, 10 isolated browser scenarios, clean install,
+contract/lint/types/build/audit and PostgreSQL migration/seed checks. API/web were
+deployed directly to Railway and verified; public desktop/mobile acceptance passed.
+Native Windows pywebview graphics and original-card research are separate limits,
+not claims of this acceptance. Earlier validation notes above are historical.
