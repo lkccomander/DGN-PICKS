@@ -62,3 +62,6 @@ Browser
 - Legacy `deposits` tables, schema names and routes remain for compatibility;
   their application semantics are non-monetary credit requests. No payment processor
   or monetary funding methods are exposed by this workflow.
+
+Users with credit requests or ledger history must be deactivated instead of
+deleted; the API returns HTTP 409 and preserves those historical references.

@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 from dgn_picks_api.api.v1.dependencies import get_db, require_authenticated_write_access, require_editor_identity
 from dgn_picks_api.api.v1.schemas import UserCreate, UserResponse, UserUpdate, PublicUserResponse
 from dgn_picks_api.domains.picks.models import Pick
+from dgn_picks_api.domains.deposits.models import Deposit
+from dgn_picks_api.domains.balances.models import BalanceTransaction
 from dgn_picks_api.domains.users.models import User
 from dgn_picks_api.domains.users.passwords import hash_password
 
@@ -97,6 +99,10 @@ def delete_user(user_id: int, db: Session = Depends(get_db)) -> Response:
         raise HTTPException(status_code=404, detail="User not found")
     if db.scalar(select(Pick.id).where(Pick.user_id == user_id).limit(1)) is not None:
         raise HTTPException(status_code=409, detail="User owns picks; deactivate instead")
+    has_requests = db.scalar(select(Deposit.id).where(Deposit.user_id == user_id).limit(1)) is not None
+    has_ledger = db.scalar(select(BalanceTransaction.id).where(BalanceTransaction.user_id == user_id).limit(1)) is not None
+    if has_requests or has_ledger:
+        raise HTTPException(status_code=409, detail="User owns virtual-credit history; deactivate instead")
     db.delete(user)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)

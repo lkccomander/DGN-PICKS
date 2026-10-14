@@ -55,6 +55,10 @@ service success and public health/web/API behavior. Record actual outcomes and
 limits as agents complete their work; open checklist items are not acceptance.
 
 ## Surprises & Discoveries
+- Final review caught user deletion with credit history producing a database
+  foreign-key error. A 409/deactivate guard and regression test preserve that
+  history. Five virtual-credit tests and contract consistency passed afterward;
+  the replacement CI run will validate the resulting 116-test API suite.
 - Built-app browser acceptance exposed an empty tracker hidden for new accounts,
   ambiguous route-announcer alert selectors, and a DELETE proxy building an
   invalid body for HTTP 204. Correct the UI/response and assert actual values,

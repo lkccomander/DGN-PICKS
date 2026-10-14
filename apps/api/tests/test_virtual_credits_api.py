@@ -105,3 +105,27 @@ def test_virtual_adjustments_preserve_auditable_legacy_history(credits_api):
     history = client.get("/api/v1/admin/balances", headers=operator).json()
     assert len(history) == 2 and any(x["reason"] == "Original legacy record" and x["kind"] == "deposit" for x in history)
     assert client.post("/api/v1/admin/balances/adjust", headers=operator, json={**payload, "user_id": 9999}).status_code == 404
+
+
+def test_credit_history_prevents_owner_deletion_and_survives_deactivation(credits_api):
+    client, db, owner, other, own, _, operator = credits_api
+    requested = client.post("/api/v1/deposits", headers=own, json={"amount": "12.50"}).json()
+    url = f"/api/v1/users/{owner.id}"
+    pending_delete = client.delete(url, headers=operator)
+    assert pending_delete.status_code == 409
+    assert "deactivate instead" in pending_delete.json()["detail"]
+    assert client.patch(f'/api/v1/admin/deposits/{requested["id"]}', headers=operator, json={"status": "approved"}).status_code == 200
+    assert client.delete(url, headers=operator).status_code == 409
+    assert client.patch(url, headers=operator, json={"active": False}).status_code == 200
+    assert db.get(User, owner.id).active is False
+    request = db.get(Deposit, requested["id"])
+    ledger = db.scalar(select(BalanceTransaction).where(BalanceTransaction.user_id == owner.id))
+    assert request.status == "approved" and request.amount == Decimal("12.50")
+    assert ledger.amount == Decimal("12.50") and ledger.kind == "virtual_credit"
+    assert client.delete(f"/api/v1/users/{other.id}", headers=operator).status_code == 204
+    # A manual ledger entry also preserves its owner without a request row.
+    ledger_owner = User(username="ledger-owner", display_name="Ledger owner")
+    db.add(ledger_owner); db.flush()
+    db.add(BalanceTransaction(user_id=ledger_owner.id, amount=Decimal("1"), kind="manual_adjustment", reason="Paper credit"))
+    db.commit()
+    assert client.delete(f"/api/v1/users/{ledger_owner.id}", headers=operator).status_code == 409

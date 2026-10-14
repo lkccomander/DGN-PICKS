@@ -507,6 +507,10 @@ Clean bootstrap, automated tests, E2E, docs sync.
   preserving NCAA fixtures and the MLB schedule preview. Original unresolved seed
   definitions return pending and display unresolved, without affecting real picks.
 
+- 2026-10-14: Users with virtual-credit requests or ledger history must be
+  deactivated instead of deleted. Return HTTP 409 instead of surfacing a
+  database foreign-key error; retain all request and ledger records.
+
 ## 22. Progress
 - [x] Product concept
 - [x] Branding direction
